@@ -32,11 +32,11 @@ class test_agent:
         for i in range(100000):
             if i % 100 == 0:
                 print("Timestep {}".format(i))
-        time.sleep(self.latency / 1000)  # Used to simulate network latency
-        action = env.action_space.sample()  # Choose a random action
-        obs, rew, done, info = env.step(action)  # Send action to game server
-        if done:
-            print("Done")
-            break  # Episode ended
+            time.sleep(self.latency / 1000)  # Used to simulate network latency
+            action = env.action_space.sample()  # Choose a random action
+            obs, rew, done, info = env.step(action)  # Send action to game server
+            if done:
+                print("Done")
+                break  # Episode ended
 
 #    conenv.render()            
