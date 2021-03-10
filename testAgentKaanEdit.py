@@ -8,26 +8,23 @@ from game_client import NetworkEnv
 from envs.envs_list import all_environments
 
 class test_agent:
-    def __init__(self, username, password, latency = 0,  games = ["__all__"], port = 12345, direct = False, host = "localhost"):
+    def __init__(self, latency = 0,  games = ["__all__"], port = 12345, direct = False, host = "localhost"):
         self.host = host
         self.port = port
-        self.username = username
-        self.password = password
+        self.username = '' 
+        self.password = ''
         self.latency = latency
         self.direct = direct
         self.games = games
         
-    def connect(self):
+    def connect(self, username, password):
+        self.username = username
+        self.password = password
         env = None
-        if self.direct:
-            env = NetworkEnv(
-        "boxing_v1", 5545551, "localhost", 35011, self.username, "A4C1B65BCE1D6EA4"
-                )
-        else:
-            mm_env = MatchmakerConnection(
+        mm_env = MatchmakerConnection(
                 self.host, self.port, self.username, self.password, available_games=self.games
                 )
-            env = mm_env.start_new()        
+        env = mm_env.start_new()        
         #return env            
             
             
