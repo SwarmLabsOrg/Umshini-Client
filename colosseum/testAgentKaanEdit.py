@@ -3,8 +3,8 @@
 import sys
 import time
 from utils.socket_wrap import SocketWrapper
-from game_client import MatchmakerConnection
-from game_client import NetworkEnv
+from .game_client import MatchmakerConnection
+from .game_client import NetworkEnv
 from envs.envs_list import all_environments
 
 class test_agent:

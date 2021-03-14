@@ -2,8 +2,8 @@ import sys
 import argparse
 import time
 from utils.socket_wrap import SocketWrapper
-from game_client import MatchmakerConnection
-from game_client import NetworkEnv
+from .game_client import MatchmakerConnection
+from .game_client import NetworkEnv
 from envs.envs_list import all_environments
 
 # Create command line argument parser
