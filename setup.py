@@ -5,7 +5,7 @@ setup(
     version='0.1',
     author='colosseum team',
     author_email="justinkterry@gmail.com",
-    description="Gym for multi-agent reinforcement learning",
+    description=" ",
     url='https://github.com/PettingZoo-Team/Colosseum',
     long_description=long_description,
     long_description_content_type="text/markdown",
