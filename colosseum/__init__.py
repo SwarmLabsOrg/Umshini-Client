@@ -1,2 +1,2 @@
-from .testAgentKaanEdit import test_agent
+from .testAgentKaanEdit import ColosseumAgent
 
