@@ -123,7 +123,7 @@ class TestEnv(gym.Env):
         return obs, rew, done, info
 
 
-class MatchmakerConnection:
+class TournamentConnection:
     def __init__(self, ip, port, username, password, available_games):
         print("Connecting to matchmaker for following games: ", available_games)
         if available_games == ["__all__"]:
@@ -136,7 +136,7 @@ class MatchmakerConnection:
         self.username = username
         self.password = password
         self.available_games = available_games
-        self.main_connection = None  # Connection to matchmaking server
+        self.main_connection = None  # Connection to tournament server
         self._test_environments()
 
     # Test agent in every game
@@ -153,10 +153,17 @@ class MatchmakerConnection:
 
     def _connect_game_server(self):
         # Tell main server that agent is ready to be matched
+        # TODO: Remove unused?
+        #send_json(self.main_connection, {"type": "ready"})
+
+        # Receive game server info from matchmaker
+        ready_data = recv_json(self.main_connection)
+        print(ready_data)
         send_json(self.main_connection, {"type": "ready"})
 
         # Receive game server info from matchmaker
         sdata = recv_json(self.main_connection)
+        print(sdata)
 
         # Create network env with game server info
         env = NetworkEnv(
@@ -169,9 +176,8 @@ class MatchmakerConnection:
         )
         return env
 
-
     # Start connection to matchmaking server
-    def setup_main_connection(self):
+    def _setup_main_connection(self):
         self.main_connection = SocketWrapper(
             socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         )
@@ -201,10 +207,16 @@ class MatchmakerConnection:
         elif init_data["type"] != "connect_success":
             raise RuntimeError("Something went wrong during login.")
 
-    def start_new(self):
-        # Create matchmaking server connection if it does not already exist
+    def next_match(self):
+        # Create tournament server connection if it does not already exist
         if self.main_connection is None:
-            self.setup_main_connection()
+            self._setup_main_connection()
+
+        # TODO: Ready connection (Either from run_match or from the tournament term signal
 
         # Connect to game server
-        return self._connect_game_server()
+        game_env = self._connect_game_server()
+        self.main_connection.close()
+        self.main_connection = None
+        return game_env
+
