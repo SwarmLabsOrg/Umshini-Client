@@ -5,7 +5,7 @@ from .tournament_client import TournamentConnection
 
 
 class ColosseumTournamentAgent:
-    def __init__(self, latency=0,  games=["__all__"], port=12345, direct=False, host="localhost"):
+    def __init__(self, latency=0,  games=["__all__"], port=12345, direct=False, host="localhost", maximum_rounds=10000):
         self.host = host
         self.port = port
         self.username = ''
@@ -14,6 +14,7 @@ class ColosseumTournamentAgent:
         self.direct = direct
         self.games = games
         self.tournament = None
+        self.maximum_rounds = maximum_rounds
 
     def connect(self, username, password):
         self.username = username
@@ -25,6 +26,7 @@ class ColosseumTournamentAgent:
     def run(self):
         # Connect to tournament server for each round, until and end signal is received.
         env = self.tournament.next_match()
+        current_round = 1
         while env is not None:
             done = False
             timestep = 0
@@ -35,4 +37,9 @@ class ColosseumTournamentAgent:
                 action = env.action_space.sample()  # Choose a random action
                 obs, rew, done, info = env.step(action)  # Send action to game server
                 timestep += 1
-            env = self.tournament.next_match()
+            current_round += 1
+            if current_round > self.maximum_rounds:
+                env = None
+            else:
+                env = self.tournament.next_match()
+
