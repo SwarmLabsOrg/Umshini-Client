@@ -1,22 +1,19 @@
 import socket
 import json
-import sys
-import time
 import gym
-import threading
-import numpy as np
 from utils.socket_wrap import SocketWrapper
 from utils.compress import decompress
 from envs.envs_list import make_test_env, all_environments
 
+
 # Send JSON through socket
-def send_json(socket, data):
-    return socket.sendall(json.dumps(data).encode("utf-8"))
+def send_json(sock, data):
+    return sock.sendall(json.dumps(data).encode("utf-8"))
 
 
 # Receive JSON from socket
-def recv_json(socket):
-    return socket.recv(2 ** 30)  # Arbitrarily large buffer
+def recv_json(sock):
+    return sock.recv(2 ** 30)  # Arbitrarily large buffer
 
 
 class NetworkEnv(gym.Env):
@@ -39,8 +36,7 @@ class NetworkEnv(gym.Env):
         self.observation_space = self.env.observation_spaces[agent]
         self.action_space = self.env.action_spaces[agent]
         self.action_space.seed(seed)
-
-        self.num_steps = 0
+        self.obs = None
 
     def step(self, action):
         if self.terminated:
@@ -66,17 +62,19 @@ class NetworkEnv(gym.Env):
         obs = decompress(observation_data["data"][self.agent])
         self.obs = obs
 
-        self.num_steps += 1
-
         # TODO: Decide what information a live tournament agent should have access to.
-        # Probably observation, info, done, though done is obvious from the type
+        # Probably observation, info, done, though done is obvious from the message type
         rew = 0
         info = {}
         return obs, rew, done, info
 
-    def render(self):
+    def render(self, mode='human'):
         # TODO: Figure out appropriate behavior here. Probably rendering live on the website.
-        return self.env.render()
+        return self.env.render(mode=mode)
+
+    def reset(self):
+        "Resetting mid-game would cause serious desync issues"
+        return
 
     def close(self):
         self.env.close()
@@ -92,6 +90,8 @@ class TestEnv(gym.Env):
         self.agent = agent = self.env.agents[0]
         self.observation_space = self.env.observation_spaces[agent]
         self.action_space = self.env.action_spaces[agent]
+        self.num_steps = 0
+        self.was_done = False
 
     def reset(self):
         obss = self.env.reset()
@@ -122,8 +122,11 @@ class TestEnv(gym.Env):
 
         return obs, rew, done, info
 
+    def render(self, mode='human'):
+        return
 
-class MatchmakerConnection:
+
+class TournamentConnection:
     def __init__(self, ip, port, username, password, available_games):
         print("Connecting to matchmaker for following games: ", available_games)
         if available_games == ["__all__"]:
@@ -131,12 +134,12 @@ class MatchmakerConnection:
             available_games = list(all_environments.keys())
 
         self.username = username
-        self.ip = ip
+        self.ip_address = ip
         self.port = port
         self.username = username
         self.password = password
         self.available_games = available_games
-        self.main_connection = None  # Connection to matchmaking server
+        self.main_connection = None  # Connection to tournament server
         self._test_environments()
 
     # Test agent in every game
@@ -144,25 +147,28 @@ class MatchmakerConnection:
         for game in self.available_games:
             test_env = TestEnv(game)
             test_env.reset()
-            for i in range(100):
+            for _ in range(100):
                 action = test_env.action_space.sample()
-                obs, rew, done, info = test_env.step(action)
+                _, _, done, _ = test_env.step(action)
                 if done:
                     print("{} passed test in {}".format(self.username, game))
                     break
 
     def _connect_game_server(self):
-        # Tell main server that agent is ready to be matched
+        # Receive game server info from matchmaker
+        ready_data = recv_json(self.main_connection)
+        print(ready_data)
         send_json(self.main_connection, {"type": "ready"})
 
         # Receive game server info from matchmaker
         sdata = recv_json(self.main_connection)
+        print(sdata)
 
         # Create network env with game server info
         env = NetworkEnv(
             sdata["env"],
             sdata["seed"],
-            self.ip,
+            self.ip_address,
             sdata["port"],
             self.username,
             sdata["token"],
@@ -170,11 +176,11 @@ class MatchmakerConnection:
         return env
 
     # Start connection to matchmaking server
-    def setup_main_connection(self):
+    def _setup_main_connection(self):
         self.main_connection = SocketWrapper(
             socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         )
-        self.main_connection.connect((self.ip, self.port))
+        self.main_connection.connect((self.ip_address, self.port))
         send_json(
             self.main_connection,
             {
@@ -189,21 +195,25 @@ class MatchmakerConnection:
         # Handle connection errors
         if init_data["type"] == "bad_creds":
             raise RuntimeError("server did not accept credentials")
-        elif init_data["type"] == "bad_client_version":
+        if init_data["type"] == "bad_client_version":
             raise RuntimeError(
                 "Old client version. Please udpate your client to the latest version available."
             )
-        elif init_data["type"] == "connected_too_many_servers":
+        if init_data["type"] == "connected_too_many_servers":
             raise RuntimeError(
                 "This username is already connected to the server too many times."
             )
-        elif init_data["type"] != "connect_success":
+        if init_data["type"] != "connect_success":
             raise RuntimeError("Something went wrong during login.")
 
-    def start_new(self):
-        # Create matchmaking server connection if it does not already exist
+    # TODO: Implement terminate signal for tournament and receive it here
+    def next_match(self):
+        # Create tournament server connection if it does not already exist
         if self.main_connection is None:
-            self.setup_main_connection()
+            self._setup_main_connection()
 
         # Connect to game server
-        return self._connect_game_server()
+        game_env = self._connect_game_server()
+        self.main_connection.close()
+        self.main_connection = None
+        return game_env
