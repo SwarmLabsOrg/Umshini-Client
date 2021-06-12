@@ -1,2 +1,1 @@
-from .testAgentKaanEdit import ColosseumAgent
-
+from .example_client import ColosseumTournamentAgent
