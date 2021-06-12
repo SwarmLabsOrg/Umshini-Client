@@ -1,13 +1,10 @@
 import socket
 import json
-import sys
-import time
 import gym
-import threading
-import numpy as np
 from utils.socket_wrap import SocketWrapper
 from utils.compress import decompress
 from envs.envs_list import make_test_env, all_environments
+
 
 # Send JSON through socket
 def send_json(socket, data):
@@ -69,7 +66,7 @@ class NetworkEnv(gym.Env):
         self.num_steps += 1
 
         # TODO: Decide what information a live tournament agent should have access to.
-        # Probably observation, info, done, though done is obvious from the type
+        # Probably observation, info, done, though done is obvious from the message type
         rew = 0
         info = {}
         return obs, rew, done, info
@@ -77,6 +74,10 @@ class NetworkEnv(gym.Env):
     def render(self):
         # TODO: Figure out appropriate behavior here. Probably rendering live on the website.
         return self.env.render()
+
+    def reset(self):
+        "Resetting mid-game would cause serious desync issues"
+        pass
 
     def close(self):
         self.env.close()
@@ -152,10 +153,6 @@ class TournamentConnection:
                     break
 
     def _connect_game_server(self):
-        # Tell main server that agent is ready to be matched
-        # TODO: Remove unused?
-        #send_json(self.main_connection, {"type": "ready"})
-
         # Receive game server info from matchmaker
         ready_data = recv_json(self.main_connection)
         print(ready_data)
@@ -219,4 +216,3 @@ class TournamentConnection:
         self.main_connection.close()
         self.main_connection = None
         return game_env
-
