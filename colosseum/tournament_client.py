@@ -94,9 +94,9 @@ class TestEnv(gym.Env):
         self.was_done = False
 
     def reset(self):
-        obss = self.env.reset()
         self.num_steps = 0
         self.was_done = False
+        obss = self.env.reset()
         return obss[self.agent]
 
     def step(self, action):
@@ -126,6 +126,44 @@ class TestEnv(gym.Env):
         return
 
 
+# Local environment used to test if agent works before connecting to network env
+class TestAECEnv(gym.Env):
+    def __init__(self, env_id):
+        seed = 1
+        self.env = make_test_env(env_id, seed=seed)
+        self.env.reset()
+        self.agent = agent = self.env.agents[0]
+        self.observation_space = self.env.observation_spaces[agent]
+        self.action_space = self.env.action_spaces[agent]
+        self.num_steps = 0
+        self.was_done = False
+
+    def reset(self):
+        self.num_steps = 0
+        self.was_done = False
+        self.env.reset()
+
+    def step(self, action):
+        assert not self.was_done, "stepped after done, should terminate loop"
+        # Set random actions for all other agents
+        print(dir(self.env.agent_iter()))
+        self.env.step(action)
+
+        if self.num_steps > 50:
+            done = True
+        else:
+            obs, rew, done, info = self.env.last()
+
+        self.was_done = done
+        self.num_steps += 1
+
+    def last(self):
+        return self.env.last()
+
+    def render(self, mode='human'):
+        return
+
+
 class TournamentConnection:
     def __init__(self, ip, port, username, password, available_games):
         print("Connecting to matchmaker for following games: ", available_games)
@@ -145,14 +183,27 @@ class TournamentConnection:
     # Test agent in every game
     def _test_environments(self):
         for game in self.available_games:
-            test_env = TestEnv(game)
-            test_env.reset()
-            for _ in range(100):
-                action = test_env.action_space.sample()
-                _, _, done, _ = test_env.step(action)
-                if done:
-                    print("{} passed test in {}".format(self.username, game))
-                    break
+            env = make_test_env(game, seed=0)
+            turn_based = getattr(env, "env", None) is not None
+            if turn_based:
+                test_env = TestAECEnv(game)
+                test_env.reset()
+                for _ in range(100):
+                    action = test_env.action_space.sample()
+                    test_env.step(action)
+                    _, _, done, _ = test_env.last()
+                    if done:
+                        print("{} passed test in {}".format(self.username, game))
+                        break
+            else:
+                test_env = TestEnv(game)
+                test_env.reset()
+                for _ in range(100):
+                    action = test_env.action_space.sample()
+                    _, _, done, _ = test_env.step(action)
+                    if done:
+                        print("{} passed test in {}".format(self.username, game))
+                        break
 
     def _connect_game_server(self):
         # Receive game server info from matchmaker
