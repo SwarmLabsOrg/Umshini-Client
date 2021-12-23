@@ -25,6 +25,7 @@ class ColosseumTournamentAgent:
 
     def run(self):
         # Connect to tournament server for each round, until and end signal is received.
+        print("running")
         env = self.tournament.next_match()
         current_round = 1
         while env is not None:
@@ -35,6 +36,7 @@ class ColosseumTournamentAgent:
                     print(f"{self.username}: Timestep {timestep}")
                 time.sleep(self.latency / 1000)  # Used to simulate network latency
                 action = env.action_space.sample()  # Choose a random action
+                
                 obs, rew, done, info = env.step(action)  # Send action to game server
                 timestep += 1
             current_round += 1

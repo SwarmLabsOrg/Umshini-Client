@@ -22,9 +22,10 @@ from pettingzoo.atari import tennis_v2
 from pettingzoo.atari import video_checkers_v3
 from pettingzoo.atari import wizard_of_wor_v2
 from pettingzoo.atari import warlords_v2
-#from pettingzoo.classic import connect_four_v3
+from pettingzoo.classic import connect_four_v3
 
 from supersuit import frame_skip_v0, frame_stack_v1
+from pettingzoo.utils import turn_based_to_parallel
 
 all_environments = {
     "boxing_v1": boxing_v1,
@@ -51,7 +52,7 @@ all_environments = {
     "video_checkers_v3": video_checkers_v3,
     "wizard_of_wor_v2": wizard_of_wor_v2,
     "warlords_v2": warlords_v2,
-    #"connect_four_v3": connect_four_v3,
+    "connect_four_v3": connect_four_v3,
 }
 
 
@@ -67,7 +68,8 @@ MAX_CYCLES = 10000
 
 
 def make_test_env(game_id, seed):
-    env = all_environments[game_id].parallel_env(seed=seed, max_cycles=MAX_CYCLES)
-    env = frame_stack_v1(env, 4)
-    env = frame_skip_v0(env, 4)
+    env = all_environments[game_id].env() # TODO: Figure out how to pass in seed and max cycles
+    #env = frame_stack_v1(env, 4)
+    #env = frame_skip_v0(env, 4)
+    env = turn_based_to_parallel(env)
     return env
