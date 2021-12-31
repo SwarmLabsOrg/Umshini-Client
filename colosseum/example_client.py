@@ -29,6 +29,7 @@ class ColosseumTournamentAgent:
         env = self.tournament.next_match()
         current_round = 1
         while env is not None:
+            obs = None
             done = False
             timestep = 0
             while not done:
@@ -36,7 +37,8 @@ class ColosseumTournamentAgent:
                     print(f"{self.username}: Timestep {timestep}")
                 time.sleep(self.latency / 1000)  # Used to simulate network latency
                 action = env.action_space.sample()  # Choose a random action
-                
+                while obs and "action_mask" in obs and obs["action_mask"][action] != 1:
+                    action = env.action_space.sample()
                 obs, rew, done, info = env.step(action)  # Send action to game server
                 timestep += 1
             current_round += 1
