@@ -1,1 +1,1 @@
-from .example_client import ColosseumTournamentAgent
+from tournament_clients import add_learner
