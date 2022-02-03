@@ -1,11 +1,18 @@
 import socket
 import json
 import gym
+import os
 from utils.socket_wrap import SocketWrapper
 from utils.compress import decompress
 from envs.envs_list import make_test_env, all_environments
+from Crypto.Cipher import AES
+from dotenv import load_dotenv
 
-
+# Load encryption key and pass
+load_dotenv()
+ENCRYPT_KEY = os.getenv('ENCRYPT_KEY')
+ENCRYPT_PASS = os.getenv('ENCRYPT_PASS')
+crypt_obj = AES.new(ENCRYPT_KEY, AES.MODE_CBC, ENCRYPT_PASS)
 # Send JSON through socket
 def send_json(sock, data):
     return sock.sendall(json.dumps(data).encode("utf-8"))
@@ -15,6 +22,9 @@ def send_json(sock, data):
 def recv_json(sock):
     return sock.recv(2 ** 30)  # Arbitrarily large buffer
 
+def encrypt_string(payload):
+    cipher_text = crypt_obj.encrypt(payload)
+    return cipher_text
 
 class NetworkEnv(gym.Env):
     def __init__(self, env_id, seed, game_ip, game_port, username, token):
@@ -228,6 +238,7 @@ class TournamentConnection:
 
     # Start connection to matchmaking server
     def _setup_main_connection(self):
+        cipher_pass = encrypt_string(self.password)
         self.main_connection = SocketWrapper(
             socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         )
@@ -236,7 +247,7 @@ class TournamentConnection:
             self.main_connection,
             {
                 "username": self.username,
-                "key": self.password,
+                "key": cipher_pass,
                 "client_version": "1.0",
                 "available_games": self.available_games,
             },
