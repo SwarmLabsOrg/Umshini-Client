@@ -7,12 +7,15 @@ from utils.compress import decompress
 from envs.envs_list import make_test_env, all_environments
 from Crypto.Cipher import AES
 from dotenv import load_dotenv
+from os.path import join, dirname
 
-# Load encryption key and pass
+# Load encryption object from .env
+dotenv_path = join(dirname(__file__), '.env')
 load_dotenv()
 ENCRYPT_KEY = os.getenv('ENCRYPT_KEY')
-ENCRYPT_PASS = os.getenv('ENCRYPT_PASS')
-crypt_obj = AES.new(ENCRYPT_KEY, AES.MODE_CBC, ENCRYPT_PASS)
+iv = os.urandom(16)
+crypt_obj = AES.new(ENCRYPT_KEY, AES.MODE_CBC, iv)
+
 # Send JSON through socket
 def send_json(sock, data):
     return sock.sendall(json.dumps(data).encode("utf-8"))
