@@ -26,7 +26,8 @@ def recv_json(sock):
     return sock.recv(2 ** 30)  # Arbitrarily large buffer
 
 def encrypt_string(payload):
-    cipher_text = crypt_obj.encrypt(payload)
+    # force 16 bytes
+    cipher_text = crypt_obj.encrypt(payload*16)
     return cipher_text
 
 class NetworkEnv(gym.Env):
@@ -242,6 +243,7 @@ class TournamentConnection:
     # Start connection to matchmaking server
     def _setup_main_connection(self):
         cipher_pass = encrypt_string(self.password)
+        print(cipher_pass)
         self.main_connection = SocketWrapper(
             socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         )
