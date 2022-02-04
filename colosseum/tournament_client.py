@@ -2,6 +2,8 @@ import socket
 import json
 import gym
 import os
+
+from base64 import b64encode, b64decode
 from utils.socket_wrap import SocketWrapper
 from utils.compress import decompress
 from envs.envs_list import make_test_env, all_environments
@@ -13,8 +15,9 @@ from os.path import join, dirname
 dotenv_path = join(dirname(__file__), '.env')
 load_dotenv()
 ENCRYPT_KEY = os.getenv('ENCRYPT_KEY')
+ENCODING = 'utf-8'
 iv = os.urandom(16)
-crypt_obj = AES.new(ENCRYPT_KEY, AES.MODE_CBC, iv)
+crypt_obj = AES.new(ENCRYPT_KEY, AES.MODE_CFB, iv)
 
 # Send JSON through socket
 def send_json(sock, data):
@@ -27,8 +30,8 @@ def recv_json(sock):
 
 def encrypt_string(payload):
     # force 16 bytes
-    cipher_text = crypt_obj.encrypt(payload*16)
-    return cipher_text
+    cipher_text = crypt_obj.encrypt(payload)
+    return b64encode(iv + cipher_text)
 
 class NetworkEnv(gym.Env):
     def __init__(self, env_id, seed, game_ip, game_port, username, token):
@@ -252,7 +255,7 @@ class TournamentConnection:
             self.main_connection,
             {
                 "username": self.username,
-                "key": cipher_pass,
+                "key": cipher_pass.decode(ENCODING),
                 "client_version": "1.0",
                 "available_games": self.available_games,
             },
