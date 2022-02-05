@@ -4,8 +4,10 @@ from colosseum.example_client import ColosseumTournamentAgent
 
 
 def create_and_run(username):
-    agent = ColosseumTournamentAgent(maximum_rounds=100, games=["connect_four_v3"])
-    agent.connect(username, "password")
+    agent = ColosseumTournamentAgent(maximum_rounds=100, games=["boxing_v1"])
+    #agent = ColosseumTournamentAgent(maximum_rounds=100)
+    test_key = "test_" + username
+    agent.connect(username, test_key)
     agent.run()
 
 

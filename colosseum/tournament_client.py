@@ -236,7 +236,7 @@ class TournamentConnection:
             self.main_connection,
             {
                 "username": self.username,
-                "password": self.password,
+                "key": self.password,
                 "client_version": "1.0",
                 "available_games": self.available_games,
             },

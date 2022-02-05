@@ -7,11 +7,11 @@ setup(
     author_email="justinkterry@gmail.com",
     description=" ",
     url='https://github.com/PettingZoo-Team/Colosseum',
-    long_description=long_description,
+    #long_description=long_description,
     long_description_content_type="text/markdown",
     keywords=["Reinforcement Learning", "game", "RL", "AI", "gym"],
     python_requires=">=3.6, <3.10",
-    data_files=[("", ["LICENSE.txt"])],
+    #data_files=[("", ["LICENSE.txt"])],
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
@@ -26,5 +26,5 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
     ],
-    extras_require=extras,
+    #extras_require=extras,
 )
