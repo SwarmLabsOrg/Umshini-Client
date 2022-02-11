@@ -22,7 +22,19 @@ from pettingzoo.atari import tennis_v2
 from pettingzoo.atari import video_checkers_v3
 from pettingzoo.atari import wizard_of_wor_v2
 from pettingzoo.atari import warlords_v2
+from pettingzoo.classic import backgammon_v3
+from pettingzoo.classic import checkers_v3
+from pettingzoo.classic import chess_v5
 from pettingzoo.classic import connect_four_v3
+from pettingzoo.classic import gin_rummy_v4
+from pettingzoo.classic import go_v5
+from pettingzoo.classic import hanabi_v4
+from pettingzoo.classic import leduc_holdem_v4
+from pettingzoo.classic import rps_v2
+from pettingzoo.classic import texas_holdem_v4
+from pettingzoo.classic import texas_holdem_no_limit_v6
+from pettingzoo.classic import tictactoe_v3
+from pettingzoo.classic import uno_v4
 
 from supersuit import frame_skip_v0, frame_stack_v1
 from pettingzoo.utils import turn_based_to_parallel
@@ -52,17 +64,29 @@ all_environments = {
     "video_checkers_v3": video_checkers_v3,
     "wizard_of_wor_v2": wizard_of_wor_v2,
     "warlords_v2": warlords_v2,
+    "backgammon_v3": backgammon_v3,
+    "checkers_v3": checkers_v3,
+    "chess_v5": chess_v5,
     "connect_four_v3": connect_four_v3,
+    "gin_rummy_v4": gin_rummy_v4,
+    "go_v5": go_v5,
+    "hanabi_v4": hanabi_v4,
+    "leduc_holdem_v4": leduc_holdem_v4,
+    #"rps_v2": rps_v2,
+    "texas_holdem_v4": texas_holdem_v4,
+    "texas_holdem_no_limit_v6": texas_holdem_no_limit_v6,
+    "tictactoe_v3": tictactoe_v3,
+    "uno_v4": uno_v4,
 }
 
 
-def get_num_agents(env):
+def get_num_agents(name, env):
     e = env.env()
     e.reset()
     return e.num_agents
 
 
-env_num_players = {name: get_num_agents(env) for name, env in all_environments.items()}
+env_num_players = {name: get_num_agents(name, env) for name, env in all_environments.items()}
 
 MAX_CYCLES = 10000
 
@@ -75,6 +99,7 @@ MAX_CYCLES = 10000
 #    return env
 
 def make_test_env(game_id, seed):
+    print(game_id)
     env = all_environments[game_id]
     # Check if game can be played with parallel API
     env_function = getattr(env, "parallel_env", None)
