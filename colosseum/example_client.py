@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import time
+import numpy as np
 from .tournament_client import TournamentConnection
 
 
@@ -36,9 +37,13 @@ class ColosseumTournamentAgent:
                 if timestep % 100 == 0:
                     print(f"{self.username}: Timestep {timestep}")
                 time.sleep(self.latency / 1000)  # Used to simulate network latency
-                action = env.action_space.sample()  # Choose a random action
-                while obs and "action_mask" in obs and obs["action_mask"][action] != 1:
-                    action = env.action_space.sample()
+                if (obs is not None
+                       and isinstance(obs, dict)
+                       and obs and "action_mask" in obs
+                       and any(obs["action_mask"] == 1)):
+                    action = np.random.choice(obs["action_mask"].nonzero()[0])
+                else:
+                    action = env.action_space.sample()  # Choose a random action
                 obs, rew, done, info = env.step(action)  # Send action to game server
                 timestep += 1
             current_round += 1

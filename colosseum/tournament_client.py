@@ -1,6 +1,8 @@
 import socket
 import json
 import gym
+import time
+import numpy as np
 from utils.socket_wrap import SocketWrapper
 from utils.compress import decompress
 from envs.envs_list import make_test_env, all_environments
@@ -31,10 +33,10 @@ class NetworkEnv(gym.Env):
         # Create env for initial action and observation spaces
         self.env = make_test_env(env_id, seed=seed)
         self.agent = agent = (
-            self.game_data["agent"] if not self.terminated else self.env.agents[0]
+            self.game_data["agent"] if not self.terminated else self.env.possible_agents[0]
         )
-        self.observation_space = self.env.observation_spaces[agent]
-        self.action_space = self.env.action_spaces[agent]
+        self.observation_space = self.env.observation_space(agent)
+        self.action_space = self.env.action_space(agent)
         self.action_space.seed(seed)
         self.obs = None
 
@@ -85,42 +87,63 @@ class NetworkEnv(gym.Env):
 class TestEnv(gym.Env):
     def __init__(self, env_id):
         seed = 1
-        self.env = make_test_env(env_id, seed=seed)
+        self.env, self.turn_based = make_test_env(env_id, seed=seed)
         self.env.reset()
         self.agent = agent = self.env.agents[0]
-        self.observation_space = self.env.observation_spaces[agent]
-        self.action_space = self.env.action_spaces[agent]
+        self.observation_space = self.env.observation_space(agent)
+        self.action_space = self.env.action_space(agent)
         self.num_steps = 0
         self.was_done = False
+        self.obss = None
 
     def reset(self):
-        obss = self.env.reset()
+        self.obss = self.env.reset()
         self.num_steps = 0
         self.was_done = False
-        return obss[self.agent]
+        return self.obss[self.agent]
 
     def step(self, action):
         assert not self.was_done, "stepped after done, should terminate loop"
-        # Set random actions for all other agents
+
+        # Set random actions for all other agents in parallel game or None in turn-based game
         actions = {
-            agent: self.env.action_spaces[agent].sample() for agent in self.env.agents
+            agent: (None if self.turn_based else self.env.action_space(agent).sample()) for agent in self.env.agents
         }
-        actions[self.agent] = action
-        obss, rews, dones, infos = self.env.step(actions)
+        actions[self.env.aec_env.agent_selection] = action
+        #print({agent: self.obss[agent]["action_mask"] for agent in self.obss.keys()})
+        #print(actions)
+        self.obss, rews, dones, infos = self.env.step(actions)
 
         if self.num_steps > 50:
             done = True
         else:
             done = dones[self.agent]
 
-        obs = obss[self.agent]
+        obs = self.obss[self.agent]
         rew = rews[self.agent]
         info = infos[self.agent]
 
         self.was_done = done
         self.num_steps += 1
 
-        return obs, rew, done, info
+        # Find next active agents
+        if self.turn_based:
+            active_agents = [self.env.aec_env.agent_selection]
+        else:
+            active_agents = self.env.agents
+
+        # Step again if testing agent is not next
+        if not self.was_done and self.agent not in active_agents:
+            obs = self.obss[self.env.aec_env.agent_selection]
+            if (obs is not None
+                and isinstance(obs, dict)
+                and obs and "action_mask" in obs):
+                action = np.random.choice(obs["action_mask"].nonzero()[0])
+            else:
+                action = self.env.action_space(self.env.aec_env.agent_selection).sample()
+            return self.step(action)
+        else:
+            return obs, rew, done, info
 
     def render(self, mode='human'):
         return
@@ -146,10 +169,15 @@ class TournamentConnection:
     def _test_environments(self):
         for game in self.available_games:
             test_env = TestEnv(game)
-            test_env.reset()
+            obs = test_env.reset()
             for _ in range(100):
-                action = test_env.action_space.sample()
-                _, _, done, _ = test_env.step(action)
+                if (obs is not None
+                    and isinstance(obs, dict)
+                    and obs and "action_mask" in obs):
+                    action = np.random.choice(obs["action_mask"].nonzero()[0])
+                else:
+                    action = test_env.action_space.sample()
+                obs, _, done, _ = test_env.step(action)
                 if done:
                     print("{} passed test in {}".format(self.username, game))
                     break
