@@ -44,6 +44,8 @@ class ColosseumTournamentAgent:
                     action = np.random.choice(obs["action_mask"].nonzero()[0])
                 else:
                     action = env.action_space.sample()  # Choose a random action
+                if (isinstance(action, np.int64)):
+                    action = int(action)
                 obs, rew, done, info = env.step(action)  # Send action to game server
                 timestep += 1
             current_round += 1

@@ -31,7 +31,7 @@ class NetworkEnv(gym.Env):
         self.terminated = self.game_data["type"] == "terminate"
 
         # Create env for initial action and observation spaces
-        self.env = make_test_env(env_id, seed=seed)
+        self.env, self.turn_based = make_test_env(env_id, seed=seed)
         self.agent = agent = (
             self.game_data["agent"] if not self.terminated else self.env.possible_agents[0]
         )
@@ -46,6 +46,13 @@ class NetworkEnv(gym.Env):
             return self.obs, 0, True, {}
 
         # Send action to game server
+        assert (isinstance(action, int) or
+                isinstance(action, float) or
+                isinstance(action, str) or
+                isinstance(action, dict) or
+                isinstance(action, list)), "Action is not a valid type."
+        assert self.action_space.contains(action), "Action not in action space."
+
         act_data = {"type": "action", "action": action}
         send_json(self.game_connection, act_data)
 
