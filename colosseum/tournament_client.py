@@ -170,6 +170,7 @@ class TournamentConnection:
         self.password = password
         self.available_games = available_games
         self.main_connection = None  # Connection to tournament server
+        self.tournament_completed = False
         self._test_environments()
 
     # Test agent in every game
@@ -190,9 +191,12 @@ class TournamentConnection:
                     break
 
     def _connect_game_server(self):
+        # If tournament is over, return no environment
+        if self.tournament_completed:
+            return None
+
         # Receive game server info from matchmaker
         ready_data = recv_json(self.main_connection)
-        print(ready_data)
         send_json(self.main_connection, {"type": "ready"})
 
         # Receive game server info from matchmaker
@@ -231,15 +235,15 @@ class TournamentConnection:
         if init_data["type"] == "bad_creds":
             raise RuntimeError("server did not accept credentials")
         if init_data["type"] == "bad_client_version":
-            raise RuntimeError(
-                "Old client version. Please udpate your client to the latest version available."
-            )
+            raise RuntimeError("Old client version. Please udpate your client to the latest version available.")
         if init_data["type"] == "connected_too_many_servers":
-            raise RuntimeError(
-                "This username is already connected to the server too many times."
-            )
+            raise RuntimeError("This username is already connected to the server too many times.")
         if init_data["type"] != "connect_success":
             raise RuntimeError("Something went wrong during login.")
+
+        # Check if tournament is complete
+        if init_data["complete"]:
+            self.tournament_completed = True
 
     # TODO: Implement terminate signal for tournament and receive it here
     def next_match(self):

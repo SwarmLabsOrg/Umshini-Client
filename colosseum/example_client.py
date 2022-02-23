@@ -37,10 +37,11 @@ class ColosseumTournamentAgent:
                 if timestep % 100 == 0:
                     print(f"{self.username}: Timestep {timestep}")
                 time.sleep(self.latency / 1000)  # Used to simulate network latency
-                if (obs is not None
-                       and isinstance(obs, dict)
-                       and obs and "action_mask" in obs
-                       and any(obs["action_mask"] == 1)):
+                if (obs is not None and
+                    isinstance(obs, dict) and
+                    obs and
+                    "action_mask" in obs and
+                    any(obs["action_mask"] == 1)):
                     action = np.random.choice(obs["action_mask"].nonzero()[0])
                 else:
                     action = env.action_space.sample()  # Choose a random action
