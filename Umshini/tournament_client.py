@@ -210,7 +210,10 @@ class TournamentConnection:
     def next_match(self):
         # Create tournament server connection if it does not already exist
         if self.main_connection is None:
-            self._setup_main_connection()
+            try:
+                self._setup_main_connection()
+            except Exception as e:
+                raise e
 
         # Connect to game server
         game_env = self._connect_game_server()

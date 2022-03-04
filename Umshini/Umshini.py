@@ -16,7 +16,8 @@ Passed function accepts parameters:
 
 Passed function returns action 
 """
-def add_learner(user_policy, username, user_key):
-    agent = ColosseumTournamentAgent(policy=user_policy, maximum_rounds=100)
+def connect(environment, username, user_key, user_policy):
+    agent = ColosseumTournamentAgent(policy=user_policy, games = [environment], maximum_rounds=100)
     agent.connect(username, user_key)
+    agent.run()
 
