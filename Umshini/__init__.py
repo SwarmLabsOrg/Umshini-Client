@@ -1,1 +1,1 @@
-from Umshini import add_learner
+from .learner import connect

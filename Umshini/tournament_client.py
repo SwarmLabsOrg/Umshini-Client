@@ -4,7 +4,7 @@ import gym
 from utils.socket_wrap import SocketWrapper
 from utils.compress import decompress
 from envs.envs_list import make_test_env, all_environments
-
+from colorama import Fore, Style
 
 # Send JSON through socket
 def send_json(sock, data):
@@ -216,7 +216,11 @@ class TournamentConnection:
                 raise e
 
         # Connect to game server
+        print(Fore.GREEN + "User: {} successfully connected to Umshini".format(self.username))
+        print(Style.RESET_ALL)
+
         game_env = self._connect_game_server()
+        print("this happened") #once match is made
         self.main_connection.close()
         self.main_connection = None
         return game_env
