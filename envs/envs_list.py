@@ -22,7 +22,7 @@ from pettingzoo.atari import tennis_v2
 from pettingzoo.atari import video_checkers_v3
 from pettingzoo.atari import wizard_of_wor_v2
 from pettingzoo.atari import warlords_v2
-#from pettingzoo.classic import connect_four_v3
+from pettingzoo.classic import connect_four_v3
 
 from supersuit import frame_skip_v0, frame_stack_v1
 
@@ -51,14 +51,14 @@ all_environments = {
     "video_checkers_v3": video_checkers_v3,
     "wizard_of_wor_v2": wizard_of_wor_v2,
     "warlords_v2": warlords_v2,
-    #"connect_four_v3": connect_four_v3,
+    "connect_four_v3": connect_four_v3,
 }
 
 
 def get_num_agents(env):
-    e = env.env()
-    e.reset()
-    return e.num_agents
+    count_env = env.env()
+    count_env.reset()
+    return count_env.num_agents
 
 
 env_num_players = {name: get_num_agents(env) for name, env in all_environments.items()}
@@ -67,7 +67,16 @@ MAX_CYCLES = 10000
 
 
 def make_test_env(game_id, seed):
-    env = all_environments[game_id].parallel_env(seed=seed, max_cycles=MAX_CYCLES)
-    env = frame_stack_v1(env, 4)
-    env = frame_skip_v0(env, 4)
+    env = all_environments[game_id]
+    # Check if game can be played with parallel API
+    env_function = getattr(env, "parallel_env", None)
+    if env_function and callable(env_function):
+        print("Parallel")
+        env = env.parallel_env(seed=seed, max_cycles=MAX_CYCLES)
+        # TODO: Redo preprocessing by environment class
+        env = frame_stack_v1(env, 4)
+        env = frame_skip_v0(env, 4)
+    else:
+        print("Turn-based")
+        env = env.env()
     return env
