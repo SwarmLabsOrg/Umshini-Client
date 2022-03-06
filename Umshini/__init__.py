@@ -1,1 +1,1 @@
-from .learner import connect
+from .learner import connect, test
