@@ -5,6 +5,7 @@ from utils.socket_wrap import SocketWrapper
 from utils.compress import decompress
 from envs.envs_list import make_test_env, all_environments
 from colorama import Fore, Style
+from halo import Halo
 
 # Send JSON through socket
 def send_json(sock, data):
@@ -156,12 +157,18 @@ class TournamentConnection:
 
     def _connect_game_server(self):
         # Receive game server info from matchmaker
+        spinner = Halo(text='Waiting for players', text_color= 'cyan', color='green', spinner='dots')
+        spinner.start()
         ready_data = recv_json(self.main_connection)
+        spinner.succeed()
         print(ready_data)
         send_json(self.main_connection, {"type": "ready"})
 
         # Receive game server info from matchmaker
+        spinner = Halo(text='Creating your game', text_color= 'cyan', color='green', spinner='dots')
+        spinner.start()
         sdata = recv_json(self.main_connection)
+        spinner.succeed()
         print(sdata)
 
         # Create network env with game server info
@@ -219,8 +226,9 @@ class TournamentConnection:
         print(Fore.GREEN + "User: {} successfully connected to Umshini".format(self.username))
         print(Style.RESET_ALL)
 
+        
         game_env = self._connect_game_server()
-        print("this happened") #once match is made
+        
         self.main_connection.close()
         self.main_connection = None
         return game_env
