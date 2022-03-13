@@ -21,7 +21,7 @@ class ColosseumTournamentAgent:
         self.username = username
         self.password = password
         try:
-            #change this so policy is used for test
+            # TODO: Use policy for test
             #connection to server isn't here, just policy test
             self.tournament = TournamentConnection(
                 self.host, self.port, self.username, self.password, available_games=self.games
