@@ -22,7 +22,7 @@ class ColosseumTournamentAgent:
         self.password = password
         try:
             # TODO: Use policy for test
-            #connection to server isn't here, just policy test
+            # Test that policy runs without errors in local environments
             self.tournament = TournamentConnection(
                 self.host, self.port, self.username, self.password, available_games=self.games
             )
