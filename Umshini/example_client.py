@@ -33,7 +33,7 @@ class ColosseumTournamentAgent:
             print(Style.RESET_ALL)
             quit()
     def run(self):
-        # Connect to tournament server for each round, until and end signal is received.
+        # Connect to tournament server each round, until the end signal is received.
         # connection to server (that can fail) is here
         try:
             env = self.tournament.next_match()
