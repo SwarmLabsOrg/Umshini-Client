@@ -34,18 +34,15 @@ class ColosseumTournamentAgent:
             quit()
     def run(self):
         # Connect to tournament server each round, until the end signal is received.
-        # connection to server (that can fail) is here
         try:
             env = self.tournament.next_match()
         except Exception as e:
             try:
                 print(Fore.RED + e.message)
-                print(Style.RESET_ALL)
-                quit()
             except:
                 print(Fore.RED + str(e))
-                print(Style.RESET_ALL)
-                quit()
+            print(Style.RESET_ALL)
+            quit()
         current_round = 1
         while env is not None:
             surprises = []
