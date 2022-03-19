@@ -1,4 +1,4 @@
-from colosseum.utils.compress import compress, decompress
+from Umshini.utils.compress import compress, decompress
 import numpy as np
 
 input_array = np.random.uniform(low=-9, high=9, size=(4, 4))
