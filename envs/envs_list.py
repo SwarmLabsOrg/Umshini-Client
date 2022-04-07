@@ -37,7 +37,7 @@ from pettingzoo.classic import tictactoe_v3
 from pettingzoo.classic import uno_v4
 
 from supersuit import frame_skip_v0, frame_stack_v1
-from pettingzoo.utils import turn_based_to_parallel
+from pettingzoo.utils import turn_based_aec_to_parallel
 
 all_environments = {
     "boxing_v1": boxing_v1,
@@ -111,6 +111,6 @@ def make_test_env(game_id, seed):
         turn_based = False
     else:
         env = env.env()
-        env = turn_based_to_parallel(env)
+        env = turn_based_aec_to_parallel(env)
         turn_based = True
     return env, turn_based
