@@ -37,7 +37,7 @@ from pettingzoo.classic import tictactoe_v3
 from pettingzoo.classic import uno_v4
 
 from supersuit import frame_skip_v0, frame_stack_v1
-from pettingzoo.utils import turn_based_aec_to_parallel
+from pettingzoo.utils import aec_to_parallel, turn_based_aec_to_parallel
 
 all_environments = {
     "boxing_v1": boxing_v1,
@@ -81,9 +81,9 @@ all_environments = {
 
 
 def get_num_agents(name, env):
-    e = env.env()
-    e.reset()
-    return e.num_agents
+    count_env = env.env()
+    count_env.reset()
+    return count_env.num_agents
 
 
 env_num_players = {name: get_num_agents(name, env) for name, env in all_environments.items()}
@@ -91,25 +91,20 @@ env_num_players = {name: get_num_agents(name, env) for name, env in all_environm
 MAX_CYCLES = 10000
 
 
-#def make_test_env(game_id, seed):
-#    env = all_environments[game_id].env() # TODO: Figure out how to pass in seed and max cycles
-#    #env = frame_stack_v1(env, 4)
-#    #env = frame_skip_v0(env, 4)
-#    env = turn_based_to_parallel(env)
-#    return env
-
 def make_test_env(game_id, seed):
-    print(game_id)
     env = all_environments[game_id]
     # Check if game can be played with parallel API
     env_function = getattr(env, "parallel_env", None)
     if env_function and callable(env_function):
-        env = env.parallel_env(seed=seed, max_cycles=MAX_CYCLES)
+        print("Parallel")
         # TODO: Redo preprocessing by environment class
+        env = env.env()
         env = frame_stack_v1(env, 4)
         env = frame_skip_v0(env, 4)
+        env = aec_to_parallel(env)
         turn_based = False
     else:
+        print("Turn Based")
         env = env.env()
         env = turn_based_aec_to_parallel(env)
         turn_based = True

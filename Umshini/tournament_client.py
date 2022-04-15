@@ -1,11 +1,12 @@
 import socket
 import json
 import gym
-import time
 import numpy as np
 from utils.socket_wrap import SocketWrapper
 from utils.compress import decompress
 from envs.envs_list import make_test_env, all_environments
+from colorama import Fore, Style
+from halo import Halo
 
 
 # Send JSON through socket
@@ -44,6 +45,10 @@ class NetworkEnv(gym.Env):
         if self.terminated:
             print("terminated before single step occurred!")
             return self.obs, 0, True, {}
+
+        # Convert Numpy types to Python types
+        if hasattr(action, "dtype"):
+            action = action.item()
 
         # Send action to game server
         assert (isinstance(action, int) or
@@ -104,10 +109,10 @@ class TestEnv(gym.Env):
         self.obss = None
 
     def reset(self):
-        self.obss = self.env.reset()
         self.num_steps = 0
         self.was_done = False
-        return self.obss[self.agent]
+        obss = self.env.reset()
+        return obss[self.agent]
 
     def step(self, action):
         assert not self.was_done, "stepped after done, should terminate loop"
@@ -117,8 +122,6 @@ class TestEnv(gym.Env):
             agent: (None if self.turn_based else self.env.action_space(agent).sample()) for agent in self.env.agents
         }
         actions[self.env.aec_env.agent_selection] = action
-        #print({agent: self.obss[agent]["action_mask"] for agent in self.obss.keys()})
-        #print(actions)
         self.obss, rews, dones, infos = self.env.step(actions)
 
         if self.num_steps > 50:
@@ -135,22 +138,59 @@ class TestEnv(gym.Env):
 
         # Find next active agents
         if self.turn_based:
-            active_agents = [self.env.aec_env.agent_selection]
+            active_agents = [self.env.unwrapped.aec_env.agent_selection]
         else:
             active_agents = self.env.agents
 
         # Step again if testing agent is not next
         if not self.was_done and self.agent not in active_agents:
-            obs = self.obss[self.env.aec_env.agent_selection]
+            obs = self.obss[self.env.unwrapped.aec_env.agent_selection]
             if (obs is not None
                 and isinstance(obs, dict)
                 and obs and "action_mask" in obs):
                 action = np.random.choice(obs["action_mask"].nonzero()[0])
             else:
-                action = self.env.action_space(self.env.aec_env.agent_selection).sample()
+                action = self.env.action_space(self.env.unwrapped.aec_env.agent_selection).sample()
             return self.step(action)
         else:
             return obs, rew, done, info
+
+    def render(self, mode='human'):
+        return
+
+
+# Local environment used to test if agent works before connecting to network env
+class TestAECEnv(gym.Env):
+    def __init__(self, env_id):
+        seed = 1
+        self.env = make_test_env(env_id, seed=seed)
+        self.env.reset()
+        self.agent = agent = self.env.agents[0]
+        self.observation_space = self.env.observation_spaces[agent]
+        self.action_space = self.env.action_spaces[agent]
+        self.num_steps = 0
+        self.was_done = False
+
+    def reset(self):
+        self.num_steps = 0
+        self.was_done = False
+        self.env.reset()
+
+    def step(self, action):
+        assert not self.was_done, "stepped after done, should terminate loop"
+        # Set random actions for all other agents
+        self.env.step(action)
+
+        if self.num_steps > 50:
+            done = True
+        else:
+            obs, rew, done, info = self.env.last()
+
+        self.was_done = done
+        self.num_steps += 1
+
+    def last(self):
+        return self.env.last()
 
     def render(self, mode='human'):
         return
@@ -196,11 +236,18 @@ class TournamentConnection:
             return None
 
         # Receive game server info from matchmaker
+        spinner = Halo(text='Waiting for players', text_color='cyan', color='green', spinner='dots')
+        spinner.start()
         ready_data = recv_json(self.main_connection)
+        spinner.succeed()
+        print(ready_data)
         send_json(self.main_connection, {"type": "ready"})
 
         # Receive game server info from matchmaker
+        spinner = Halo(text='Creating your game', text_color='cyan', color='green', spinner='dots')
+        spinner.start()
         sdata = recv_json(self.main_connection)
+        spinner.succeed()
         print(sdata)
 
         # Create network env with game server info
@@ -224,7 +271,7 @@ class TournamentConnection:
             self.main_connection,
             {
                 "username": self.username,
-                "password": self.password,
+                "key": self.password,
                 "client_version": "1.0",
                 "available_games": self.available_games,
             },
@@ -249,7 +296,16 @@ class TournamentConnection:
     def next_match(self):
         # Create tournament server connection if it does not already exist
         if self.main_connection is None:
-            self._setup_main_connection()
+            try:
+                self._setup_main_connection()
+            except Exception as e:
+                raise e
+
+        if self.tournament_completed:
+            print(Fore.GREEN + "User: {} completed tournament".format(self.username))
+        else:
+            print(Fore.GREEN + "User: {} successfully connected to Umshini".format(self.username))
+        print(Style.RESET_ALL)
 
         # Connect to game server
         game_env = self._connect_game_server()
