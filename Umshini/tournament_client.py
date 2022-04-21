@@ -240,7 +240,7 @@ class TournamentConnection:
         spinner.start()
         ready_data = recv_json(self.main_connection)
         spinner.succeed()
-        print(ready_data)
+        #print(ready_data)
         send_json(self.main_connection, {"type": "ready"})
 
         # Receive game server info from matchmaker
@@ -248,7 +248,7 @@ class TournamentConnection:
         spinner.start()
         sdata = recv_json(self.main_connection)
         spinner.succeed()
-        print(sdata)
+        #print(sdata)
 
         # Create network env with game server info
         env = NetworkEnv(
