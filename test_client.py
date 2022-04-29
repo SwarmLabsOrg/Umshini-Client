@@ -31,7 +31,8 @@ def mute():
 user_nums =  [*range(2, 9)]
 master_params = [("boxing_v1", "user" + str(i), "test_user" + str(i), my_pol) for i in user_nums]
 
-with Pool(len(user_nums), initializer=mute) as pool:
-    pool.starmap(Umshini.connect, master_params)
+if __name__ == "__main__":
+    with Pool(len(user_nums), initializer=mute) as pool:
+        pool.starmap(Umshini.connect, master_params)
 
 #Umshini.connect("boxing_v1", "user1", "test_user1", my_pol)
