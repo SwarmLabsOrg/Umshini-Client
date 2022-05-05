@@ -131,7 +131,7 @@ class TestEnv(gym.Env):
 class TestAECEnv(gym.Env):
     def __init__(self, env_id):
         seed = 1
-        self.env = make_test_env(env_id, seed=seed, not_turn_based=False)
+        self.env = make_test_env(env_id, seed=seed, turn_based=True)
         self.env.reset()
         self.agent = agent = self.env.agents[0]
         self.observation_space = self.env.observation_spaces[agent]
