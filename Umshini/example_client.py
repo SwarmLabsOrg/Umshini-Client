@@ -28,7 +28,7 @@ class ColosseumTournamentAgent:
             )
             print(Fore.GREEN + "User: {}'s policy has passed environment verifications".format(self.username))
             print(Style.RESET_ALL)
-        except:
+        except Exception as e:
             print(Fore.RED + "User: {}'s policy has failed verification testing in environment: ".format(self.username))
             print(Style.RESET_ALL)
             quit()
