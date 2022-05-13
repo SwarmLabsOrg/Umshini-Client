@@ -277,9 +277,9 @@ class TournamentConnection:
         print(Fore.GREEN + "User: {} successfully connected to Umshini".format(self.username))
         print(Style.RESET_ALL)
 
-        
+
         game_env = self._connect_game_server()
-        
+
         self.main_connection.close()
         self.main_connection = None
         return game_env
