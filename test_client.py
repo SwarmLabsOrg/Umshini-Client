@@ -16,7 +16,7 @@ I wrote this so we can continue to use this client repo to test, before release 
 file from the client repo and have actual unit tests instead
 '''
 
-env = make_test_env("boxing_v1", seed = 1)
+env = make_test_env("boxing_v2", seed = 1)
 env.reset()
 agent = env.agents[0]
 action_space = env.action_spaces[agent]
@@ -29,7 +29,7 @@ def mute():
 
 #Umshini.connect("boxing_v1", "user1", "test_user1", my_pol)
 user_nums =  [*range(2, 9)]
-master_params = [("boxing_v1", "user" + str(i), "test_user" + str(i), my_pol) for i in user_nums]
+master_params = [("boxing_v2", "user" + str(i), "test_user" + str(i), my_pol) for i in user_nums]
 
 if __name__ == "__main__":
     with Pool(len(user_nums), initializer=mute) as pool:
