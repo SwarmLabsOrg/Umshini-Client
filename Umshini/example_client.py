@@ -9,27 +9,27 @@ class ColosseumTournamentAgent:
         self.host = host
         self.policy = policy
         self.port = port
-        self.username = ''
-        self.password = ''
+        self.botname = ''
+        self.key = ''
         self.latency = latency
         self.direct = direct
         self.games = games
         self.tournament = None
         self.maximum_rounds = maximum_rounds
 
-    def connect(self, username, password):
-        self.username = username
-        self.password = password
+    def connect(self, botname, key):
+        self.botname = botname
+        self.key = key
         try:
             # TODO: Use policy for test
             # Test that policy runs without errors in local environments
             self.tournament = TournamentConnection(
-                self.host, self.port, self.username, self.password, available_games=self.games
+                self.host, self.port, self.botname, self.password, available_games=self.games
             )
-            print(Fore.GREEN + "User: {}'s policy has passed environment verifications".format(self.username))
+            print(Fore.GREEN + "User: {}'s policy has passed environment verifications".format(self.botname))
             print(Style.RESET_ALL)
         except:
-            print(Fore.RED + "User: {}'s policy has failed verification testing in environment: ".format(self.username))
+            print(Fore.RED + "User: {}'s policy has failed verification testing in environment: ".format(self.botname))
             print(Style.RESET_ALL)
             quit()
     def run(self):
@@ -51,7 +51,7 @@ class ColosseumTournamentAgent:
             obs = rew = info = None
             while not done:
                 if timestep % 100 == 0:
-                    print(f"{self.username}: Timestep {timestep}")
+                    print(f"{self.botname}: Timestep {timestep}")
                 time.sleep(self.latency / 1000)  # Used to simulate network latency
                 (action, surprise) = self.policy(obs, rew, done, info)  # recieve action and surprise from user
                 obs, rew, done, info = env.step(action)  # Send action to game server

@@ -19,6 +19,6 @@ action_space = env.action_spaces[agent]
 def my_pol(obs, rew, done, info):
     return (action_space.sample(), 1) # use 1 for dummy surprise
 
-Umshini.connect("boxing_v1", "user1", "test_user1", my_pol)
+Umshini.connect("boxing_v1", "bot_user{}_env{}".format(1, 1), "test_user1", my_pol)
 
 #Umshini.test("boxing_v1", my_pol)

@@ -6,9 +6,9 @@ from .example_client import ColosseumTournamentAgent
 from .tournament_client import TestEnv
 from colorama import Fore, Style
 
-def create_and_run(username, user_key):
+def create_and_run(botname, user_key):
     agent = ColosseumTournamentAgent(maximum_rounds=100)
-    agent.connect(username, user_key)
+    agent.connect(botname, user_key)
     agent.run()
 
 """
@@ -19,9 +19,9 @@ Passed function accepts parameters:
 
 Passed function returns action 
 """
-def connect(environment, username, user_key, user_policy):
+def connect(environment, botname, user_key, user_policy):
     agent = ColosseumTournamentAgent(policy=user_policy, games = [environment], maximum_rounds=100)
-    agent.connect(username, user_key)
+    agent.connect(botname, user_key)
     agent.run()
 
 def test(environment, user_policy):

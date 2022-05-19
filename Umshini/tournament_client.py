@@ -166,16 +166,15 @@ class TestAECEnv(gym.Env):
 
 
 class TournamentConnection:
-    def __init__(self, ip, port, username, password, available_games):
+    def __init__(self, ip, port, botname, password, available_games):
         print("Connecting to matchmaker for following games: ", available_games)
         if available_games == ["__all__"]:
             print("TESTING ALL GAMES")
             available_games = list(all_environments.keys())
 
-        self.username = username
+        self.botname = botname
         self.ip_address = ip
         self.port = port
-        self.username = username
         self.password = password
         self.available_games = available_games
         self.main_connection = None  # Connection to tournament server
@@ -194,7 +193,7 @@ class TournamentConnection:
                     test_env.step(action)
                     _, _, done, _ = test_env.last()
                     if done:
-                        print("{} passed test in {}".format(self.username, game))
+                        print("{} passed test in {}".format(self.botname, game))
                         break
             else:
                 test_env = TestEnv(game)
@@ -203,7 +202,7 @@ class TournamentConnection:
                     action = test_env.action_space.sample()
                     _, _, done, _ = test_env.step(action)
                     if done:
-                        print("{} passed test in {}".format(self.username, game))
+                        print("{} passed test in {}".format(self.botname, game))
                         break
 
     def _connect_game_server(self):
@@ -228,7 +227,7 @@ class TournamentConnection:
             sdata["seed"],
             self.ip_address,
             sdata["port"],
-            self.username,
+            sdata["username"],
             sdata["token"],
         )
         return env
@@ -242,7 +241,7 @@ class TournamentConnection:
         send_json(
             self.main_connection,
             {
-                "username": self.username,
+                "botname": self.botname,
                 "key": self.password,
                 "client_version": "1.0",
                 "available_games": self.available_games,
@@ -259,7 +258,7 @@ class TournamentConnection:
             )
         if init_data["type"] == "connected_too_many_servers":
             raise RuntimeError(
-                "This username is already connected to the server too many times."
+                "This user is already connected to the server too many times."
             )
         if init_data["type"] != "connect_success":
             raise RuntimeError("Something went wrong during login.")
@@ -274,7 +273,7 @@ class TournamentConnection:
                 raise e
 
         # Connect to game server
-        print(Fore.GREEN + "User: {} successfully connected to Umshini".format(self.username))
+        print(Fore.GREEN + "User: {} successfully connected to Umshini".format(self.botname))
         print(Style.RESET_ALL)
 
         
