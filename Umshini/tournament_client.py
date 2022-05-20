@@ -131,7 +131,7 @@ class TestEnv(gym.Env):
 class TestAECEnv(gym.Env):
     def __init__(self, env_id):
         seed = 1
-        self.env = make_test_env(env_id, seed=seed)
+        self.env = make_test_env(env_id, seed=seed, turn_based=True)
         self.env.reset()
         self.agent = agent = self.env.agents[0]
         self.observation_space = self.env.observation_spaces[agent]
@@ -147,9 +147,8 @@ class TestAECEnv(gym.Env):
     def step(self, action):
         assert not self.was_done, "stepped after done, should terminate loop"
         # Set random actions for all other agents
-        print(dir(self.env.agent_iter()))
+        # print(dir(self.env.agent_iter()))
         self.env.step(action)
-
         if self.num_steps > 50:
             done = True
         else:
@@ -186,15 +185,16 @@ class TournamentConnection:
             env = make_test_env(game, seed=0)
             turn_based = getattr(env, "env", None) is not None
             if turn_based:
-                test_env = TestAECEnv(game)
-                test_env.reset()
-                for _ in range(100):
-                    action = test_env.action_space.sample()
-                    test_env.step(action)
-                    _, _, done, _ = test_env.last()
-                    if done:
-                        print("{} passed test in {}".format(self.botname, game))
-                        break
+                pass
+                # test_env = TestAECEnv(game)
+                # test_env.reset()
+                # for _ in range(100):
+                #     action = test_env.action_space.sample()
+                #     test_env.step(action)
+                #     _, _, done, _ = test_env.last()
+                #     if done:
+                #         print("{} passed test in {}".format(self.username, game))
+                #         break
             else:
                 test_env = TestEnv(game)
                 test_env.reset()

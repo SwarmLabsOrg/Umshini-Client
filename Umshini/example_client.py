@@ -26,10 +26,10 @@ class ColosseumTournamentAgent:
             self.tournament = TournamentConnection(
                 self.host, self.port, self.botname, self.password, available_games=self.games
             )
-            print(Fore.GREEN + "User: {}'s policy has passed environment verifications".format(self.botname))
+            print(Fore.GREEN + "Bot: {}'s policy has passed environment verifications".format(self.botname))
             print(Style.RESET_ALL)
-        except:
-            print(Fore.RED + "User: {}'s policy has failed verification testing in environment: ".format(self.botname))
+        except Exception as e:
+            print(Fore.RED + "Bot: {}'s policy has failed verification testing in environment: ".format(self.botname))
             print(Style.RESET_ALL)
             quit()
     def run(self):
