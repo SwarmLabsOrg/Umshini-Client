@@ -27,9 +27,10 @@ def my_pol(obs, rew, done, info):
 def mute():
     sys.stdout = open(os.devnull, 'w')
 
-#Umshini.connect("boxing_v1", "user1", "test_user1", my_pol)
+# Umshini.connect("boxing_v1", "user1", "test_user1", my_pol)
+# Change _env to correct ID matching testing env 
 user_nums =  [*range(2, 9)]
-master_params = [("boxing_v1", "user" + str(i), "test_user" + str(i), my_pol) for i in user_nums]
+master_params = [("boxing_v1", "bot_user{}_env{}".format(i, 1), "test_user" + str(i), my_pol) for i in user_nums]
 
 if __name__ == "__main__":
     with Pool(len(user_nums), initializer=mute) as pool:
