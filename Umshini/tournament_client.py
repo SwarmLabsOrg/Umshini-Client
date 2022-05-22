@@ -165,7 +165,7 @@ class TestAECEnv(gym.Env):
 
 
 class TournamentConnection:
-    def __init__(self, ip, port, botname, password, available_games):
+    def __init__(self, ip, port, botname, key, available_games):
         print("Connecting to matchmaker for following games: ", available_games)
         if available_games == ["__all__"]:
             print("TESTING ALL GAMES")
@@ -174,7 +174,7 @@ class TournamentConnection:
         self.botname = botname
         self.ip_address = ip
         self.port = port
-        self.password = password
+        self.key = key
         self.available_games = available_games
         self.main_connection = None  # Connection to tournament server
         self._test_environments()
@@ -242,7 +242,7 @@ class TournamentConnection:
             self.main_connection,
             {
                 "botname": self.botname,
-                "key": self.password,
+                "key": self.key,
                 "client_version": "1.0",
                 "available_games": self.available_games,
             },
@@ -276,9 +276,8 @@ class TournamentConnection:
         print(Fore.GREEN + "User: {} successfully connected to Umshini".format(self.botname))
         print(Style.RESET_ALL)
 
-        
         game_env = self._connect_game_server()
-        
+
         self.main_connection.close()
         self.main_connection = None
         return game_env

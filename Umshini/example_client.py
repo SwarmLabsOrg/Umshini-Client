@@ -24,13 +24,14 @@ class ColosseumTournamentAgent:
             # TODO: Use policy for test
             # Test that policy runs without errors in local environments
             self.tournament = TournamentConnection(
-                self.host, self.port, self.botname, self.password, available_games=self.games
+                self.host, self.port, self.botname, self.key, available_games=self.games
             )
             print(Fore.GREEN + "Bot: {}'s policy has passed environment verifications".format(self.botname))
             print(Style.RESET_ALL)
         except Exception as e:
             print(Fore.RED + "Bot: {}'s policy has failed verification testing in environment: ".format(self.botname))
             print(Style.RESET_ALL)
+            print(e)
             quit()
     def run(self):
         # Connect to tournament server each round, until the end signal is received.

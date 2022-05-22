@@ -17,7 +17,7 @@ User end function to add their RL policy
 Passed function accepts parameters:
     policy(observation, reward, done, info)
 
-Passed function returns action 
+Passed function returns action
 """
 def connect(environment, botname, user_key, user_policy):
     agent = ColosseumTournamentAgent(policy=user_policy, games = [environment], maximum_rounds=100)
@@ -41,4 +41,3 @@ def test(environment, user_policy):
             print(Fore.RED + "Policy has failed verification testing")
             print(Style.RESET_ALL)
             quit()
-    
