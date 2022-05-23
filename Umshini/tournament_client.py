@@ -58,6 +58,7 @@ class NetworkEnv(gym.Env):
                 isinstance(action, list)), "Action is not a valid type."
         assert self.action_space.contains(action), "Action not in action space."
 
+        print(action)
         act_data = {"type": "action", "action": action}
         send_json(self.game_connection, act_data)
 
@@ -163,7 +164,7 @@ class TestEnv(gym.Env):
 class TestAECEnv(gym.Env):
     def __init__(self, env_id):
         seed = 1
-        self.env = make_test_env(env_id, seed=seed)
+        self.env = make_test_env(env_id, seed=seed, turn_based=True)
         self.env.reset()
         self.agent = agent = self.env.agents[0]
         self.observation_space = self.env.observation_spaces[agent]
@@ -180,7 +181,6 @@ class TestAECEnv(gym.Env):
         assert not self.was_done, "stepped after done, should terminate loop"
         # Set random actions for all other agents
         self.env.step(action)
-
         if self.num_steps > 50:
             done = True
         else:
@@ -197,17 +197,16 @@ class TestAECEnv(gym.Env):
 
 
 class TournamentConnection:
-    def __init__(self, ip, port, username, password, available_games):
+    def __init__(self, ip, port, botname, key, available_games):
         print("Connecting to matchmaker for following games: ", available_games)
         if available_games == ["__all__"]:
             print("TESTING ALL GAMES")
             available_games = list(all_environments.keys())
 
-        self.username = username
+        self.botname = botname
         self.ip_address = ip
         self.port = port
-        self.username = username
-        self.password = password
+        self.key = key
         self.available_games = available_games
         self.main_connection = None  # Connection to tournament server
         self.tournament_completed = False
@@ -227,7 +226,7 @@ class TournamentConnection:
                     action = test_env.action_space.sample()
                 obs, _, done, _ = test_env.step(action)
                 if done:
-                    print("{} passed test in {}".format(self.username, game))
+                    print("{} passed test in {}".format(self.botname, game))
                     break
 
     def _connect_game_server(self):
@@ -248,7 +247,7 @@ class TournamentConnection:
         spinner.start()
         sdata = recv_json(self.main_connection)
         spinner.succeed()
-        #print(sdata)
+        print(sdata)
 
         # Create network env with game server info
         env = NetworkEnv(
@@ -256,7 +255,7 @@ class TournamentConnection:
             sdata["seed"],
             self.ip_address,
             sdata["port"],
-            self.username,
+            sdata["username"],
             sdata["token"],
         )
         return env
@@ -270,8 +269,8 @@ class TournamentConnection:
         send_json(
             self.main_connection,
             {
-                "username": self.username,
-                "key": self.password,
+                "botname": self.botname,
+                "key": self.key,
                 "client_version": "1.0",
                 "available_games": self.available_games,
             },
@@ -284,7 +283,7 @@ class TournamentConnection:
         if init_data["type"] == "bad_client_version":
             raise RuntimeError("Old client version. Please udpate your client to the latest version available.")
         if init_data["type"] == "connected_too_many_servers":
-            raise RuntimeError("This username is already connected to the server too many times.")
+            raise RuntimeError("This user is already connected to the server too many times.")
         if init_data["type"] != "connect_success":
             raise RuntimeError("Something went wrong during login.")
 
@@ -302,9 +301,10 @@ class TournamentConnection:
                 raise e
 
         if self.tournament_completed:
-            print(Fore.GREEN + "User: {} completed tournament".format(self.username))
+            print(Fore.GREEN + "User: {} successfully completed tournament".format(self.botname))
         else:
-            print(Fore.GREEN + "User: {} successfully connected to Umshini".format(self.username))
+            # Connect to game server
+            print(Fore.GREEN + "User: {} successfully connected to Umshini".format(self.botname))
         print(Style.RESET_ALL)
 
         # Connect to game server
