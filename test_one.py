@@ -27,4 +27,4 @@ def my_pol(obs, rew, done, info):
     return (action, 1)   # use 1 for dummy surprise
 
 Umshini.connect(env_name, "bot_user{}_env{}".format(1, 1), "test_user1", my_pol)
-Umshini.test("boxing_v2", my_pol)
+#Umshini.test("boxing_v2", my_pol)

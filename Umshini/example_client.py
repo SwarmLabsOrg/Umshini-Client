@@ -32,7 +32,6 @@ class ColosseumTournamentAgent:
         except Exception as e:
             print(Fore.RED + "Bot: {}'s policy has failed verification testing in environment: ".format(self.botname))
             print(Style.RESET_ALL)
-            print(e)
             quit()
 
     def run(self):

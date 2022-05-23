@@ -58,7 +58,6 @@ class NetworkEnv(gym.Env):
                 isinstance(action, list)), "Action is not a valid type."
         assert self.action_space.contains(action), "Action not in action space."
 
-        print(action)
         act_data = {"type": "action", "action": action}
         send_json(self.game_connection, act_data)
 
@@ -247,7 +246,6 @@ class TournamentConnection:
         spinner.start()
         sdata = recv_json(self.main_connection)
         spinner.succeed()
-        print(sdata)
 
         # Create network env with game server info
         env = NetworkEnv(
