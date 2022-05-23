@@ -4,6 +4,7 @@ import time
 from .tournament_client import TournamentConnection
 from colorama import Fore, Style
 
+
 class ColosseumTournamentAgent:
     def __init__(self, policy, latency=0,  games=["__all__"], port=12345, direct=False, host="localhost", maximum_rounds=10000):
         self.host = host
@@ -31,12 +32,13 @@ class ColosseumTournamentAgent:
         except Exception as e:
             print(Fore.RED + "Bot: {}'s policy has failed verification testing in environment: ".format(self.botname))
             print(Style.RESET_ALL)
-            print(e)
             quit()
+
     def run(self):
         # Connect to tournament server each round, until the end signal is received.
         try:
             env = self.tournament.next_match()
+            print(env)
         except Exception as e:
             try:
                 print(Fore.RED + e.message)
@@ -54,7 +56,7 @@ class ColosseumTournamentAgent:
                 if timestep % 100 == 0:
                     print(f"{self.botname}: Timestep {timestep}")
                 time.sleep(self.latency / 1000)  # Used to simulate network latency
-                (action, surprise) = self.policy(obs, rew, done, info)  # recieve action and surprise from user
+                (action, surprise) = self.policy(obs, rew, done, info)  # receive action and surprise from user
                 obs, rew, done, info = env.step(action)  # Send action to game server
                 surprises.append(surprise) # Collect surprise for later use when game server supports
                 timestep += 1

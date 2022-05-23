@@ -1,4 +1,3 @@
-
 from pettingzoo.atari import (boxing_v2,
                               combat_tank_v2,
                               combat_plane_v2,
@@ -38,6 +37,7 @@ from pettingzoo.classic import (backgammon_v3,
                                 uno_v4)
 
 from supersuit import frame_skip_v0, frame_stack_v1
+from pettingzoo.utils import aec_to_parallel, turn_based_aec_to_parallel
 
 all_environments = {
     "boxing_v2": boxing_v2,
@@ -65,16 +65,25 @@ all_environments = {
     "wizard_of_wor_v3": wizard_of_wor_v3,
     "warlords_v3": warlords_v3,
     "connect_four_v3": connect_four_v3,
+    "gin_rummy_v4": gin_rummy_v4,
+    "go_v5": go_v5,
+    "hanabi_v4": hanabi_v4,
+    "leduc_holdem_v4": leduc_holdem_v4,
+    #"rps_v2": rps_v2,
+    "texas_holdem_v4": texas_holdem_v4,
+    "texas_holdem_no_limit_v6": texas_holdem_no_limit_v6,
+    "tictactoe_v3": tictactoe_v3,
+    "uno_v4": uno_v4,
 }
 
 
-def get_num_agents(env):
+def get_num_agents(name, env):
     count_env = env.env()
     count_env.reset()
     return count_env.num_agents
 
 
-env_num_players = {name: get_num_agents(env) for name, env in all_environments.items()}
+env_num_players = {name: get_num_agents(name, env) for name, env in all_environments.items()}
 
 MAX_CYCLES = 10000
 
@@ -85,11 +94,15 @@ def make_test_env(game_id, seed, turn_based=False):
     env_function = getattr(env, "parallel_env", None)
     if not turn_based and env_function and callable(env_function):
         print("Parallel")
-        env = env.parallel_env(seed=seed, max_cycles=MAX_CYCLES)
         # TODO: Redo preprocessing by environment class
+        env = env.env()
         env = frame_stack_v1(env, 4)
         env = frame_skip_v0(env, 4)
+        env = aec_to_parallel(env)
+        turn_based = False
     else:
-        print("Turn-based")
+        print("Turn Based")
         env = env.env()
-    return env
+        env = turn_based_aec_to_parallel(env)
+        turn_based = True
+    return env, turn_based
