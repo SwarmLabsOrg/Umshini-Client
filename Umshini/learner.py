@@ -17,7 +17,7 @@ def connect(environment, botname, user_key, user_policy):
 
     Passed function returns action
     """
-    agent = ColosseumTournamentAgent(policy=user_policy, games = [environment], maximum_rounds=100)
+    agent = ColosseumTournamentAgent(policy=user_policy, games = [environment], maximum_rounds=100, host="34.70.234.149", port="8803")
     agent.connect(botname, user_key)
     agent.run()
 

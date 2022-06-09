@@ -204,7 +204,7 @@ class TournamentConnection:
 
         self.botname = botname
         self.ip_address = ip
-        self.port = port
+        self.port = int(port)
         self.key = key
         self.available_games = available_games
         self.main_connection = None  # Connection to tournament server

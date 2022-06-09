@@ -42,8 +42,9 @@ class ColosseumTournamentAgent:
         except Exception as e:
             try:
                 print(Fore.RED + e.message)
-            except:
+            except Exception as f:
                 print(Fore.RED + str(e))
+            raise e
             print(Style.RESET_ALL)
             quit()
         current_round = 1
