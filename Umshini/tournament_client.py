@@ -2,9 +2,9 @@ import socket
 import json
 import gym
 import numpy as np
-from utils.socket_wrap import SocketWrapper
-from utils.compress import decompress
-from envs.envs_list import make_test_env, all_environments
+from Umshini.utils.socket_wrap import SocketWrapper
+from Umshini.utils.compress import decompress
+from Umshini.envs import make_test_env, all_environments
 from colorama import Fore, Style
 from halo import Halo
 
