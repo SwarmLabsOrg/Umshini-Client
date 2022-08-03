@@ -15,8 +15,11 @@ def send_json(sock, data):
 
 
 # Receive JSON from socket
-def recv_json(sock):
-    return sock.recv(2 ** 30)  # Arbitrarily large buffer
+def recv_json(sock, timeout=30):
+    sock.settimeout(timeout)
+    data = sock.recv(2 ** 30)  # Arbitrarily large buffer
+    sock.settimeout(30)
+    return data
 
 
 class NetworkEnv(gym.Env):
@@ -236,15 +239,23 @@ class TournamentConnection:
         # Receive game server info from matchmaker
         spinner = Halo(text='Waiting for players', text_color='cyan', color='green', spinner='dots')
         spinner.start()
-        ready_data = recv_json(self.main_connection)
+        try:
+            ready_data = recv_json(self.main_connection, timeout=60)
+        except TimeoutError as err:
+            print("Not enough players to start tournament.")
+            raise err
         spinner.succeed()
-        #print(ready_data)
+        print(ready_data)
         send_json(self.main_connection, {"type": "ready"})
 
         # Receive game server info from matchmaker
         spinner = Halo(text='Creating your game', text_color='cyan', color='green', spinner='dots')
         spinner.start()
-        sdata = recv_json(self.main_connection)
+        try:
+            sdata = recv_json(self.main_connection)
+        except TimeoutError as err:
+            print("Failed to receive game info from server")
+            raise err
         spinner.succeed()
 
         # Create network env with game server info
@@ -273,7 +284,12 @@ class TournamentConnection:
                 "available_games": self.available_games,
             },
         )
-        init_data = recv_json(self.main_connection)
+
+        try:
+            init_data = recv_json(self.main_connection)
+        except TimeoutError as err:
+            print("Failed to connect to matchmaker.")
+            raise err
 
         # Handle connection errors
         if init_data["type"] == "bad_creds":
