@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import time
+import traceback
 from .tournament_client import TournamentConnection
 from colorama import Fore, Style
 
@@ -40,10 +41,8 @@ class ColosseumTournamentAgent:
             env = self.tournament.next_match()
             print(env)
         except Exception as e:
-            try:
-                print(Fore.RED + e.message)
-            except:
-                print(Fore.RED + str(e))
+            print(Fore.RED + str(e))
+            print(traceback.format_exc())
             print(Style.RESET_ALL)
             quit()
         current_round = 1
