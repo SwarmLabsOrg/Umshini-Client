@@ -2,6 +2,7 @@ from .example_client import ColosseumTournamentAgent
 from .tournament_client import TestEnv
 from colorama import Fore, Style
 
+
 def create_and_run(botname, user_key):
     agent = ColosseumTournamentAgent(maximum_rounds=100)
     agent.connect(botname, user_key)

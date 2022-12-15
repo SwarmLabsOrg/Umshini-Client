@@ -39,8 +39,8 @@ def my_pol(obs, rew, term, trunc, info):
 #     sys.stdout = open(os.devnull, 'w')
 
 # Change _env to correct ID matching testing env 
-user_nums =  [*range(2, 6)]
-master_params = [(env_name, "bot_user{}_env{}".format(i, 1), "user" + str(i), my_pol) for i in user_nums]
+user_nums = [*range(2, 5)]
+master_params = [(env_name, "bot_user{}_env{}".format(i, 2), "user" + str(i), my_pol) for i in user_nums]
 
 if __name__ == "__main__":
     with Pool(len(user_nums)) as pool:

@@ -87,7 +87,6 @@ def make_test_env(game_id, seed, turn_based=False):
     # Check if game can be played with parallel API
     env_function = getattr(env, "parallel_env", None)
     if not turn_based and env_function and callable(env_function):
-        print("Parallel")
         # TODO: Redo preprocessing by environment class
         env = env.env()
         env = frame_stack_v1(env, 4)
@@ -95,7 +94,6 @@ def make_test_env(game_id, seed, turn_based=False):
         env = aec_to_parallel(env)
         turn_based = False
     else:
-        print("Turn Based")
         env = env.env()
         env = turn_based_aec_to_parallel(env)
         turn_based = True

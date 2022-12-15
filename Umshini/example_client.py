@@ -54,7 +54,7 @@ class ColosseumTournamentAgent:
             obs = rew = info = None
             while not (term or trunc):
                 if timestep % 100 == 0:
-                    print(f"{self.botname}: Timestep {timestep}")
+                    print(f"{self.botname}: Timestep {timestep}\n")
                 time.sleep(self.latency / 1000)  # Used to simulate network latency
                 (action, surprise) = self.policy(obs, rew, term, trunc, info)  # receive action and surprise from user
                 obs, rew, term, trunc, info = env.step(action)  # Send action to game server
