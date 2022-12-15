@@ -16,14 +16,14 @@ Hardcoded for 7 players user2 - user8 (the 7 players the DB spin up script creat
 I wrote this so we can continue to use this client repo to test, before release we should delete this
 file from the client repo and have actual unit tests instead
 '''
-env_name = "boxing_v2"
+env_name = "connect_four_v3"
 env, turn_based = make_test_env(env_name, seed=1)
 env.reset()
 agent = env.agents[0]
-action_space = env.action_spaces[agent]
+action_space = env.action_space(agent)
 
 
-def my_pol(obs, rew, done, info):
+def my_pol(obs, rew, term, trunc, info):
     if (obs is not None and
         isinstance(obs, dict) and
         obs and
@@ -35,13 +35,13 @@ def my_pol(obs, rew, done, info):
     return (action, 1)   # use 1 for dummy surprise
 
 
-def mute():
-    sys.stdout = open(os.devnull, 'w')
+# def mute():
+#     sys.stdout = open(os.devnull, 'w')
 
 # Change _env to correct ID matching testing env 
-user_nums =  [*range(2, 5)]
-master_params = [(env_name, "bot_user{}_env{}".format(i, 1), "test_user" + str(i), my_pol) for i in user_nums]
+user_nums = [*range(2, 5)]
+master_params = [(env_name, "bot_user{}_env{}".format(i, 2), "user" + str(i), my_pol) for i in user_nums]
 
 if __name__ == "__main__":
-    with Pool(len(user_nums), initializer=mute) as pool:
+    with Pool(len(user_nums)) as pool:
         pool.starmap(Umshini.connect, master_params)

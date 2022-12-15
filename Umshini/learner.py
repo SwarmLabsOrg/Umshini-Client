@@ -2,6 +2,7 @@ from .example_client import ColosseumTournamentAgent
 from .tournament_client import TestEnv
 from colorama import Fore, Style
 
+
 def create_and_run(botname, user_key):
     agent = ColosseumTournamentAgent(maximum_rounds=100)
     agent.connect(botname, user_key)
@@ -17,21 +18,21 @@ def connect(environment, botname, user_key, user_policy):
 
     Passed function returns action
     """
-    agent = ColosseumTournamentAgent(policy=user_policy, games = [environment], maximum_rounds=100, host="34.70.234.149", port="8803")
+    agent = ColosseumTournamentAgent(policy=user_policy, games=[environment], maximum_rounds=100, host="34.70.234.149", port="8803")
     agent.connect(botname, user_key)
     agent.run()
 
 
 def test(environment, user_policy):
     test_env = TestEnv(environment)
-    done = False
+    term = trunc = False
     obs = rew = info = None
     for _ in range(100):
         try:
-            (action, surprise) = user_policy(obs, rew, done, info)
-            obs, rew, done, info = test_env.step(action)
+            (action, surprise) = user_policy(obs, rew, term, trunc, info)
+            obs, rew, term, trunc, info = test_env.step(action)
 
-            if done:
+            if term or trunc:
                 print(Fore.GREEN + "Policy has passed verification testing in {}".format(environment))
                 print(Style.RESET_ALL)
                 break
