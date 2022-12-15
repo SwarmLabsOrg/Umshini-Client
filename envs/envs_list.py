@@ -7,7 +7,6 @@ from pettingzoo.atari import (boxing_v2,
                               flag_capture_v2,
                               joust_v3,
                               ice_hockey_v2,
-                              maze_craze_v3,
                               mario_bros_v3,
                               othello_v3,
                               basketball_pong_v3,
@@ -22,9 +21,7 @@ from pettingzoo.atari import (boxing_v2,
                               video_checkers_v4,
                               wizard_of_wor_v3,
                               warlords_v3)
-from pettingzoo.classic import (backgammon_v3,
-                                checkers_v3,
-                                chess_v5,
+from pettingzoo.classic import (chess_v5,
                                 connect_four_v3,
                                 gin_rummy_v4,
                                 go_v5,
@@ -33,8 +30,7 @@ from pettingzoo.classic import (backgammon_v3,
                                 rps_v2,
                                 texas_holdem_v4,
                                 texas_holdem_no_limit_v6,
-                                tictactoe_v3,
-                                uno_v4)
+                                tictactoe_v3)
 
 from supersuit import frame_skip_v0, frame_stack_v1
 from pettingzoo.utils import aec_to_parallel, turn_based_aec_to_parallel
@@ -49,7 +45,6 @@ all_environments = {
     "flag_capture_v2": flag_capture_v2,
     "joust_v3": joust_v3,
     "ice_hockey_v2": ice_hockey_v2,
-    "maze_craze_v3": maze_craze_v3,
     "mario_bros_v3": mario_bros_v3,
     "othello_v3": othello_v3,
     "pong_v3": pong_v3,
@@ -73,7 +68,6 @@ all_environments = {
     "texas_holdem_v4": texas_holdem_v4,
     "texas_holdem_no_limit_v6": texas_holdem_no_limit_v6,
     "tictactoe_v3": tictactoe_v3,
-    "uno_v4": uno_v4,
 }
 
 
