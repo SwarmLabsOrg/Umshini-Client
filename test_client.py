@@ -35,13 +35,14 @@ def my_pol(obs, rew, term, trunc, info):
     return (action, 1)   # use 1 for dummy surprise
 
 
-# def mute():
-#     sys.stdout = open(os.devnull, 'w')
+def mute():
+    sys.stdout = open(os.devnull, 'w')
 
-# Change _env to correct ID matching testing env 
+
+# Change _env to correct ID matching testing env
 user_nums = [*range(2, 5)]
 master_params = [(env_name, "bot_user{}_env{}".format(i, 2), "user" + str(i), my_pol) for i in user_nums]
 
 if __name__ == "__main__":
-    with Pool(len(user_nums)) as pool:
+    with Pool(len(user_nums), initializer=mute) as pool:
         pool.starmap(Umshini.connect, master_params)
