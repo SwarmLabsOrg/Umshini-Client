@@ -309,8 +309,11 @@ class TournamentConnection:
             raise RuntimeError("Old client version. Please udpate your client to the latest version available.")
         if init_data["type"] == "connected_too_many_servers":
             raise RuntimeError("This user is already connected to the server too many times.")
+        if init_data["type"] == "invalid botnam":
+            raise RuntimeError(f"This user does not have a bot with the provided name ({self.botname})")
         if init_data["type"] != "connect_success":
             raise RuntimeError("Something went wrong during login.")
+#Umshini.connect(env_name, "New Bot", "ryanpnavillus0.21510420085056414", my_pol)
 
         # Check if tournament is complete
         if init_data["complete"]:
