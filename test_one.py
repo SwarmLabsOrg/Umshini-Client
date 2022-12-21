@@ -1,3 +1,4 @@
+import sys
 import Umshini
 import numpy as np
 from envs.envs_list import make_test_env
@@ -26,5 +27,6 @@ def my_pol(obs, rew, term, trunc, info):
         action = env.action_space(env.agents[0]).sample()  # Choose a random action
     return (action, 1)   # use 1 for dummy surprise
 
-Umshini.connect(env_name, "bot_user{}_env{}".format(1, 2), "user1", my_pol)
+#Umshini.connect(env_name, "bot_user{}_env{}".format(1, 2), "user1", my_pol)
+Umshini.connect(env_name, sys.argv[1], sys.argv[2], my_pol)
 #Umshini.test("boxing_v2", my_pol)

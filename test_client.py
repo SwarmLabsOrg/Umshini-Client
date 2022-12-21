@@ -44,5 +44,5 @@ user_nums = [*range(2, 5)]
 master_params = [(env_name, "bot_user{}_env{}".format(i, 2), "user" + str(i), my_pol) for i in user_nums]
 
 if __name__ == "__main__":
-    with Pool(len(user_nums), initializer=mute) as pool:
+    with Pool(len(user_nums), initializer=None) as pool:
         pool.starmap(Umshini.connect, master_params)
