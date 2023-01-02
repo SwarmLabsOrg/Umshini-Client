@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import time
+import traceback
 from .tournament_client import TournamentConnection
 from colorama import Fore, Style
 
@@ -40,25 +41,24 @@ class ColosseumTournamentAgent:
             env = self.tournament.next_match()
             print(env)
         except Exception as e:
-            try:
-                print(Fore.RED + e.message)
-            except:
-                print(Fore.RED + str(e))
+            print(Fore.RED + str(e))
+            print(traceback.format_exc())
             print(Style.RESET_ALL)
             quit()
         current_round = 1
         while env is not None:
             surprises = []
-            done = False
+            term = False
+            trunc = False
             timestep = 0
             obs = rew = info = None
-            while not done:
+            while not (term or trunc):
                 if timestep % 100 == 0:
-                    print(f"{self.botname}: Timestep {timestep}")
+                    print(f"{self.botname}: Timestep {timestep}\n")
                 time.sleep(self.latency / 1000)  # Used to simulate network latency
-                (action, surprise) = self.policy(obs, rew, done, info)  # receive action and surprise from user
-                obs, rew, done, info = env.step(action)  # Send action to game server
-                surprises.append(surprise) # Collect surprise for later use when game server supports
+                (action, surprise) = self.policy(obs, rew, term, trunc, info)  # receive action and surprise from user
+                obs, rew, term, trunc, info = env.step(action)  # Send action to game server
+                surprises.append(surprise)  # Collect surprise for later use when game server supports
                 timestep += 1
             current_round += 1
             if current_round > self.maximum_rounds:
