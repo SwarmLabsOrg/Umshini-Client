@@ -1,7 +1,7 @@
 import sys
 import Umshini
 import numpy as np
-from envs.envs_list import make_test_env
+from Umshini.envs.envs_list import make_test_env
 
 '''
 Spawns 8th and final player instance
