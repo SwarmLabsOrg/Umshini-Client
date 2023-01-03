@@ -9,7 +9,7 @@ def create_and_run(botname, user_key):
     agent.run()
 
 
-def connect(environment, botname, user_key, user_policy):
+def connect(environment, botname, user_key, user_policy, debug=False):
     """
     User end function to add their RL policy
 
@@ -21,7 +21,8 @@ def connect(environment, botname, user_key, user_policy):
 
     # agent = ColosseumTournamentAgent(policy=user_policy, games=[environment],
     #                                  host="34.70.234.149", port=8803, maximum_rounds=100)
-    agent = ColosseumTournamentAgent(policy=user_policy, games=[environment], maximum_rounds=100)
+    agent = ColosseumTournamentAgent(policy=user_policy, games=[environment], 
+                                    maximum_rounds=100, debug=debug)
     agent.connect(botname, user_key)
     agent.run()
 
