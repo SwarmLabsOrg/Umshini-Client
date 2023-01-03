@@ -3,7 +3,7 @@ import os
 import numpy as np
 from multiprocessing import Pool
 import Umshini
-from envs.envs_list import make_test_env
+from Umshini.envs.envs_list import make_test_env
 
 '''
 Test Script, does what the old system test script does and spawns 7 players in a processing pool

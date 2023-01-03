@@ -11,7 +11,7 @@ setup(
     author='umshini team',
     author_email="justinkterry@gmail.com",
     description=DESCRIPTION,
-    #url='https://github.com/PettingZoo-Team/Colosseum',
+    url='umshini.ml',
     #long_description=long_description,
     #long_description_content_type="text/markdown",
     #keywords=["Reinforcement Learning", "game", "RL", "AI", "gym"],
@@ -19,6 +19,14 @@ setup(
     #data_files=[("", ["LICENSE.txt"])],
     packages=find_packages(),
     include_package_data=True,
+    install_requires=[
+        'colorama',
+        'pettingzoo[atari,classic]==1.22.2',
+        'supersuit==3.7.0',
+        'gymnasium',
+        'numpy',
+        'halo',
+    ],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python :: 3',
