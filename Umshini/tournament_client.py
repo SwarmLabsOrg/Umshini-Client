@@ -24,7 +24,6 @@ def recv_json(sock, timeout=30):
 
 class NetworkEnv(gym.Env):
     def __init__(self, env_id, seed, game_ip, game_port, username, token):
-        print("Host: {}:{}".format(game_ip, game_port))
         self.game_connection = SocketWrapper(
             socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         )
@@ -213,7 +212,6 @@ class TournamentConnection:
     def __init__(self, ip, port, botname, key, available_games):
         print("Connecting to matchmaker for following games: ", available_games)
         if available_games == ["__all__"]:
-            print("TESTING ALL GAMES")
             available_games = list(all_environments.keys())
 
         self.botname = botname
@@ -256,7 +254,6 @@ class TournamentConnection:
             print("Not enough players to start tournament.")
             raise err
         spinner.succeed()
-        print(ready_data)
         send_json(self.main_connection, {"type": "ready"})
 
         # Receive game server info from matchmaker
