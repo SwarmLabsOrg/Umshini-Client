@@ -209,18 +209,23 @@ class TestAECEnv(gym.Env):
 
 
 class TournamentConnection:
-    def __init__(self, ip, port, botname, key, available_games):
-        print("Connecting to matchmaker for following games: ", available_games)
-        if available_games == ["__all__"]:
-            available_games = list(all_environments.keys())
-
+    def __init__(self, ip, port, botname, key, available_games, debug=False):
+        # Initialize class variables
         self.botname = botname
         self.ip_address = ip
         self.port = int(port)
         self.key = key
-        self.available_games = available_games
         self.main_connection = None  # Connection to tournament server
         self.tournament_completed = False
+        self.debug = debug
+        # Grab all available games        
+        if self.debug: print("Connecting to matchmaker for following games: ", available_games)
+        if available_games == ["__all__"]:
+            if self.debug: print("TESTING ALL GAMES")
+            available_games = list(all_environments.keys())
+        # Initialize available games
+        # Test agent in every game
+        self.available_games = available_games
         self._test_environments()
 
     # Test agent in every game
@@ -237,7 +242,7 @@ class TournamentConnection:
                     action = test_env.action_space.sample()
                 obs, _, term, trunc, _ = test_env.step(action)
                 if term or trunc:
-                    print("{} passed test in {}".format(self.botname, game))
+                    if self.debug: print("{} passed test in {}".format(self.botname, game))
                     break
 
     def _connect_game_server(self):
