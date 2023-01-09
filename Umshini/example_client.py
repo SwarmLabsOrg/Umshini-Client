@@ -7,7 +7,8 @@ from colorama import Fore, Style
 
 
 class ColosseumTournamentAgent:
-    def __init__(self, policy, latency=0,  games=["__all__"], port=12345, direct=False, host="localhost", maximum_rounds=10000):
+    def __init__(self, policy, latency=0,  games=["__all__"], port=12345, 
+                direct=False, host="localhost", maximum_rounds=10000, debug=False):
         self.host = host
         self.policy = policy
         self.port = port
@@ -18,6 +19,7 @@ class ColosseumTournamentAgent:
         self.games = games
         self.tournament = None
         self.maximum_rounds = maximum_rounds
+        self.debug = debug
 
     def connect(self, botname, key):
         self.botname = botname
@@ -26,7 +28,8 @@ class ColosseumTournamentAgent:
             # TODO: Use policy for test
             # Test that policy runs without errors in local environments
             self.tournament = TournamentConnection(
-                self.host, self.port, self.botname, self.key, available_games=self.games
+                self.host, self.port, self.botname, self.key, 
+                available_games=self.games, debug=self.debug
             )
             print(Fore.GREEN + "Bot: {}'s policy has passed environment verifications".format(self.botname))
             print(Style.RESET_ALL)
@@ -39,6 +42,7 @@ class ColosseumTournamentAgent:
         # Connect to tournament server each round, until the end signal is received.
         try:
             env = self.tournament.next_match()
+            if self.debug: print(env)
         except Exception as e:
             print(Fore.RED + str(e))
             print(traceback.format_exc())
@@ -54,6 +58,8 @@ class ColosseumTournamentAgent:
             while not (term or trunc):
                 #if timestep % 100 == 0:
                 #    print(f"{self.botname}: Timestep {timestep}\n")
+                if timestep % 100 == 0:
+                    if self.debug: print(f"{self.botname}: Timestep {timestep}\n")
                 time.sleep(self.latency / 1000)  # Used to simulate network latency
                 (action, surprise) = self.policy(obs, rew, term, trunc, info)  # receive action and surprise from user
                 obs, rew, term, trunc, info = env.step(action)  # Send action to game server
