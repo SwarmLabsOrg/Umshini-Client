@@ -21,12 +21,16 @@ setup(
     include_package_data=True,
     install_requires=[
         'colorama',
-        'pettingzoo[atari,classic]==1.22.2',
+        'pettingzoo==1.22.2',
         'supersuit==3.7.0',
         'gymnasium',
         'numpy',
         'halo',
     ],
+    extras_require={
+        "atari": ['pettingzoo[atari]==1.22.2'],
+        "classic": ['pettingzoo[classic]==1.22.2'],
+    },
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python :: 3',
