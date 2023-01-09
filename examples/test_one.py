@@ -1,4 +1,4 @@
-import sys
+import argparse
 import Umshini
 from example_policy import DummyAgent
 
@@ -14,5 +14,12 @@ from example_policy import DummyAgent
         3. The Umshini account api key
 '''
 
-agent = DummyAgent(sys.argv[1])
-Umshini.connect(agent.env_name, sys.argv[2], sys.argv[3], agent.pol)
+parser = argparse.ArgumentParser()
+parser.add_argument("env_name", type=str, help="Name of environment for agent to compete in.")
+parser.add_argument("bot_name", type=str, help="Name of bot to record results to.")
+parser.add_argument("api_key", type=str, help="Umshini API key.")
+
+args = parser.parse_args()
+
+agent = DummyAgent(args.env_name)
+Umshini.connect(agent.env_name, args.bot_name, args.api_key, agent.pol)
