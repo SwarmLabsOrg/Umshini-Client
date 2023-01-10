@@ -17,6 +17,7 @@ I wrote this so we can continue to use this client repo to test, before release 
 file from the client repo and have actual unit tests instead
 '''
 env_name = "connect_four_v3"
+#env_name = "space_war_v2"
 env, turn_based = make_test_env(env_name, seed=1)
 env.reset()
 agent = env.agents[0]
@@ -26,11 +27,15 @@ action_space = env.action_space(agent)
 def my_pol(obs, rew, term, trunc, info):
     if (obs is not None and
         isinstance(obs, dict) and
-        obs and
         "action_mask" in obs and
         any(obs["action_mask"] == 1)):
-        action = np.random.choice(obs["action_mask"].nonzero()[0])
+        action_mask = obs["action_mask"].nonzero()[0]
+        action = np.random.choice(action_mask)
     else:
+        if (obs is not None and
+            isinstance(obs, dict) and
+            "action_mask" in obs):
+            action_mask = obs["action_mask"].nonzero()[0]
         action = env.action_space(env.agents[0]).sample()  # Choose a random action
     return (action, 1)   # use 1 for dummy surprise
 
@@ -39,8 +44,8 @@ def my_pol(obs, rew, term, trunc, info):
 #     sys.stdout = open(os.devnull, 'w')
 
 # Change _env to correct ID matching testing env 
-user_nums = [*range(2, 5)]
-master_params = [(env_name, "bot_user{}_env{}".format(i, 2), "user" + str(i), my_pol) for i in user_nums]
+user_nums = [*range(int(sys.argv[1]), int(sys.argv[1])+1)]
+master_params = [(env_name, "bot_user{}_env{}".format(i, 1), "user" + str(i), my_pol) for i in user_nums]
 
 if __name__ == "__main__":
     with Pool(len(user_nums)) as pool:

@@ -23,8 +23,10 @@ def recv_json(sock, timeout=30):
 
 
 class NetworkEnv(gym.Env):
-    def __init__(self, env_id, seed, game_ip, game_port, username, token):
-        print("Host: {}:{}".format(game_ip, game_port))
+    def __init__(self, env_id, seed, game_ip, game_port, username, token, verbose=0):
+        self.verbose = verbose
+        if self.verbose > 0:
+            print("Host: {}:{}".format(game_ip, game_port))
         self.game_connection = SocketWrapper(
             socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         )
@@ -36,11 +38,13 @@ class NetworkEnv(gym.Env):
 
         # Create env for initial action and observation spaces
         self.env, self.turn_based = make_test_env(env_id, seed=seed)
-        self.agent = agent = (
+        if self.verbose > 1:
+            print("Game server data:", self.game_data)
+        self.agent = (
             self.game_data["agent"] if not self.terminated else self.env.possible_agents[0]
         )
-        self.observation_space = self.env.observation_space(agent)
-        self.action_space = self.env.action_space(agent)
+        self.observation_space = self.env.observation_space(self.agent)
+        self.action_space = self.env.action_space(self.agent)
         self.action_space.seed(seed)
         self.obs = None
 
@@ -62,10 +66,18 @@ class NetworkEnv(gym.Env):
         assert self.action_space.contains(action), "Action not in action space."
 
         act_data = {"type": "action", "action": action}
+        if self.verbose > 1:
+            print("sending action")
         send_json(self.game_connection, act_data)
+        if self.verbose > 1:
+            print("sent action")
 
         # Receive observation from game server
+        if self.verbose > 1:
+            print("receiving obs")
         observation_data = recv_json(self.game_connection)
+        if self.verbose > 1:
+            print("received obs")
         if observation_data["type"] != "observation":
             # Game is done
             rew = 0
@@ -73,6 +85,7 @@ class NetworkEnv(gym.Env):
             trunc = True
             info = {}
             info["_terminated"] = True
+            self.spinner.succeed()
             return self.obs, rew, term, trunc, info
 
         # Unpack observation
@@ -85,6 +98,8 @@ class NetworkEnv(gym.Env):
         info = {}
         term = False
         trunc = False
+        self.steps += 1
+        self.spinner.text = f"Playing game (step: {self.steps})"
         return obs, rew, term, trunc, info
 
     def render(self, mode='human'):
@@ -92,8 +107,23 @@ class NetworkEnv(gym.Env):
         return self.env.render(mode=mode)
 
     def reset(self):
-        "Resetting mid-game would cause serious desync issues"
-        return
+        self.steps = 0
+        self.spinner = Halo(text=f"Playing game (step: {self.steps})", text_color='cyan', color='green', spinner='dots')
+        self.spinner.start()
+        # Get initial observation
+        if self.verbose > 1:
+            print("receiving initial obs")
+        observation_data = recv_json(self.game_connection)
+        if self.verbose > 1:
+            print("received initial obs")
+        if observation_data["type"] != "observation":
+            # Game is done
+            return self.obs
+
+        # Unpack observation
+        obs = decompress(observation_data["data"][self.agent])
+        self.obs = obs
+        return self.obs
 
     def close(self):
         self.env.close()
@@ -227,6 +257,7 @@ class TournamentConnection:
         # Initialize available games
         # Test agent in every game
         self.available_games = available_games
+        self.current_match = 0
         self._test_environments()
 
     # Test agent in every game
@@ -260,7 +291,8 @@ class TournamentConnection:
             print("Not enough players to start tournament.")
             raise err
         spinner.succeed()
-        print(ready_data)
+        if self.debug:
+            print(ready_data)
         send_json(self.main_connection, {"type": "ready"})
 
         # Receive game server info from matchmaker
@@ -324,22 +356,29 @@ class TournamentConnection:
 
     # TODO: Implement terminate signal for tournament and receive it here
     def next_match(self):
+        if self.current_match > 0:
+            spinner = Halo(text='Waiting for next round', text_color='cyan', color='green', spinner='dots')
+            spinner.start()
         # Create tournament server connection if it does not already exist
         if self.main_connection is None:
             try:
                 self._setup_main_connection()
             except Exception as e:
                 raise e
+        if self.current_match > 0:
+            spinner.succeed()
 
         if self.tournament_completed:
-            print(Fore.GREEN + "User: {} successfully completed tournament".format(self.botname))
-        else:
+            print(Fore.GREEN + "Bot: {} successfully completed tournament".format(self.botname))
+        elif self.current_match == 0:
             # Connect to game server
-            print(Fore.GREEN + "User: {} successfully connected to Umshini".format(self.botname))
+            print(Fore.GREEN + "Bot: {} successfully connected to Umshini".format(self.botname))
+            pass
         print(Style.RESET_ALL)
 
         # Connect to game server
         game_env = self._connect_game_server()
         self.main_connection.close()
         self.main_connection = None
+        self.current_match = 1
         return game_env

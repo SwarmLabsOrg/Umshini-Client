@@ -82,19 +82,18 @@ env_num_players = {name: get_num_agents(name, env) for name, env in all_environm
 MAX_CYCLES = 10000
 
 
-def make_test_env(game_id, seed, turn_based=False):
+def make_test_env(game_id, seed=None, render_mode=None, turn_based=False):
     env = all_environments[game_id]
     # Check if game can be played with parallel API
-    env_function = getattr(env, "parallel_env", None)
-    if not turn_based and env_function and callable(env_function):
+    test_env = env.env()
+    turn_based = not test_env.metadata["is_parallelizable"]
+    if turn_based:
+        env = env.env(render_mode=render_mode)
+        env = turn_based_aec_to_parallel(env)
+    else:
         # TODO: Redo preprocessing by environment class
-        env = env.env()
+        env = env.env(render_mode=render_mode)
         env = frame_stack_v1(env, 4)
         env = frame_skip_v0(env, 4)
         env = aec_to_parallel(env)
-        turn_based = False
-    else:
-        env = env.env()
-        env = turn_based_aec_to_parallel(env)
-        turn_based = True
     return env, turn_based
