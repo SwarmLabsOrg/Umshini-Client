@@ -20,8 +20,8 @@ def connect(environment, botname, user_key, user_policy, debug=False):
     """
     agent = ColosseumTournamentAgent(policy=user_policy, games=[environment], maximum_rounds=100, host="34.70.234.149",
                                      port="8803", debug=debug)
-    #agent = ColosseumTournamentAgent(policy=user_policy, games=[environment], 
-    #                                maximum_rounds=100, debug=debug)
+    #agent = ColosseumTournamentAgent(policy=user_policy, games=[environment],
+    #                                 maximum_rounds=100, debug=debug)
     agent.connect(botname, user_key)
     agent.run()
 
