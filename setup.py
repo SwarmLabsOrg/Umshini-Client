@@ -2,16 +2,16 @@ from setuptools import find_packages, setup
 import codecs
 import os
 
-VERSION = '0.0.1'
+VERSION = '0.0.3'
 DESCRIPTION = 'Umshini Client API'
 
 setup(
     name='umshini',
     version=VERSION,
     author='umshini team',
-    author_email="justinkterry@gmail.com",
+    author_email="j.k.terry@swarmlabs.com",
     description=DESCRIPTION,
-    url='umshini.ml',
+    url='https://github.com/umshini/umshini',
     #long_description=long_description,
     #long_description_content_type="text/markdown",
     #keywords=["Reinforcement Learning", "game", "RL", "AI", "gym"],
