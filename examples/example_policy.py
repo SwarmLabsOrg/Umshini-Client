@@ -18,20 +18,19 @@ from Umshini.envs.envs_list import make_test_env
 """
 
 
-def pol(self, obs, rew, term, trunc, info):
-    # If obs has an action mask, use that to select ana ction
-    # Otherwise, sampel from the action space directly
-    if (
-        obs is not None
-        and isinstance(obs, dict)
-        and obs
-        and "action_mask" in obs
-        and any(obs["action_mask"] == 1)
-    ):
-        # Choose a random action
-        action = np.random.choice(
-            obs["action_mask"].nonzero()[0]
-        )
-    else:
-        action = self.env.action_space(self.env.agents[0]).sample()
-    return (action, 1)  # Return the action and a dummy surprise value of 1
+class DummyAgent:
+    def __init__(self, env_name):
+        self.env_name = env_name
+        self.env, _ = make_test_env(env_name, seed=1)
+        self.env.reset()
+
+    def pol(self, obs, rew, term, trunc, info):
+        if (isinstance(obs, dict) and "action_mask" in obs):
+            # If obs has an action mask, use that to select an action
+            legal_mask = obs["action_mask"]
+            legal_actions = legal_mask.nonzero()[0]
+            action = np.random.choice(legal_actions)
+        else:
+            # Otherwise, sample from the action space directly
+            action = self.env.action_space(self.env.agents[0]).sample()
+        return (action, 1)
