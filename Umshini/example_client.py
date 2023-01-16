@@ -47,7 +47,8 @@ class ColosseumTournamentAgent:
                 print(env)
         except Exception as e:
             print(Fore.RED + str(e))
-            print(traceback.format_exc())
+            if self.debug:
+                print(traceback.format_exc())
             print(Style.RESET_ALL)
             quit()
         current_round = 1
