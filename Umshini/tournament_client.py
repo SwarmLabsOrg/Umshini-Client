@@ -1,11 +1,12 @@
-import socket
-import sys
-import json
+import errno
 import gymnasium as gym
+import json
 import numpy as np
+import socket
+from socket import error as socket_error
 from Umshini.utils.socket_wrap import SocketWrapper
 from Umshini.utils.compress import decompress
-from Umshini.envs import make_test_env, all_environments
+from Umshini.envs import make_test_env, ALL_ENVIRONMENTS
 from colorama import Fore, Style
 from halo import Halo
 
@@ -256,7 +257,7 @@ class TournamentConnection:
         if available_games == ["__all__"]:
             if self.debug:
                 print("TESTING ALL GAMES")
-            available_games = list(all_environments.keys())
+            available_games = list(ALL_ENVIRONMENTS.keys())
         # Initialize available games
         # Test agent in every game
         self.available_games = available_games
@@ -291,7 +292,7 @@ class TournamentConnection:
         try:
             ready_data = recv_json(self.main_connection, timeout=60)
         except TimeoutError as err:
-            print("Not enough players to start tournament.")
+            print("Not enough players to start tournament.", flush=True)
             raise err
         spinner.succeed()
 
@@ -305,7 +306,7 @@ class TournamentConnection:
         try:
             sdata = recv_json(self.main_connection)
         except TimeoutError as err:
-            print("Failed to receive game info from server")
+            print("Failed to receive game info from server", flush=True)
             raise err
         spinner.succeed()
 
@@ -325,7 +326,11 @@ class TournamentConnection:
         self.main_connection = SocketWrapper(
             socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         )
-        self.main_connection.connect((self.ip_address, self.port))
+        try:
+            self.main_connection.connect((self.ip_address, self.port))
+        except ConnectionRefusedError:
+            raise RuntimeError("Tournament server is offline.")
+
         send_json(
             self.main_connection,
             {
@@ -338,12 +343,10 @@ class TournamentConnection:
 
         try:
             init_data = recv_json(self.main_connection)
-        except TimeoutError as err:
-            print("Failed to connect to matchmaker.")
-            raise err
-        except json.decoder.JSONDecodeError as err:
-            print("Server returned an invalid response")
-            raise err
+        except TimeoutError:
+            raise RuntimeError("Failed to connect to matchmaker.")
+        except json.decoder.JSONDecodeError:
+            raise RuntimeError("Server returned an invalid response.")
 
         # Handle connection errors
         if init_data["type"] == "malformed_creds":

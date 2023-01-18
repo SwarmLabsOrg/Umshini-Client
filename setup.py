@@ -34,14 +34,13 @@ setup(
         'colorama',
         'supersuit==3.7.1',
         'pettingzoo==1.22.3',
-        'supersuit==3.7.0',
         'gymnasium',
         'numpy',
         'halo',
     ],
     extras_require={
-        "atari": ['pettingzoo[atari]==1.22.3', 'autorom[accept-rom-license]'],
-        "classic": ['pettingzoo[classic]==1.22.3'],
+        "atari": ['pettingzoo[atari]==1.22.3', 'autorom[accept-rom-license]', 'multi-agent-ale-py'],
+        "classic": ['pettingzoo[classic]==1.22.3', 'pygame', 'rlcard'],
     },
     classifiers=[
         'Development Status :: 5 - Production/Stable',

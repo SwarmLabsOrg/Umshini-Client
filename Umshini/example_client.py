@@ -32,10 +32,10 @@ class ColosseumTournamentAgent:
                 self.host, self.port, self.botname, self.key,
                 available_games=self.games, debug=self.debug
             )
-            print(Fore.GREEN + "Bot: {}'s policy has passed environment verifications".format(self.botname))
+            print(Fore.GREEN + f"Bot: {self.botname}'s policy has passed environment verifications")
             print(Style.RESET_ALL)
         except Exception:
-            print(Fore.RED + "Bot: {}'s policy has failed verification testing in environment: ".format(self.botname))
+            print(Fore.RED + f"Bot: {self.botname}'s policy has failed verification testing in environment: {self.games}")
             print(Style.RESET_ALL)
             quit()
 
@@ -63,7 +63,11 @@ class ColosseumTournamentAgent:
                 if timestep % 100 == 0 and self.debug:
                     print(f"{self.botname}: Timestep {timestep}\n")
                 time.sleep(self.latency / 1000)  # Used to simulate network latency
-                (action, surprise) = self.policy(obs, rew, term, trunc, info)  # receive action and surprise from user
+                try:
+                    # receive action and surprise from user
+                    (action, surprise) = self.policy(obs, rew, term, trunc, info)
+                except Exception as err:
+                    raise RuntimeError(f"Error occurred in policy: {err}")
                 obs, rew, term, trunc, info = env.step(action)  # Send action to game server
                 surprises.append(surprise)  # Collect surprise for later use when game server supports
                 timestep += 1
