@@ -1,7 +1,7 @@
 from setuptools import find_packages, setup
 
 
-VERSION = '0.0.1'
+VERSION = '0.0.5'
 DESCRIPTION = 'Umshini Client API'
 with open("README.md", 'r') as f:
     long_description = f.read()
@@ -10,9 +10,9 @@ setup(
     name='umshini',
     version=VERSION,
     author='umshini team',
-    author_email="justinkterry@gmail.com",
+    author_email="j.k.terry@swarmlabs.com",
     description=DESCRIPTION,
-    url='umshini.ml',
+    url='https://github.com/umshini/umshini',
     long_description=long_description,
     #long_description_content_type="text/markdown",
     #keywords=["Reinforcement Learning", "game", "RL", "AI", "gym"],
