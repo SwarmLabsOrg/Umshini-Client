@@ -5,14 +5,14 @@ include = [
 ]
 
 [build-system]
-requires      = ["setuptools>=61.0.0", "wheel"]
+requires      = ["setuptools>=61.0.0", "wheel", "numpy>=1.19.0", "Cython>=0.29.21"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "umshini"
-version = "0.0.3"
-description = "Umshini client for playing in MARL tournaments"
+version = "0.0.6"
 readme = "README.md"
+description = "Umshini client for playing in MARL tournaments"
 authors = [{ name = "Jordan K. Terry", email = "j.k.terry@swarmlabs.com" }]
 license = { file = "LICENSE" }
 classifiers = [

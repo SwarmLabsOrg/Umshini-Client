@@ -1,9 +1,9 @@
 from setuptools import find_packages, setup
-import codecs
-import os
 
-VERSION = '0.0.3'
+VERSION = '0.0.6'
 DESCRIPTION = 'Umshini Client API'
+with open("README.md", 'r') as f:
+    long_description = f.read()
 
 setup(
     name='umshini',
@@ -20,16 +20,26 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
+        'Cython',
         'colorama',
-        'pettingzoo==1.22.2',
-        'supersuit==3.7.0',
+        'pettingzoo==1.22.3',
+        'supersuit==3.7.1',
+        'gymnasium',
+        'numpy',
+        'halo',
+    ],
+    setup_requires=[
+        'Cython',
+        'colorama',
+        'supersuit==3.7.1',
+        'pettingzoo==1.22.3',
         'gymnasium',
         'numpy',
         'halo',
     ],
     extras_require={
-        "atari": ['pettingzoo[atari]==1.22.2'],
-        "classic": ['pettingzoo[classic]==1.22.2'],
+        "atari": ['pettingzoo[atari]==1.22.3', 'autorom[accept-rom-license]', 'multi-agent-ale-py'],
+        "classic": ['pettingzoo[classic]==1.22.3', 'pygame', 'rlcard'],
     },
     classifiers=[
         'Development Status :: 5 - Production/Stable',

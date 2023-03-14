@@ -32,10 +32,10 @@ class ColosseumTournamentAgent:
                 self.host, self.port, self.botname, self.key,
                 available_games=self.games, debug=self.debug
             )
-            print(Fore.GREEN + "Bot: {}'s policy has passed environment verifications".format(self.botname))
+            print(Fore.GREEN + f"Bot: {self.botname}'s policy has passed environment verifications")
             print(Style.RESET_ALL)
         except Exception:
-            print(Fore.RED + "Bot: {}'s policy has failed verification testing in environment: ".format(self.botname))
+            print(Fore.RED + f"Bot: {self.botname}'s policy has failed verification testing in environment: {self.games}")
             print(Style.RESET_ALL)
             quit()
 
@@ -47,7 +47,8 @@ class ColosseumTournamentAgent:
                 print(env)
         except Exception as e:
             print(Fore.RED + str(e))
-            print(traceback.format_exc())
+            if self.debug:
+                print(traceback.format_exc())
             print(Style.RESET_ALL)
             quit()
         current_round = 1

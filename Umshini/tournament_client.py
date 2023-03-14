@@ -1,10 +1,12 @@
-import socket
-import json
+import errno
 import gymnasium as gym
+import json
 import numpy as np
+import socket
+from socket import error as socket_error
 from Umshini.utils.socket_wrap import SocketWrapper
 from Umshini.utils.compress import decompress
-from Umshini.envs import make_test_env, all_environments
+from Umshini.envs import make_test_env, ALL_ENVIRONMENTS
 from colorama import Fore, Style
 from halo import Halo
 
@@ -192,10 +194,10 @@ class TestEnv(gym.Env):
         # Step again if testing agent is not next
         if not self.was_term and not self.was_trunc and self.agent not in active_agents:
             obs = self.obss[self.env.unwrapped.agent_selection]
-            if (obs is not None
-                and isinstance(obs, dict)
-                and obs and "action_mask" in obs):
-                action = np.random.choice(obs["action_mask"].nonzero()[0])
+            if (isinstance(obs, dict) and "action_mask" in obs):
+                legal_mask = obs["action_mask"]
+                legal_actions = legal_mask.nonzero()[0]
+                action = np.random.choice(legal_actions)
             else:
                 action = self.env.action_space(self.env.unwrapped.agent_selection).sample()
             return self.step(action)
@@ -251,16 +253,18 @@ class TournamentConnection:
         # Initialize class variables
         self.botname = botname
         self.ip_address = ip
-        self.port = port
+        self.port = int(port)
         self.key = key
         self.main_connection = None  # Connection to tournament server
         self.tournament_completed = False
         self.debug = debug
-        # Grab all available games        
-        if self.debug: print("Connecting to matchmaker for following games: ", available_games)
+        # Grab all available games
+        if self.debug:
+            print("Connecting to matchmaker for following games: ", available_games)
         if available_games == ["__all__"]:
-            if self.debug: print("TESTING ALL GAMES")
-            available_games = list(all_environments.keys())
+            if self.debug:
+                print("TESTING ALL GAMES")
+            available_games = list(ALL_ENVIRONMENTS.keys())
         # Initialize available games
         # Test agent in every game
         self.available_games = available_games
@@ -295,9 +299,10 @@ class TournamentConnection:
         try:
             ready_data = recv_json(self.main_connection, timeout=60)
         except TimeoutError as err:
-            print("Not enough players to start tournament.")
+            print("Not enough players to start tournament.", flush=True)
             raise err
         spinner.succeed()
+
         if self.debug:
             print(ready_data)
         send_json(self.main_connection, {"type": "ready"})
@@ -308,7 +313,7 @@ class TournamentConnection:
         try:
             sdata = recv_json(self.main_connection)
         except TimeoutError as err:
-            print("Failed to receive game info from server")
+            print("Failed to receive game info from server", flush=True)
             raise err
         spinner.succeed()
 
@@ -328,7 +333,11 @@ class TournamentConnection:
         self.main_connection = SocketWrapper(
             socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         )
-        self.main_connection.connect((self.ip_address, self.port))
+        try:
+            self.main_connection.connect((self.ip_address, self.port))
+        except ConnectionRefusedError:
+            raise RuntimeError("Tournament server is offline.")
+
         send_json(
             self.main_connection,
             {
@@ -341,11 +350,14 @@ class TournamentConnection:
 
         try:
             init_data = recv_json(self.main_connection)
-        except TimeoutError as err:
-            print("Failed to connect to matchmaker.")
-            raise err
+        except TimeoutError:
+            raise RuntimeError("Failed to connect to matchmaker.")
+        except json.decoder.JSONDecodeError:
+            raise RuntimeError("Server returned an invalid response.")
 
         # Handle connection errors
+        if init_data["type"] == "malformed_creds":
+            raise RuntimeError("Credentials were formatted incorrectly")
         if init_data["type"] == "bad_creds":
             raise RuntimeError("server did not accept credentials")
         if init_data["type"] == "bad_client_version":
@@ -361,17 +373,18 @@ class TournamentConnection:
         if init_data["complete"]:
             self.tournament_completed = True
 
-    # TODO: Implement terminate signal for tournament and receive it here
     def next_match(self):
         if self.current_match > 0:
             spinner = Halo(text='Waiting for next round', text_color='cyan', color='green', spinner='dots')
             spinner.start()
+
         # Create tournament server connection if it does not already exist
         if self.main_connection is None:
             try:
                 self._setup_main_connection()
             except Exception as e:
                 raise e
+
         if self.current_match > 0:
             spinner.succeed()
 
