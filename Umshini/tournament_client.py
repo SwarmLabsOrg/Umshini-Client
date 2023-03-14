@@ -48,11 +48,16 @@ class NetworkEnv(gym.Env):
         self.action_space.seed(seed)
         self.obs = None
 
-    def step(self, action):
+    def step(self, action_surprise):
         if self.terminated:
             print("terminated before single step occurred!")
             return self.obs, 0, True, True, {}
-
+        if type(action_surprise) is tuple:
+            action = action_surprise[0]
+            surprise = action_surprise[1]
+        else:
+            action = action_surprise
+            action_surprise = 0.0
         # Convert Numpy types to Python types
         if hasattr(action, "dtype"):
             action = action.item()
@@ -64,8 +69,10 @@ class NetworkEnv(gym.Env):
                 isinstance(action, dict) or
                 isinstance(action, list)), "Action is not a valid type."
         assert self.action_space.contains(action), "Action not in action space."
+        assert (isinstance(surprise, int) or
+                isinstance(surprise, float)), "Surprise is not a valid type."
 
-        act_data = {"type": "action", "action": action}
+        act_data = {"type": "action", "action": action, "surprise": surprise}
         if self.verbose > 1:
             print("sending action")
         send_json(self.game_connection, act_data)

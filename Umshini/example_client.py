@@ -52,7 +52,6 @@ class ColosseumTournamentAgent:
             quit()
         current_round = 1
         while env is not None:
-            surprises = []
             term = False
             trunc = False
             timestep = 0
@@ -62,9 +61,8 @@ class ColosseumTournamentAgent:
                 if timestep % 100 == 0 and self.debug:
                     print(f"{self.botname}: Timestep {timestep}\n")
                 time.sleep(self.latency / 1000)  # Used to simulate network latency
-                (action, surprise) = self.policy(obs, rew, term, trunc, info)  # receive action and surprise from user
-                obs, rew, term, trunc, info = env.step(action)  # Send action to game server
-                surprises.append(surprise)  # Collect surprise for later use when game server supports
+                action_surprise = self.policy(obs, rew, term, trunc, info)  # receive action and surprise from user
+                obs, rew, term, trunc, info = env.step(action_surprise)  # Send action to game server
                 timestep += 1
             print(Fore.GREEN + f"Round {current_round} complete")
             print(Style.RESET_ALL)
