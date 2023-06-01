@@ -23,10 +23,10 @@ setup(
         ''
         'Cython',
         'colorama',
-        'pettingzoo==1.22.3',
-        'pettingzoo[classic]==1.22.3',
+        'pettingzoo==1.23.0',
+        'pettingzoo[classic]==1.23.0',
         'rlcard',
-        'supersuit==3.7.1',
+        'supersuit==3.8.0',
         'gymnasium',
         'numpy',
         'halo',

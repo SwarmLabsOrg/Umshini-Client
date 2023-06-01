@@ -125,6 +125,9 @@ class NetworkEnv(gym.Env):
         observation_data = recv_json(self.game_connection)
         if self.verbose > 1:
             print("received initial obs")
+            print(observation_data)
+            if not observation_data:
+                print("No data received")
         if observation_data["type"] != "observation":
             # Game is done
             return self.obs
@@ -157,8 +160,8 @@ class TestEnv(gym.Env):
         self.num_steps = 0
         self.was_term = False
         self.was_trunc = False
-        obss = self.env.reset()
-        return obss[self.agent]
+        obss, info = self.env.reset()
+        return obss, info
 
     def step(self, action):
         assert not self.was_term and not self.was_trunc, "stepped after term or trunc, should terminate loop"
@@ -275,7 +278,7 @@ class TournamentConnection:
     def _test_environments(self):
         for game in self.available_games:
             test_env = TestEnv(game)
-            obs = test_env.reset()
+            obs, info = test_env.reset()
             for _ in range(100):
                 if (obs is not None
                     and isinstance(obs, dict)

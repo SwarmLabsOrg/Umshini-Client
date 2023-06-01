@@ -10,7 +10,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "umshini"
-version = "0.0.6"
+version = "0.0.7"
 readme = "README.md"
 description = "Umshini client for playing in MARL tournaments"
 authors = [{ name = "Jordan K. Terry", email = "j.k.terry@swarmlabs.com" }]
