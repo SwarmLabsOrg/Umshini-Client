@@ -1,5 +1,5 @@
-import Umshini
-from Umshini.envs.envs_list import make_test_env
+import umshini
+from umshini.envs.envs_list import make_test_env
 
 
 try:
@@ -17,4 +17,4 @@ def policy(obs, rew, term, trunc, info):
     return (action, 0)
 
 
-Umshini.connect("surround_v2", "bot_user1_env1", "user1", policy)
+umshini.connect("surround_v2", "bot_user1_env1", "user1", policy)

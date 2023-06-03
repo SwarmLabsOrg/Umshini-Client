@@ -1,9 +1,9 @@
 import numpy as np
-from Umshini.envs.envs_list import make_test_env
+from umshini.envs.envs_list import make_test_env
 
 """
     This is a simple example of a policy function that can be used to play
-    in an umshini environment.
+    in an Umshini environment.
 
     The policy function takes 5 arguments:
         obs: the observation of the environment
