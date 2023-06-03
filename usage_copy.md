@@ -14,9 +14,9 @@
         '''
         return(action, surprise)
     '''
-    Now call connect from the Umshini package with your desired environment and user
+    Now call connect from the umshini package with your desired environment and user
     information and matchmaking will begin! The results of your games played as well as replays
-    of the games will be posted to the Umshini website.
+    of the games will be posted to the umshini website.
     '''
     Umshini.connect("gym_env_name", "your_umshini_botname", "your_umshini_key", my_policy)
 ```

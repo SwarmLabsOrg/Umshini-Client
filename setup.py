@@ -1,7 +1,7 @@
 from setuptools import find_packages, setup
 
 VERSION = '0.0.7'
-DESCRIPTION = 'Umshini Client API'
+DESCRIPTION = 'umshini Client API'
 with open("README.md", 'r') as f:
     long_description = f.read()
 

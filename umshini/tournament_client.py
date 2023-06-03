@@ -4,9 +4,9 @@ import json
 import numpy as np
 import socket
 from socket import error as socket_error
-from Umshini.utils.socket_wrap import SocketWrapper
-from Umshini.utils.compress import decompress
-from Umshini.envs import make_test_env, ALL_ENVIRONMENTS
+from umshini.utils.socket_wrap import SocketWrapper
+from umshini.utils.compress import decompress
+from umshini.envs import make_test_env, ALL_ENVIRONMENTS
 from colorama import Fore, Style
 from halo import Halo
 
@@ -165,7 +165,6 @@ class TestEnv(gym.Env):
 
     def step(self, action):
         assert not self.was_term and not self.was_trunc, "stepped after term or trunc, should terminate loop"
-
         # Set random actions for all other agents in parallel game or None in turn-based game
         actions = {
             agent: (None if self.turn_based else self.env.action_space(agent).sample()) for agent in self.env.agents
@@ -279,10 +278,10 @@ class TournamentConnection:
         for game in self.available_games:
             test_env = TestEnv(game)
             obs, info = test_env.reset()
-            for _ in range(100):
+            for i in range(100):
                 if (obs is not None
-                    and isinstance(obs, dict)
-                    and obs and "action_mask" in obs):
+                        and isinstance(obs, dict)
+                        and obs and "action_mask" in obs):
                     action = np.random.choice(obs["action_mask"].nonzero()[0])
                 else:
                     action = test_env.action_space.sample()
@@ -395,7 +394,7 @@ class TournamentConnection:
             print(Fore.GREEN + "Bot: {} successfully completed tournament".format(self.botname))
         elif self.current_match == 0:
             # Connect to game server
-            print(Fore.GREEN + "Bot: {} successfully connected to Umshini".format(self.botname))
+            print(Fore.GREEN + "Bot: {} successfully connected to umshini".format(self.botname))
             pass
         print(Style.RESET_ALL)
 

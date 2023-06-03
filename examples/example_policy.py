@@ -3,7 +3,7 @@ from Umshini.envs.envs_list import make_test_env
 
 """
     This is a simple example of a policy function that can be used to play
-    in an Umshini environment.
+    in an umshini environment.
 
     The policy function takes 5 arguments:
         obs: the observation of the environment
