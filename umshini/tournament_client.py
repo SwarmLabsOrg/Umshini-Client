@@ -59,7 +59,7 @@ class NetworkEnv(gym.Env):
             surprise = action_surprise[1]
         else:
             action = action_surprise
-            action_surprise = 0.0
+            surprise = 0.0
         # Convert Numpy types to Python types
         if hasattr(action, "dtype"):
             action = action.item()
