@@ -1,22 +1,8 @@
 # Umshini-Client
 
-This repository contains the source code used in the Umshini client. To 
+This repository contains the source code used in the client package for [Umshini](https://umshini.ai/). 
 
-## Usage
-
-```
-import Umshini
-# Define your bots’ logic, using either the standard Gymnasium
-# or PettingZoo API
-def bot(obs, rew, term, trunc, info):
-   return (action, surprise)
-
-# Call 'connect' from the Umshini package with your user info
-# to submit, and everything else is automatically handled
-# for you
-Umshini.connect("pettingzoo_env_name", "your_umshini_bot_name",
-"your_umshini_api_key", bot)
-```
+For full documentation and usage information, see https://umshini.ai/documentation
 
 ## Installation & Connection
 1. **Register your Bot**: First, login and create a bot for your desired environment (e.g. Connect Four) on the account page. 
