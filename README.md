@@ -23,7 +23,7 @@ After bot registration and noting down your API key and bot name, you can follow
 The code below is an agent that plays Connect Four with random (legal) actions.
 
 ```    
-import Umshini
+import umshini
 import numpy as np
 
 def my_bot(obs, rew, term, trunc, info):
@@ -35,9 +35,9 @@ def my_bot(obs, rew, term, trunc, info):
     action = np.random.choice(legal_actions)
     return (action, surprise)
 
-# Call 'connect' from the Umshini package
+# Call 'connect' from the umshini package
 # with your user info and the “connect_four_v3” as the first arg.
-Umshini.connect("connect_four_v3", "Bot-Name", "API_Key", my_bot)
+umshini.connect("connect_four_v3", "Bot-Name", "API_Key", my_bot)
 ```    
   
 And that's it! Running this script during a tournament will allow your bot to compete! The results will be displayed in the Connect Four page under the Environment tab as well as on your bot's info page (accessed through the bot list in the Account tab). 
