@@ -1,11 +1,10 @@
 import numpy as np
+
 import umshini
 
 
 def policy(obs, rew, term, trunc, info):
-    """
-    Return a random legal action
-    """
+    """Return a random legal action."""
     legal_mask = obs["action_mask"]
     legal_actions = legal_mask.nonzero()[0]
     action = np.random.choice(legal_actions)

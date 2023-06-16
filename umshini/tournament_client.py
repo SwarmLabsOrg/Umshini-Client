@@ -1,14 +1,15 @@
-import errno
-import gymnasium as gym
+# pyright: reportGeneralTypeIssues=false, reportUnboundVariable=false, reportOptionalMemberAccess=false
 import json
-import numpy as np
 import socket
-from socket import error as socket_error
-from umshini.utils.socket_wrap import SocketWrapper
-from umshini.utils.compress import decompress
-from umshini.envs import make_test_env, ALL_ENVIRONMENTS
+
+import gymnasium as gym
+import numpy as np
 from colorama import Fore, Style
 from halo import Halo
+
+from umshini.envs import ALL_ENVIRONMENTS, make_test_env
+from umshini.utils.compress import decompress
+from umshini.utils.socket_wrap import SocketWrapper
 
 
 # Send JSON through socket
@@ -28,7 +29,7 @@ class NetworkEnv(gym.Env):
     def __init__(self, env_id, seed, game_ip, game_port, username, token, verbose=0):
         self.verbose = verbose
         if self.verbose > 0:
-            print("Host: {}:{}".format(game_ip, game_port))
+            print(f"Host: {game_ip}:{game_port}")
         self.game_connection = SocketWrapper(
             socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         )
@@ -308,7 +309,7 @@ class TournamentConnection:
                 obs, _, term, trunc, _ = test_env.step(action)
                 if term or trunc:
                     if self.debug:
-                        print("{} passed test in {}".format(self.botname, game))
+                        print(f"{self.botname} passed test in {game}")
                     break
 
     def _connect_game_server(self):
@@ -389,7 +390,7 @@ class TournamentConnection:
             raise RuntimeError("server did not accept credentials")
         if init_data["type"] == "bad_client_version":
             raise RuntimeError(
-                "Old client version. Please udpate your client to the latest version available."
+                "Old client version. Please update your client to the latest version available."
             )
         if init_data["type"] == "connected_too_many_servers":
             raise RuntimeError(
@@ -429,16 +430,10 @@ class TournamentConnection:
             spinner.succeed()
 
         if self.tournament_completed:
-            print(
-                Fore.GREEN
-                + "Bot: {} successfully completed tournament".format(self.botname)
-            )
+            print(Fore.GREEN + f"Bot: {self.botname} successfully completed tournament")
         elif self.current_match == 0:
             # Connect to game server
-            print(
-                Fore.GREEN
-                + "Bot: {} successfully connected to umshini".format(self.botname)
-            )
+            print(Fore.GREEN + f"Bot: {self.botname} successfully connected to umshini")
             pass
         print(Style.RESET_ALL)
 

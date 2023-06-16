@@ -1,10 +1,10 @@
-from pettingzoo.utils import aec_to_parallel, turn_based_aec_to_parallel
 from chatarena.environments.umshini import PettingZooCompatibilityV0
 from chatarena.environments.umshini.debate import create_debate_env
 from chatarena.environments.umshini.symmetric_content_moderation import (
     create_content_moderation_env,
 )
 from chatarena.environments.umshini.symmetric_deception import create_deception_env
+from pettingzoo.utils import aec_to_parallel, turn_based_aec_to_parallel
 
 CLASSIC_GAMES = ["connect_four_v3", "texas_holdem_no_limit_v6", "go_v5"]
 LLM_GAMES = ["debate_v1", "deception_v1", "content_moderation_v1"]
@@ -37,12 +37,6 @@ def import_classic(env_name):
 
 def import_llm(env_name):
     try:
-        from pettingzoo_language.environments import (
-            debate,
-            symmetric_deception,
-            symmetric_content_moderation,
-        )
-
         all_environments["debate_v0"] = create_debate_env(
             "Is AI safety a valid concept to pursue?", round_length=8
         )
@@ -55,7 +49,7 @@ def import_llm(env_name):
     except ImportError as err:
         print(
             f"You do not have the requested LLM game ({env_name}) installed.\n\
-              You can install it with `pip install pettingzoo-language`"
+              You can install it with `pip install umshini[llm]`"
         )
         print(err, flush=True)
         raise err

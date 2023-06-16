@@ -1,6 +1,9 @@
+# pyright: reportGeneralTypeIssues=false
+
+from colorama import Fore, Style
+
 from .example_client import ColosseumTournamentAgent
 from .tournament_client import TestEnv
-from colorama import Fore, Style
 
 
 def create_and_run(botname, user_key):
@@ -10,8 +13,7 @@ def create_and_run(botname, user_key):
 
 
 def connect(environment, botname, user_key, user_policy, debug=False, testing=False):
-    """
-    User end function to add their RL policy
+    """User end function to add their RL policy.
 
     Passed function accepts parameters:
         policy(observation, reward, done, info)
@@ -53,11 +55,11 @@ def test(environment, user_policy):
             if term or trunc:
                 print(
                     Fore.GREEN
-                    + "Policy has passed verification testing in {}".format(environment)
+                    + f"Policy has passed verification testing in {environment}"
                 )
                 print(Style.RESET_ALL)
                 break
-        except:
+        except:  # noqa: E722
             print(Fore.RED + "Policy has failed verification testing")
             print(Style.RESET_ALL)
             quit()

@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# pyright: reportOptionalMemberAccess=false
 import time
 import traceback
-from .tournament_client import TournamentConnection
+
 from colorama import Fore, Style
-from halo import Halo
+
+from .tournament_client import TournamentConnection
 
 
 class ColosseumTournamentAgent:

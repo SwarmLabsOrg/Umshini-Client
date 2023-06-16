@@ -1,7 +1,6 @@
-import json
-import pickle
 import gzip
-from base64 import b64encode, b64decode
+import pickle
+from base64 import b64decode, b64encode
 
 
 def compress(original_data):

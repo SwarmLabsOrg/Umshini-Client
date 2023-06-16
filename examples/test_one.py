@@ -1,6 +1,8 @@
 import argparse
-import umshini
+
 from example_policy import DummyAgent
+
+import umshini
 
 """
     This is a simple example of connecting an agent to the Umshini server.
