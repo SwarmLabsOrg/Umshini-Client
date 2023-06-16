@@ -3,7 +3,7 @@ from umshini.envs.envs_list import make_test_env
 
 
 try:
-    sample_env, _ = make_test_env("surround_v2")
+    sample_env, _ = make_test_env("connect_four_v3", seed=0)
     sample_env.reset()
 except ImportError:
     quit()

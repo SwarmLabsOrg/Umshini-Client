@@ -38,6 +38,7 @@ dynamic = ["version"]
 [project.optional-dependencies]
 classic = ["pettingzoo[classic]>=1.23.1"]
 llm = ["chatarena[umshini_requirements]>=0.1.12"]
+all = ["pettingzoo[classic]>=1.23.1", "chatarena[umshini_requirements]>=0.1.12"]
 
 [tool.setuptools.dynamic]
 version = {attr = "umshini.__version__"}

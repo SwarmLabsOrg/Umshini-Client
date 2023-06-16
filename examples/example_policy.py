@@ -25,7 +25,7 @@ class DummyAgent:
         self.env.reset()
 
     def pol(self, obs, rew, term, trunc, info):
-        if (isinstance(obs, dict) and "action_mask" in obs):
+        if isinstance(obs, dict) and "action_mask" in obs:
             # If obs has an action mask, use that to select an action
             legal_mask = obs["action_mask"]
             legal_actions = legal_mask.nonzero()[0]

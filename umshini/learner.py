@@ -19,11 +19,23 @@ def connect(environment, botname, user_key, user_policy, debug=False, testing=Fa
     Passed function returns action
     """
     if testing:
-        agent = ColosseumTournamentAgent(policy=user_policy, games=[environment], maximum_rounds=100, host="127.0.0.1",
-                                         port="8803", debug=debug)
+        agent = ColosseumTournamentAgent(
+            policy=user_policy,
+            games=[environment],
+            maximum_rounds=100,
+            host="127.0.0.1",
+            port="8803",
+            debug=debug,
+        )
     else:
-        agent = ColosseumTournamentAgent(policy=user_policy, games=[environment], maximum_rounds=100, host="34.70.234.149",
-                                        port="8803", debug=debug)
+        agent = ColosseumTournamentAgent(
+            policy=user_policy,
+            games=[environment],
+            maximum_rounds=100,
+            host="34.70.234.149",
+            port="8803",
+            debug=debug,
+        )
 
     agent.connect(botname, user_key)
     agent.run()
@@ -39,7 +51,10 @@ def test(environment, user_policy):
             obs, rew, term, trunc, info = test_env.step(action)
 
             if term or trunc:
-                print(Fore.GREEN + "Policy has passed verification testing in {}".format(environment))
+                print(
+                    Fore.GREEN
+                    + "Policy has passed verification testing in {}".format(environment)
+                )
                 print(Style.RESET_ALL)
                 break
         except:

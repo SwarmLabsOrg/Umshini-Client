@@ -6,6 +6,7 @@ from setuptools import setup
 
 CWD = pathlib.Path(__file__).absolute().parent
 
+
 def get_version():
     """Gets the umshini version."""
     path = CWD / "umshini" / "__init__.py"
@@ -18,4 +19,3 @@ def get_version():
 
 
 setup(name="umshini", version=get_version())
-

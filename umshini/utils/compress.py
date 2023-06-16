@@ -6,7 +6,7 @@ from base64 import b64encode, b64decode
 
 def compress(original_data):
     pickled_data = pickle.dumps(original_data)
-    gzipped_data = gzip.compress(pickled_data,compresslevel=1)
+    gzipped_data = gzip.compress(pickled_data, compresslevel=1)
     b64_data = b64encode(gzipped_data)
     return b64_data.decode()
 
