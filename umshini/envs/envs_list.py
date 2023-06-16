@@ -11,6 +11,11 @@ LLM_GAMES = ["debate_v1", "deception_v1", "content_moderation_v1"]
 MAX_CYCLES = 10000
 
 
+def get_num_agents(env):
+    count_env = env.env()
+    count_env.reset()
+    return count_env.num_agents
+
 ALL_ENVIRONMENTS = CLASSIC_GAMES + LLM_GAMES
 all_environments = {}
 env_num_players = {name: get_num_agents(env) for name, env in all_environments.items()}
