@@ -13,6 +13,7 @@ MAX_CYCLES = 10000
 
 ALL_ENVIRONMENTS = CLASSIC_GAMES + LLM_GAMES
 all_environments = {}
+env_num_players = {name: get_num_agents(env) for name, env in all_environments.items()}
 
 
 class UnsupportedGameError(Exception):
