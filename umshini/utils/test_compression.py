@@ -1,5 +1,6 @@
-from umshini.utils.compress import compress, decompress
 import numpy as np
+
+from umshini.utils.compress import compress, decompress
 
 input_array = np.random.uniform(low=-9, high=9, size=(4, 4))
 print(input_array)
