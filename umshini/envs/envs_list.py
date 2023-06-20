@@ -65,7 +65,7 @@ def make_test_env(env_id, seed=None, render_mode=None):
     if env_id in CLASSIC_GAMES:
         import_classic(env_id)
         env = all_environments[env_id]
-        env = env.env(render_mode=render_mode, seed=seed)
+        env = env.env(render_mode=render_mode)
     elif env_id in LLM_GAMES:
         import_llm(env_id)
         env = all_environments[env_id]
@@ -73,7 +73,7 @@ def make_test_env(env_id, seed=None, render_mode=None):
     else:
         raise UnsupportedGameError
 
-    turn_based = env.metadata["is_parallelizable"]
+    turn_based = not env.metadata["is_parallelizable"]
     if turn_based:
         env = turn_based_aec_to_parallel(env)
     else:
