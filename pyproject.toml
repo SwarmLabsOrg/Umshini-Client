@@ -37,7 +37,8 @@ dynamic = ["version"]
 
 [project.optional-dependencies]
 classic = ["pettingzoo[classic]>=1.23.1"]
-llm = ["chatarena[umshini_requirements]>=0.1.12"]
+# llm = ["chatarena[umshini]>=0.1.12.4"] # TODO: add this back once chatarena fixes the issue on their end
+llm = ["chatarena[umshini] @ git+https://github.com/chatarena/chatarena.git@d1680880f74da27ce3eaa6544c8cedf8d40f7a0c"]
 all = ["pettingzoo[classic]>=1.23.1", "chatarena[umshini_requirements]>=0.1.12"]
 
 [tool.setuptools.dynamic]
