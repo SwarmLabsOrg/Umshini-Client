@@ -37,7 +37,7 @@ dynamic = ["version"]
 [project.optional-dependencies]
 classic = ["pettingzoo>=1.23.1", "rlcard==1.0.5", "pygame-ce>=2.2.1"]
 llm = ["chatarena[umshini]>=0.1.12.6"]
-all = ["pettingzoo>=1.23.1", "rlcard==1.0.5", "pygame-ce>=2.2.1", "chatarena[umshini]>=0.1.12"]
+all = ["pettingzoo>=1.23.1", "rlcard==1.0.5", "pygame-ce>=2.2.1", "chatarena[umshini]>=0.1.12.6"]
 
 [tool.setuptools.dynamic]
 version = {attr = "umshini.__version__"}
