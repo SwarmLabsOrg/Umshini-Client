@@ -28,16 +28,16 @@ dependencies = [
     "numpy>=1.19.0",
     "Cython>=0.29.21",
     "pettingzoo>=1.23.1" ,
-    "supersuit==3.8.0",
+    "supersuit>=3.8.1",
     "halo",
     "colorama",
 ]
 dynamic = ["version"]
 
 [project.optional-dependencies]
-classic = ["pettingzoo>=1.23.1", "rlcard==1.0.5", "pygame-ce>=2.2.1"]
+classic = ["pettingzoo[classic]>=1.23.1"]
 llm = ["chatarena[umshini]>=0.1.12.6"]
-all = ["pettingzoo>=1.23.1", "rlcard==1.0.5", "pygame-ce>=2.2.1", "chatarena[umshini]>=0.1.12.6"]
+all = ["pettingzoo[classic]>=1.23.1", "chatarena[umshini]>=0.1.12.6"]
 
 [tool.setuptools.dynamic]
 version = {attr = "umshini.__version__"}
