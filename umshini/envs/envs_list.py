@@ -44,7 +44,7 @@ def import_llm(env_name, render_mode):
             topic="Is AI safety a valid concept to pursue? Is it possible to fully prevent prompt hacking and other security vulnerabilities?",
             round_length=8,
             render_mode=render_mode,
-            save_json=True
+            save_json=True,
         )
         all_environments["content_moderation_v0"] = PettingZooCompatibilityV0(
             env_name="content_moderation",
@@ -58,7 +58,7 @@ def import_llm(env_name, render_mode):
             restricted_action="open the door",
             round_length=8,
             render_mode=render_mode,
-            save_json=True
+            save_json=True,
         )
     except ImportError as err:
         print(
