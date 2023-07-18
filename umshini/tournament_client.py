@@ -18,10 +18,10 @@ def send_json(sock, data):
 
 
 # Receive JSON from socket
-def recv_json(sock, timeout=30):
+def recv_json(sock, timeout=60):
     sock.settimeout(timeout)
     data = sock.recv(2**30)  # Arbitrarily large buffer
-    sock.settimeout(30)
+    sock.settimeout(60)
     return data
 
 
@@ -340,6 +340,9 @@ class TournamentConnection:
         spinner.start()
         try:
             sdata = recv_json(self.main_connection)
+            while sdata.get("queued") is True:
+                print("Waiting for game...")
+                sdata = recv_json(self.main_connection)
         except TimeoutError as err:
             print("Failed to receive game info from server", flush=True)
             raise err
