@@ -23,7 +23,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
 ]
 keywords = ["Reinforcement Learning", "game", "RL", "AI", "gym"]
-requires-python = ">=3.7,<3.10"
+requires-python = ">=3.8,<3.10"
 dependencies = [
     "numpy>=1.19.0",
     "Cython>=0.29.21",
@@ -43,4 +43,5 @@ all = ["pettingzoo[classic]>=1.23.1", "chatarena[umshini]>=0.1.12.7"]
 version = {attr = "umshini.__version__"}
 
 [project.urls]
-Homepage = "https://github.com/umshini/umshini"
+Repository = "https://github.com/Umshini/Umshini-Server/"
+"Bug Report" = "https://github.com/Umshini/Umshini-Server/issues"
