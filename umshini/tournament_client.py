@@ -106,6 +106,8 @@ class NetworkEnv(gym.Env):
         # Unpack observation
         obs = decompress(observation_data["data"][self.agent])
         self.obs = obs
+        info = decompress(observation_data["info"][self.agent])
+        self.info = info
 
         # TODO: Decide what information a live tournament agent should have access to.
         # Probably observation, info, term or trunc, though term or trunc are obvious from the message type
@@ -145,8 +147,10 @@ class NetworkEnv(gym.Env):
 
         # Unpack observation
         obs = decompress(observation_data["data"][self.agent])
+        info = decompress(observation_data["info"][self.agent])
         self.obs = obs
-        return self.obs
+        self.info = info
+        return self.obs, self.info
 
     def close(self):
         self.env.close()

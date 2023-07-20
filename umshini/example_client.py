@@ -77,7 +77,7 @@ class ColosseumTournamentAgent:
             trunc = False
             timestep = 0
             rew = info = None
-            obs = env.reset()
+            obs, info = env.reset()
             while not (term or trunc):
                 if timestep % 100 == 0 and self.debug:
                     print(f"{self.botname}: Timestep {timestep}\n")
