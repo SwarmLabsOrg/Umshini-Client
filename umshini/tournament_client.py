@@ -344,7 +344,6 @@ class TournamentConnection:
         try:
             sdata = recv_json(self.main_connection)
             while sdata.get("queued") is True:
-                print("Waiting for game...")
                 sdata = recv_json(self.main_connection)
         except TimeoutError as err:
             print("Failed to receive game info from server", flush=True)
