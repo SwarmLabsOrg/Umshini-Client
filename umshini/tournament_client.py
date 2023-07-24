@@ -112,7 +112,6 @@ class NetworkEnv(gym.Env):
         # TODO: Decide what information a live tournament agent should have access to.
         # Probably observation, info, term or trunc, though term or trunc are obvious from the message type
         rew = 0
-        info = {}
         term = False
         trunc = False
         self.steps += 1
