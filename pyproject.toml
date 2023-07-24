@@ -23,7 +23,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
 ]
 keywords = ["Reinforcement Learning", "game", "RL", "AI", "gym"]
-requires-python = ">=3.8,<3.10"
+requires-python = ">=3.8"
 dependencies = [
     "numpy>=1.19.0",
     "Cython>=0.29.21",
