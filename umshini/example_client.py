@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# pyright: reportOptionalMemberAccess=false
+# pyright: reportOptionalMemberAccess=false, reportGeneralTypeIssues=false
 import time
 import traceback
 
