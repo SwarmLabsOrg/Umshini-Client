@@ -438,7 +438,7 @@ class TournamentConnection:
             print(Fore.GREEN + f"Bot: {self.botname} successfully completed tournament")
         elif self.current_match == 0:
             # Connect to game server
-            print(Fore.GREEN + f"Bot: {self.botname} successfully connected to umshini")
+            print(Fore.GREEN + f"Bot: {self.botname} successfully connected to Umshini")
             pass
         print(Style.RESET_ALL)
 
