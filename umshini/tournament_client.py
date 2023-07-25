@@ -160,7 +160,7 @@ class NetworkEnv(gym.Env):
 class TestEnv(gym.Env):
     def __init__(self, env_id):
         seed = 1
-        self.env, self.turn_based = make_test_env(env_id, seed=seed)
+        self.env, self.turn_based = make_test_env(env_id, seed=seed, debug=True)
         self.env.reset()
         self.agent = agent = self.env.agents[0]
         self.observation_space = self.env.observation_space(agent)
@@ -233,7 +233,7 @@ class TestEnv(gym.Env):
 class TestAECEnv(gym.Env):
     def __init__(self, env_id):
         seed = 1
-        self.env = make_test_env(env_id, seed=seed)
+        self.env = make_test_env(env_id, seed=seed, debug=True)
         self.env.reset()
         self.agent = agent = self.env.agents[0]
         self.observation_space = self.env.observation_spaces[agent]

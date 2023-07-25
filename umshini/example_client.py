@@ -8,7 +8,7 @@ from colorama import Fore, Style
 from .tournament_client import TournamentConnection
 
 
-class ColosseumTournamentAgent:
+class UmshiniTournamentAgent:
     def __init__(
         self,
         policy,
@@ -51,7 +51,12 @@ class ColosseumTournamentAgent:
                 + f"Bot: {self.botname}'s policy has passed environment verifications"
             )
             print(Style.RESET_ALL)
-        except Exception:
+        except Exception as e:
+            if self.debug:
+                print(
+                    Fore.RED
+                    + f"ERROR: {e}"
+                )
             print(
                 Fore.RED
                 + f"Bot: {self.botname}'s policy has failed verification testing in environment: {self.games}"

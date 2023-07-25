@@ -1,4 +1,17 @@
-from chatarena.environments.umshini import PettingZooCompatibilityV0
+
+import os
+from contextlib import contextmanager, redirect_stderr, redirect_stdout
+
+@contextmanager
+def suppress_stdout_stderr():
+    """A context manager that redirects stdout and stderr to devnull"""
+    with open(os.devnull, 'w') as fnull:
+        with redirect_stderr(fnull) as err, redirect_stdout(fnull) as out:
+            yield (err, out)
+
+with suppress_stdout_stderr():
+    from chatarena.environments.umshini import PettingZooCompatibilityV0
+
 from pettingzoo.utils import aec_to_parallel, turn_based_aec_to_parallel
 
 CLASSIC_GAMES = ["connect_four_v3", "texas_holdem_no_limit_v6", "go_v5"]
@@ -69,7 +82,7 @@ def import_llm(env_name, render_mode):
         raise err
 
 
-def make_test_env(env_id, seed=None, render_mode=None):
+def make_test_env(env_id, seed=None, render_mode=None, debug=False):
     if env_id in CLASSIC_GAMES:
         import_classic(env_id)
         env = all_environments[env_id]
@@ -77,6 +90,9 @@ def make_test_env(env_id, seed=None, render_mode=None):
     elif env_id in LLM_GAMES:
         import_llm(env_id, render_mode)
         env = all_environments[env_id]
+        if debug:
+            env_name = env_id.split("_")[0] # debate_v0 -> debate
+            env = PettingZooCompatibilityV0(env_name=env_name, topic="Test", moderation_policy="Test", restricted_action="Test", render_mode=render_mode, disable_judging=debug)
     else:
         raise UnsupportedGameError
 

@@ -2,12 +2,12 @@
 
 from colorama import Fore, Style
 
-from .example_client import ColosseumTournamentAgent
+from .example_client import UmshiniTournamentAgent
 from .tournament_client import TestEnv
 
 
 def create_and_run(botname, user_key):
-    agent = ColosseumTournamentAgent(maximum_rounds=100)
+    agent = UmshiniTournamentAgent(maximum_rounds=100)
     agent.connect(botname, user_key)
     agent.run()
 
@@ -21,7 +21,7 @@ def connect(environment, botname, user_key, user_policy, debug=False, testing=Fa
     Passed function returns action
     """
     if testing:
-        agent = ColosseumTournamentAgent(
+        agent = UmshiniTournamentAgent(
             policy=user_policy,
             games=[environment],
             maximum_rounds=100,
@@ -30,7 +30,7 @@ def connect(environment, botname, user_key, user_policy, debug=False, testing=Fa
             debug=debug,
         )
     else:
-        agent = ColosseumTournamentAgent(
+        agent = UmshiniTournamentAgent(
             policy=user_policy,
             games=[environment],
             maximum_rounds=100,
