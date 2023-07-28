@@ -2,8 +2,8 @@
 
 from colorama import Fore, Style
 
-from .example_client import UmshiniTournamentAgent
-from .tournament_client import TestEnv
+from umshini.example_client import UmshiniTournamentAgent
+from umshini.tournament_client import TestEnv
 
 
 def create_and_run(botname, user_key):
