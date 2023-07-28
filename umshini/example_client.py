@@ -5,7 +5,8 @@ import traceback
 
 from colorama import Fore, Style
 
-from .tournament_client import TournamentConnection
+from umshini.envs import ALL_ENVIRONMENTS
+from umshini.tournament_client import TournamentConnection
 
 
 class UmshiniTournamentAgent:
@@ -35,6 +36,17 @@ class UmshiniTournamentAgent:
     def connect(self, botname, key):
         self.botname = botname
         self.key = key
+
+
+        # Environment verification
+        if any(game not in ALL_ENVIRONMENTS for game in self.games):
+            print(
+                Fore.RED
+                + f"Environment name invalid: {self.games}. Available environments: {ALL_ENVIRONMENTS}."
+            )
+            print(Style.RESET_ALL)
+            quit()
+
         try:
             # TODO: Use policy for test
             # Test that policy runs without errors in local environments
