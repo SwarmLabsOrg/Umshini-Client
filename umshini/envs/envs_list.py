@@ -1,13 +1,14 @@
-
 import os
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 
+
 @contextmanager
 def suppress_stdout_stderr():
-    """A context manager that redirects stdout and stderr to devnull"""
-    with open(os.devnull, 'w') as fnull:
+    """A context manager that redirects stdout and stderr to devnull."""
+    with open(os.devnull, "w") as fnull:
         with redirect_stderr(fnull) as err, redirect_stdout(fnull) as out:
             yield (err, out)
+
 
 with suppress_stdout_stderr():
     from chatarena.environments.umshini import PettingZooCompatibilityV0
@@ -96,6 +97,7 @@ def make_test_env(env_id, seed=None, render_mode=None, debug=False):
 
     return env, turn_based
 
+
 def make_env(env_id, render_mode=None, debug=False):
     if env_id in CLASSIC_GAMES:
         import_classic(env_id)
@@ -105,9 +107,17 @@ def make_env(env_id, render_mode=None, debug=False):
         import_llm(env_id, render_mode)
         env = all_environments[env_id]
         if debug:
-            env = PettingZooCompatibilityV0(env_name=env_id, topic="Test", moderation_policy="Test",
-                                            restricted_action="Test", render_mode=render_mode, disable_judging=debug)
+            env = PettingZooCompatibilityV0(
+                env_name=env_id,
+                topic="Test",
+                moderation_policy="Test",
+                restricted_action="Test",
+                render_mode=render_mode,
+                disable_judging=debug,
+            )
     else:
-        raise UnsupportedGameError(f"Environment name invalid: {env_id}. Available environments: {ALL_ENVIRONMENTS}.")
+        raise UnsupportedGameError(
+            f"Environment name invalid: {env_id}. Available environments: {ALL_ENVIRONMENTS}."
+        )
 
     return env

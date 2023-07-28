@@ -37,7 +37,6 @@ class UmshiniTournamentAgent:
         self.botname = botname
         self.key = key
 
-
         # Environment verification
         if any(game not in ALL_ENVIRONMENTS for game in self.games):
             print(
@@ -65,10 +64,7 @@ class UmshiniTournamentAgent:
             print(Style.RESET_ALL)
         except Exception as e:
             if self.debug:
-                print(
-                    Fore.RED
-                    + f"ERROR: {e}"
-                )
+                print(Fore.RED + f"ERROR: {e}")
             print(
                 Fore.RED
                 + f"Bot: {self.botname}'s policy has failed verification testing in environment: {self.games}"
