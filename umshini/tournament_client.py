@@ -348,6 +348,7 @@ class TournamentConnection:
         try:
             sdata = recv_json(self.main_connection)
             if sdata.get("type") == "default":
+                spinner.stop()
                 print(Fore.GREEN + f"Opponent didn't connect, win by default.")
                 return None, {"default": True}
             while sdata.get("queued") is True:
