@@ -18,10 +18,10 @@ def send_json(sock, data):
 
 
 # Receive JSON from socket
-def recv_json(sock, timeout=60):
+def recv_json(sock, timeout=180):
     sock.settimeout(timeout)
     data = sock.recv(2**30)  # Arbitrarily large buffer
-    sock.settimeout(60)
+    sock.settimeout(180)
     return data
 
 
@@ -38,6 +38,10 @@ class NetworkEnv(gym.Env):
         send_json(self.game_connection, {"username": username, "token": token})
         self.game_data = recv_json(self.game_connection)
         self.terminated = self.game_data["type"] == "terminate"
+        self.default = self.game_data["type"] == "default"
+        if self.default:
+            print(Fore.GREEN + f"Opponent didn't connect, win by default.")
+            return
 
         # Create env for initial action and observation spaces
         self.env, self.turn_based = make_test_env(env_id, seed=seed)
@@ -318,7 +322,7 @@ class TournamentConnection:
     def _connect_game_server(self):
         # If tournament is over, return no environment
         if self.tournament_completed:
-            return None
+            return None, {}
 
         # Receive game server info from matchmaker
         spinner = Halo(
@@ -343,6 +347,9 @@ class TournamentConnection:
         spinner.start()
         try:
             sdata = recv_json(self.main_connection)
+            if sdata.get("type") == "default":
+                print(Fore.GREEN + f"Opponent didn't connect, win by default.")
+                return None, {"default": True}
             while sdata.get("queued") is True:
                 sdata = recv_json(self.main_connection)
         except TimeoutError as err:
@@ -359,7 +366,7 @@ class TournamentConnection:
             sdata["username"],
             sdata["token"],
         )
-        return env
+        return env, {}
 
     # Start connection to matchmaking server
     def _setup_main_connection(self):
@@ -443,8 +450,8 @@ class TournamentConnection:
         print(Style.RESET_ALL)
 
         # Connect to game server
-        game_env = self._connect_game_server()
+        game_env, info = self._connect_game_server()
         self.main_connection.close()
         self.main_connection = None
         self.current_match = 1
-        return game_env
+        return game_env, info
