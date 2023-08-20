@@ -330,7 +330,7 @@ class TournamentConnection:
         )
         spinner.start()
         try:
-            ready_data = recv_json(self.main_connection, timeout=60)
+            ready_data = recv_json(self.main_connection, timeout=180)
         except TimeoutError as err:
             print("Not enough players to start tournament.", flush=True)
             raise err
@@ -338,6 +338,20 @@ class TournamentConnection:
 
         if self.debug:
             print(ready_data)
+
+        if ready_data.get("type") == "reconnect":
+            # shortcut to reconnect
+            sdata = ready_data
+            env = NetworkEnv(
+                sdata["env"],
+                sdata["seed"],
+                self.ip_address,
+                sdata["port"],
+                sdata["username"],
+                sdata["token"],
+            )
+            return env, {}
+
         send_json(self.main_connection, {"type": "ready"})
 
         # Receive game server info from matchmaker
