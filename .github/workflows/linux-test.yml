@@ -24,6 +24,11 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Install Umshini-Server using private key
+        run: |
+          eval `ssh-agent -s`
+          ssh-add - <<< '${{ secrets.PRIVATE_SSH_KEY }}'
+          pip install git+ssh://git@github.com:Umshini/Umshini-Server.git
       - name: Install dependencies
         run: |
           sudo apt-get install python3-opengl xvfb
