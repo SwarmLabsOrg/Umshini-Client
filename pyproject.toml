@@ -44,3 +44,6 @@ version = {attr = "umshini.__version__"}
 [project.urls]
 Repository = "https://github.com/Umshini/Umshini-Server/"
 "Bug Report" = "https://github.com/Umshini/Umshini-Server/issues"
+
+[tool.pytest.ini_options]
+addopts = [ "--ignore-glob=*/__init__.py" ]

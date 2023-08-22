@@ -5,7 +5,7 @@ import traceback
 
 from colorama import Fore, Style
 
-from umshini.envs import ALL_ENVIRONMENTS
+from umshini import ALL_ENVIRONMENTS
 from umshini.tournament_client import TournamentConnection
 
 
