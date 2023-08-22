@@ -68,7 +68,6 @@ jobs:
         name: coverage${{ matrix.group }}
         path: .coverage
 
-
   coverage:
     needs: test
     runs-on: ubuntu-latest
