@@ -28,6 +28,7 @@ jobs:
         run: |
           sudo apt-get install python3-opengl xvfb
           pip install -e .[all]
+          pip install pytest
       - name: Source distribution test
         run: |
           python -m pip install --upgrade build
