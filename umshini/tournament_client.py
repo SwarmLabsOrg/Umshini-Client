@@ -40,7 +40,7 @@ class NetworkEnv(gym.Env):
         self.terminated = self.game_data["type"] == "terminate"
         self.default = self.game_data["type"] == "default"
         if self.default:
-            print(Fore.GREEN + f"Opponent didn't connect, win by default.")
+            print(Fore.GREEN + "Opponent didn't connect, win by default.")
             return
 
         # Create env for initial action and observation spaces
@@ -363,7 +363,7 @@ class TournamentConnection:
             sdata = recv_json(self.main_connection)
             if sdata.get("type") == "default":
                 spinner.stop()
-                print(Fore.GREEN + f"Opponent didn't connect, win by default.")
+                print(Fore.GREEN + "Opponent didn't connect, win by default.")
                 return None, {"default": True}
             while sdata.get("queued") is True:
                 sdata = recv_json(self.main_connection)
