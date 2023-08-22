@@ -1,13 +1,11 @@
 # pyright: reportGeneralTypeIssues=false
 from __future__ import annotations
 
-from typing import Optional
-
 from colorama import Fore, Style
 
 from umshini.example_client import UmshiniTournamentAgent
-from umshini.tournament_client import TestEnv
 from umshini.examples.example_agent import DummyAgent
+from umshini.tournament_client import TestEnv
 
 
 def create_and_run(botname, user_key):
@@ -47,7 +45,8 @@ def connect(environment, botname, user_key, user_policy, debug=False, testing=Fa
     agent.run()
 
 
-def test(env_id: str, user_policy: Optional[callable] = None):
+# noinspection PyUnresolvedReferences
+def test(env_id: str, user_policy: callable | None = None):
     if user_policy is None:
         user_policy = DummyAgent(env_id).pol
     test_env = TestEnv(env_id)
@@ -60,8 +59,7 @@ def test(env_id: str, user_policy: Optional[callable] = None):
 
             if term or trunc:
                 print(
-                    Fore.GREEN
-                    + f"Policy has passed verification testing in {env_id}"
+                    Fore.GREEN + f"Policy has passed verification testing in {env_id}"
                 )
                 print(Style.RESET_ALL)
                 break

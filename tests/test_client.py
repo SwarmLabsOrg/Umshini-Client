@@ -1,5 +1,3 @@
-from multiprocessing import Pool
-
 import numpy as np
 import pytest
 
