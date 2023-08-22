@@ -1,4 +1,4 @@
-# pyright: reportGeneralTypeIssues=false
+# pyright: reportGeneralTypeIssues=false, reportOptionalCall=false
 from __future__ import annotations
 
 from colorama import Fore, Style
@@ -45,7 +45,6 @@ def connect(environment, botname, user_key, user_policy, debug=False, testing=Fa
     agent.run()
 
 
-# noinspection PyUnresolvedReferences
 def test(env_id: str, user_policy: callable | None = None):
     if user_policy is None:
         user_policy = DummyAgent(env_id).pol
