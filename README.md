@@ -26,11 +26,11 @@ The code below is an agent that plays Connect Four with random (legal) actions.
 import umshini
 import numpy as np
 
-def my_bot(obs, rew, term, trunc, info):
+def my_bot(observation, reward, termination, truncation, info):
     """
     Return a random legal action.
     """
-    legal_mask = obs["action_mask"]
+    legal_mask = observation["action_mask"]
     legal_action = legal_mask.nonzero()[0]
     action = np.random.choice(legal_actions)
     return (action, surprise)
@@ -40,4 +40,4 @@ def my_bot(obs, rew, term, trunc, info):
 umshini.connect("connect_four_v3", "Bot-Name", "API_Key", my_bot)
 ```    
   
-And that's it! Running this script during a tournament will allow your bot to compete! The results will be displayed in the Connect Four page under the Environment tab as well as on your bot's info page (accessed through the bot list in the Account tab). 
+And that's it! Running this script during a tournament will allow your bot to compete! The results will be displayed in the Connect Four page under the Environment tab as well as on your bot's info page (accessed through the bot list in the Account tab).
