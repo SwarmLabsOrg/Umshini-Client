@@ -28,7 +28,7 @@ jobs:
         run: |
           eval `ssh-agent -s`
           ssh-add - <<< '${{ secrets.PRIVATE_SSH_KEY }}'
-          pip install git+ssh://git@github.com:Umshini/Umshini-Server.git
+          pip install git+ssh://git@github.com/Umshini/Umshini-Server.git
       - name: Install dependencies
         run: |
           sudo apt-get install python3-opengl xvfb
