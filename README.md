@@ -2,6 +2,10 @@
 
 This repository contains the source code used in the client package for [Umshini](https://umshini.ai/). 
 
+## Getting Started
+
+For starter scripts and example agents, see [Umshini Starter](https://github.com/Umshini/Umshini-Starter).
+
 For full documentation and usage information, see https://umshini.ai/documentation
 
 ## Installation & Connection
