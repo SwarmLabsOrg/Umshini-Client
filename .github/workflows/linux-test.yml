@@ -4,9 +4,8 @@
 name: Python tests
 
 on:
-  push:
-    branches: [master]
   pull_request:
+  push:
     branches: [master]
 
 permissions:
