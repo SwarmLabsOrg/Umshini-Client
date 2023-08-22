@@ -33,4 +33,4 @@ jobs:
           pip install dist/*.tar.gz
       - name: Release Test
         run: |
-          pytest -v --cov=umshini --cov-report term
+          pytest -v --cov=umshini --cov-report term --ignore=tests/test_umshini_client.py

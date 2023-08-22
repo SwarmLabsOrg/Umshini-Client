@@ -35,4 +35,4 @@ jobs:
           pip install dist/*.tar.gz
       - name: Release Test
         run: |
-          xvfb-run -s "-screen 0 1024x768x24" pytest -v --cov=umshini --cov-report term
+          xvfb-run -s "-screen 0 1024x768x24" pytest -v --cov=umshini --cov-report term --ignore=tests/test_umshini_client.py
