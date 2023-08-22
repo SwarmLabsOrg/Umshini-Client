@@ -5,7 +5,7 @@ import traceback
 
 from colorama import Fore, Style
 
-from umshini.envs import ALL_ENVIRONMENTS
+from umshini import ALL_ENVIRONMENTS
 from umshini.tournament_client import TournamentConnection
 
 
@@ -86,8 +86,10 @@ class UmshiniTournamentAgent:
             quit()
         current_round = 1
         while env is not None or match_info.get("default") is True:
-            if match_info.get("default") is True or (hasattr(env, "default") and env.default):
-                print(Fore.YELLOW + f"Opponent Failed to Connect.")
+            if match_info.get("default") is True or (
+                hasattr(env, "default") and env.default
+            ):
+                print(Fore.YELLOW + "Opponent Failed to Connect.")
                 print(Fore.GREEN + f"Round {current_round} complete")
                 print(Style.RESET_ALL)
                 if current_round > self.maximum_rounds:

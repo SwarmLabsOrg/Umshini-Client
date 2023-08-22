@@ -1,8 +1,10 @@
-# pyright: reportGeneralTypeIssues=false
+# pyright: reportGeneralTypeIssues=false, reportOptionalCall=false
+from __future__ import annotations
 
 from colorama import Fore, Style
 
 from umshini.example_client import UmshiniTournamentAgent
+from umshini.examples.example_agent import DummyAgent
 from umshini.tournament_client import TestEnv
 
 
@@ -43,8 +45,10 @@ def connect(environment, botname, user_key, user_policy, debug=False, testing=Fa
     agent.run()
 
 
-def test(environment, user_policy):
-    test_env = TestEnv(environment)
+def test(env_id: str, user_policy: callable | None = None):
+    if user_policy is None:
+        user_policy = DummyAgent(env_id).pol
+    test_env = TestEnv(env_id)
     term = trunc = False
     obs = rew = info = None
     for _ in range(100):
@@ -54,8 +58,7 @@ def test(environment, user_policy):
 
             if term or trunc:
                 print(
-                    Fore.GREEN
-                    + f"Policy has passed verification testing in {environment}"
+                    Fore.GREEN + f"Policy has passed verification testing in {env_id}"
                 )
                 print(Style.RESET_ALL)
                 break

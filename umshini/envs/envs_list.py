@@ -1,6 +1,8 @@
 import os
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 
+from pettingzoo.utils import aec_to_parallel, turn_based_aec_to_parallel
+
 
 @contextmanager
 def suppress_stdout_stderr():
@@ -13,7 +15,6 @@ def suppress_stdout_stderr():
 with suppress_stdout_stderr():
     from chatarena.environments.umshini import PettingZooCompatibilityV0
 
-from pettingzoo.utils import aec_to_parallel, turn_based_aec_to_parallel
 
 CLASSIC_GAMES = ["connect_four_v3", "texas_holdem_no_limit_v6", "go_v5"]
 LLM_GAMES = ["debate", "deception", "content_moderation"]

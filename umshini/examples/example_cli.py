@@ -1,6 +1,6 @@
 import argparse
 
-from example_policy import DummyAgent
+from example_agent import DummyAgent
 
 import umshini
 
@@ -8,7 +8,7 @@ import umshini
     This is a simple example of connecting an agent to the Umshini server.
 
     The agent is a simple policy function that chooses a random action.
-    For more information on how to write a policy function, see example_policy.py
+    For more information on how to write a policy function, see example_agent.py
 
     This example script takes 3 command line arguments:
         1. The name of the environment to connect to
