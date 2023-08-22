@@ -27,16 +27,16 @@ requires-python = ">=3.8"
 dependencies = [
     "numpy>=1.19.0",
     "Cython>=0.29.21",
-    "pettingzoo>=1.23.1" ,
+    "pettingzoo>=1.24.0" ,
     "halo",
     "colorama",
 ]
 dynamic = ["version"]
 
 [project.optional-dependencies]
-classic = ["pettingzoo[classic]>=1.23.1"]
+classic = ["pettingzoo[classic]>=1.24.0"]
 llm = ["chatarena[umshini]>=0.1.12.10"]
-all = ["pettingzoo[classic]>=1.23.1", "chatarena[umshini]>=0.1.12.10"]
+all = ["pettingzoo[classic]>=1.24.0", "chatarena[umshini]>=0.1.12.10"]
 
 [tool.setuptools.dynamic]
 version = {attr = "umshini.__version__"}
