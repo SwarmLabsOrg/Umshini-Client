@@ -74,6 +74,10 @@ jobs:
       with:
         name: coverage-integration-${{ matrix.env_name }}
         path: .coverage
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v3
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   linux-test:
     runs-on: ubuntu-latest
@@ -104,6 +108,10 @@ jobs:
         with:
           name: coverage-linux-test-${{ matrix.python-version }}
           path: .coverage
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   macos-test:
     runs-on: macos-11
@@ -132,6 +140,10 @@ jobs:
         with:
           name: coverage-macos-test-${{ matrix.python-version }}
           path: .coverage
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   coverage:
     needs: [integration-test, linux-test, macos-test]
@@ -161,3 +173,4 @@ jobs:
           coverage combine coverage*/.coverage*
           coverage report
       - uses: codecov/codecov-action@v1
+
