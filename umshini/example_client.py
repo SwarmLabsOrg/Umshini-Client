@@ -4,6 +4,7 @@ import time
 import traceback
 
 from colorama import Fore, Style
+from pettingzoo import ParallelEnv
 
 from umshini import ALL_ENVIRONMENTS
 from umshini.tournament_client import TournamentConnection
@@ -101,6 +102,7 @@ class UmshiniTournamentAgent:
             trunc = False
             timestep = 0
             rew = info = None
+            assert isinstance(self.env, ParallelEnv), "Environment should be parallel"
             obs, info = env.reset()
             while not (term or trunc):
                 if timestep % 100 == 0 and self.debug:
