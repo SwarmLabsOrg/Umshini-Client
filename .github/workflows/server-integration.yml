@@ -22,7 +22,7 @@ env:
   DEPLOYMENT_NAME: chatgpt-16k
 
 jobs:
-  build:
+  integration-test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -72,7 +72,7 @@ jobs:
     - name: Upload coverage
       uses: actions/upload-artifact@v2
       with:
-        name: coverage_${{ env.JOB_NAME }}_${{ matrix.group }}
+        name: coverage-integration-${{ matrix.env_name }}
         path: .coverage
 
   linux-test:
@@ -102,7 +102,7 @@ jobs:
       - name: Upload coverage
         uses: actions/upload-artifact@v2
         with:
-          name: coverage_${{ env.JOB_NAME }}_${{ matrix.group }}
+          name: coverage-linux-test-${{ matrix.python-version }}
           path: .coverage
 
   macos-test:
@@ -130,11 +130,11 @@ jobs:
       - name: Upload coverage
         uses: actions/upload-artifact@v2
         with:
-          name: coverage_${{ env.JOB_NAME }}_${{ matrix.group }}
+          name: coverage-macos-test-${{ matrix.python-version }}
           path: .coverage
 
   coverage:
-    needs: [build, linux-test, macos-test]
+    needs: [integration-test, linux-test, macos-test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
