@@ -72,12 +72,69 @@ jobs:
     - name: Upload coverage
       uses: actions/upload-artifact@v2
       with:
-        name: coverage${{ matrix.group }}
+        name: coverage_${{ env.JOB_NAME }}_${{ matrix.group }}
         path: .coverage
 
+  linux-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11']
+    steps:
+      - uses: actions/checkout@v3
+      # - uses: openrndr/setup-opengl@v1.1
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          sudo apt-get install python3-opengl xvfb
+          pip install -e '.[all,testing]'
+      - name: Source distribution test
+        run: |
+          python -m pip install --upgrade build
+          python -m build --sdist
+          pip install dist/*.tar.gz
+      - name: Release Test
+        run: |
+          xvfb-run -s "-screen 0 1024x768x24" pytest -v --cov=umshini --cov-report term --ignore=tests/test_umshini_client.py
+      - name: Upload coverage
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage_${{ env.JOB_NAME }}_${{ matrix.group }}
+          path: .coverage
+
+  macos-test:
+    runs-on: macos-11
+    strategy:
+      matrix:
+        python-version: [ '3.8', '3.9', '3.10', '3.11' ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          pip install -e '.[all,testing]'
+      - name: Source distribution test
+        run: |
+          python -m pip install --upgrade build
+          python -m build --sdist
+          pip install dist/*.tar.gz
+      - name: Release Test
+        run: |
+          pytest -v --cov=umshini --cov-report term --ignore=tests/test_umshini_client.py
+      - name: Upload coverage
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage_${{ env.JOB_NAME }}_${{ matrix.group }}
+          path: .coverage
 
   coverage:
-    needs: build
+    needs: [build, linux-test, macos-test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -91,6 +148,8 @@ jobs:
       - name: Download all artifacts
         # Downloads coverage1, coverage2, etc.
         uses: actions/download-artifact@v2
+      - name: Display structure of downloaded files
+        run: ls -R
       - name: Run coverage
         run: |
           coverage combine coverage*/.coverage*
