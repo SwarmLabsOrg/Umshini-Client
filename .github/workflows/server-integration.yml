@@ -173,4 +173,3 @@ jobs:
           coverage combine coverage*/.coverage*
           coverage report
       - uses: codecov/codecov-action@v1
-
