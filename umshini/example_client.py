@@ -102,7 +102,7 @@ class UmshiniTournamentAgent:
             trunc = False
             timestep = 0
             rew = info = None
-            assert isinstance(self.env, ParallelEnv), "Environment should be parallel"
+            assert isinstance(env, ParallelEnv), "Environment should be parallel"
             obs, info = env.reset()
             while not (term or trunc):
                 if timestep % 100 == 0 and self.debug:
