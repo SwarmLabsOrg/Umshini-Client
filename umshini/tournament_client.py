@@ -40,7 +40,7 @@ class NetworkEnv(gym.Env):
         self.terminated = self.game_data["type"] == "terminate"
         self.default = self.game_data["type"] == "default"
         if self.default:
-            print(Fore.GREEN + f"Opponent didn't connect, win by default.")
+            print(Fore.GREEN + "Opponent didn't connect, win by default.")
             return
 
         # Create env for initial action and observation spaces
@@ -123,10 +123,9 @@ class NetworkEnv(gym.Env):
         return obs, rew, term, trunc, info
 
     def render(self, mode="human"):
-        # TODO: Figure out appropriate behavior here. Probably rendering live on the website.
         return self.env.render(mode=mode)
 
-    def reset(self):
+    def reset(self, **kwargs):
         self.steps = 0
         self.spinner = Halo(
             text=f"Playing game (step: {self.steps})",
@@ -174,7 +173,7 @@ class TestEnv(gym.Env):
         self.was_trunc = False
         self.obss = None
 
-    def reset(self):
+    def reset(self, **kwargs):
         self.num_steps = 0
         self.was_term = False
         self.was_trunc = False
@@ -228,48 +227,6 @@ class TestEnv(gym.Env):
             return self.step(action)
         else:
             return obs, rew, term, trunc, info
-
-    def render(self, mode="human"):
-        return
-
-
-# Local environment used to test if agent works before connecting to network env
-class TestAECEnv(gym.Env):
-    def __init__(self, env_id):
-        seed = 1
-        self.env = make_test_env(env_id, seed=seed, debug=True)
-        self.env.reset()
-        self.agent = agent = self.env.agents[0]
-        self.observation_space = self.env.observation_spaces[agent]
-        self.action_space = self.env.action_spaces[agent]
-        self.num_steps = 0
-        self.was_term = False
-        self.was_trunc = False
-
-    def reset(self):
-        self.num_steps = 0
-        self.was_term = False
-        self.was_trunc = False
-        self.env.reset()
-
-    def step(self, action):
-        assert (
-            not self.was_term and not self.was_trunc
-        ), "stepped after term or trunc, should terminate loop"
-        # Set random actions for all other agents
-        self.env.step(action)
-        if self.num_steps > 50:
-            trunc = True
-            term = True
-        else:
-            obs, rew, term, trunc, info = self.env.last()
-
-        self.was_term = term
-        self.was_trunc = trunc
-        self.num_steps += 1
-
-    def last(self):
-        return self.env.last()
 
     def render(self, mode="human"):
         return
@@ -363,7 +320,7 @@ class TournamentConnection:
             sdata = recv_json(self.main_connection)
             if sdata.get("type") == "default":
                 spinner.stop()
-                print(Fore.GREEN + f"Opponent didn't connect, win by default.")
+                print(Fore.GREEN + "Opponent didn't connect, win by default.")
                 return None, {"default": True}
             while sdata.get("queued") is True:
                 sdata = recv_json(self.main_connection)

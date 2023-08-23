@@ -1,7 +1,7 @@
 # pyproject.toml
 
 include = [
-    "Umshini/**",
+    "umshini/**",
 ]
 
 [build-system]
@@ -37,6 +37,7 @@ dynamic = ["version"]
 classic = ["pettingzoo[classic]>=1.24.0"]
 llm = ["chatarena[umshini]>=0.1.12.10"]
 all = ["pettingzoo[classic]>=1.24.0", "chatarena[umshini]>=0.1.12.10"]
+testing = [ "pytest", "pytest-cov" ]
 
 [tool.setuptools.dynamic]
 version = {attr = "umshini.__version__"}
@@ -44,3 +45,9 @@ version = {attr = "umshini.__version__"}
 [project.urls]
 Repository = "https://github.com/Umshini/Umshini-Server/"
 "Bug Report" = "https://github.com/Umshini/Umshini-Server/issues"
+
+[tool.pytest.ini_options]
+addopts = [ "--cov=umshini", "--cov-report=term", "--ignore-glob=*/__init__.py"]
+
+[tool.coverage.run]
+omit = [ "umshini/examples/connect_four.py", "umshini/examples/example_cli.py" ]
