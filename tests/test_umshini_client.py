@@ -32,7 +32,7 @@ def test_umshini_client(env_name):
     env_to_id = {
         "go_v5": 1,
         "connect_four_v3": 2,
-        "texas_holdem_no_limit_v6": 3,
+        "texas_holdem_v4": 3,
         "debate": 4,
         "content_moderation": 5,
         "deception": 6,
