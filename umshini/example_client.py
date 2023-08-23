@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-# pyright: reportOptionalMemberAccess=false, reportGeneralTypeIssues=false
+# pyright: reportOptionalMemberAccess=false, reportGeneralTypeIssues=false, reportUnboundVariable=false
 import time
 import traceback
 
 from colorama import Fore, Style
-from pettingzoo import ParallelEnv
+from pettingzoo import AECEnv, ParallelEnv
 
 from umshini import ALL_ENVIRONMENTS
 from umshini.tournament_client import TournamentConnection
@@ -102,8 +102,20 @@ class UmshiniTournamentAgent:
             trunc = False
             timestep = 0
             rew = info = None
-            assert isinstance(env, ParallelEnv), "Environment should be parallel"
-            obs, info = env.reset()
+            if isinstance(env, ParallelEnv):
+                if self.debug:
+                    print("Environment is parallel")
+                obs, info = env.reset()
+            elif isinstance(env, AECEnv):
+                if self.debug:
+                    print("Environment is AEC")
+                obs, rew, term, trunc, info = env.last()
+            else:
+                if self.debug:
+                    print(type(env))
+                    print(env)
+                    print(type(env.unwrapped))
+                    raise AssertionError("Environment is neither parallel or aec")
             while not (term or trunc):
                 if timestep % 100 == 0 and self.debug:
                     print(f"{self.botname}: Timestep {timestep}\n")
