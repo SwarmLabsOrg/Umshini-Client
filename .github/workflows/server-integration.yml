@@ -15,6 +15,11 @@ env:
   DEBUG: "TRUE"
   SECRET_KEY: BANANA
   SENDGRID_API_KEY: BANANA
+  OPENAI_API_KEY: ${{ secrets.openai_api_key }}
+  OPENAI_API_TYPE: azure
+  OPENAI_API_BASE: https://testy-test.openai.azure.com/
+  OPENAI_API_VERSION: 2023-06-01-preview
+  DEPLOYMENT_NAME: chatgpt-16k
 
 jobs:
   build:
