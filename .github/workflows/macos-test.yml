@@ -34,3 +34,8 @@ jobs:
       - name: Release Test
         run: |
           pytest -v --cov=umshini --cov-report term --ignore=tests/test_umshini_client.py
+      - name: Upload coverage
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage${{ matrix.group }}
+          path: .coverage
