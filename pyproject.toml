@@ -47,7 +47,7 @@ Repository = "https://github.com/Umshini/Umshini-Server/"
 "Bug Report" = "https://github.com/Umshini/Umshini-Server/issues"
 
 [tool.pytest.ini_options]
-addopts = [ "--cov=umshini", "--cov-report term-missing", "--ignore-glob=*/__init__.py"]
+addopts = [ "--cov=umshini", "--cov-report=term-missing", "--ignore-glob=*/__init__.py"]
 
 [tool.coverage.run]
 omit = [ "umshini/examples/connect_four.py", "umshini/examples/example_cli.py" ]
