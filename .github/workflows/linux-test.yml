@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11']
+        python-version: [ '3.8', '3.9', '3.10', '3.11' ]
     steps:
       - uses: actions/checkout@v3
       # - uses: openrndr/setup-opengl@v1.1
@@ -35,4 +35,13 @@ jobs:
           pip install dist/*.tar.gz
       - name: Release Test
         run: |
-          xvfb-run -s "-screen 0 1024x768x24" pytest -v --cov=umshini --cov-report term --ignore=tests/test_umshini_client.py
+          xvfb-run -s "-screen 0 1024x768x24" pytest -v --cov=umshini --cov-report term --ignore=tests/test_umshini_client.py --cache-clear
+      - name: Upload coverage
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-linux-test-${{ matrix.python-version }}
+          path: .coverage
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

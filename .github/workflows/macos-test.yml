@@ -33,4 +33,13 @@ jobs:
           pip install dist/*.tar.gz
       - name: Release Test
         run: |
-          pytest -v --cov=umshini --cov-report term --ignore=tests/test_umshini_client.py
+          pytest -v --cov=umshini --cov-report term --ignore=tests/test_umshini_client.py --cache-clear
+      - name: Upload coverage
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage-macos-test-${{ matrix.python-version }}
+          path: .coverage
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
