@@ -61,7 +61,6 @@ jobs:
         python -m umshini_server.server.standalone_game_server &
         python -m umshini_server.server.tournament_matchmaker -e ${{ matrix.env_name }} -p 4 &
         pytest -v tests/test_umshini_client.py --env_name ${{ matrix.env_name }}
-        pytest -v
     - name: Upload coverage
       uses: actions/upload-artifact@v2
       with:
