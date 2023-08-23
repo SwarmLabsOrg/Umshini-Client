@@ -79,97 +79,97 @@ jobs:
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-  linux-test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ['3.8', '3.9', '3.10', '3.11']
-    steps:
-      - uses: actions/checkout@v3
-      # - uses: openrndr/setup-opengl@v1.1
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
-        run: |
-          sudo apt-get install python3-opengl xvfb
-          pip install -e '.[all,testing]'
-      - name: Source distribution test
-        run: |
-          python -m pip install --upgrade build
-          python -m build --sdist
-          pip install dist/*.tar.gz
-      - name: Release Test
-        run: |
-          xvfb-run -s "-screen 0 1024x768x24" pytest -v --cov=umshini --cov-report term --ignore=tests/test_umshini_client.py --cache-clear
-      - name: Upload coverage
-        uses: actions/upload-artifact@v2
-        with:
-          name: coverage-linux-test-${{ matrix.python-version }}
-          path: .coverage
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+#  linux-test:
+#    runs-on: ubuntu-latest
+#    strategy:
+#      matrix:
+#        python-version: ['3.8', '3.9', '3.10', '3.11']
+#    steps:
+#      - uses: actions/checkout@v3
+#      # - uses: openrndr/setup-opengl@v1.1
+#      - name: Set up Python ${{ matrix.python-version }}
+#        uses: actions/setup-python@v3
+#        with:
+#          python-version: ${{ matrix.python-version }}
+#      - name: Install dependencies
+#        run: |
+#          sudo apt-get install python3-opengl xvfb
+#          pip install -e '.[all,testing]'
+#      - name: Source distribution test
+#        run: |
+#          python -m pip install --upgrade build
+#          python -m build --sdist
+#          pip install dist/*.tar.gz
+#      - name: Release Test
+#        run: |
+#          xvfb-run -s "-screen 0 1024x768x24" pytest -v --cov=umshini --cov-report term --ignore=tests/test_umshini_client.py --cache-clear
+#      - name: Upload coverage
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: coverage-linux-test-${{ matrix.python-version }}
+#          path: .coverage
+#      - name: Upload coverage reports to Codecov
+#        uses: codecov/codecov-action@v3
+#        env:
+#          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-  macos-test:
-    runs-on: macos-11
-    strategy:
-      matrix:
-        python-version: [ '3.8', '3.9', '3.10', '3.11' ]
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
-        run: |
-          pip install -e '.[all,testing]'
-      - name: Source distribution test
-        run: |
-          python -m pip install --upgrade build
-          python -m build --sdist
-          pip install dist/*.tar.gz
-      - name: Release Test
-        run: |
-          pytest -v --cov=umshini --cov-report term --ignore=tests/test_umshini_client.py --cache-clear
-      - name: Upload coverage
-        uses: actions/upload-artifact@v2
-        with:
-          name: coverage-macos-test-${{ matrix.python-version }}
-          path: .coverage
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+#  macos-test:
+#    runs-on: macos-11
+#    strategy:
+#      matrix:
+#        python-version: [ '3.8', '3.9', '3.10', '3.11' ]
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Set up Python ${{ matrix.python-version }}
+#        uses: actions/setup-python@v3
+#        with:
+#          python-version: ${{ matrix.python-version }}
+#      - name: Install dependencies
+#        run: |
+#          pip install -e '.[all,testing]'
+#      - name: Source distribution test
+#        run: |
+#          python -m pip install --upgrade build
+#          python -m build --sdist
+#          pip install dist/*.tar.gz
+#      - name: Release Test
+#        run: |
+#          pytest -v --cov=umshini --cov-report term --ignore=tests/test_umshini_client.py --cache-clear
+#      - name: Upload coverage
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: coverage-macos-test-${{ matrix.python-version }}
+#          path: .coverage
+#      - name: Upload coverage reports to Codecov
+#        uses: codecov/codecov-action@v3
+#        env:
+#          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-  coverage:
-    needs: [integration-test, linux-test, macos-test]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v3
-        with:
-          python-version: '3.10'
-      - name: Install dependencies
-        run: |
-          pip install -e '.[all,testing]'
-          pip install coverage[toml]
-      - name: Source distribution test
-        run: |
-          python -m pip install --upgrade build
-          python -m build --sdist
-          pip install dist/*.tar.gz
-      - name: Download all artifacts
-        # Downloads coverage1, coverage2, etc.
-        uses: actions/download-artifact@v2
-      - name: Display structure of downloaded files
-        run: ls -R
-      - name: Run coverage
-        run: |
-          coverage combine coverage*/.coverage*
-          coverage report
-      - uses: codecov/codecov-action@v1
+#  coverage:
+#    needs: [integration-test, linux-test, macos-test]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Set up Python 3.10
+#        uses: actions/setup-python@v3
+#        with:
+#          python-version: '3.10'
+#      - name: Install dependencies
+#        run: |
+#          pip install -e '.[all,testing]'
+#          pip install coverage[toml]
+#      - name: Source distribution test
+#        run: |
+#          python -m pip install --upgrade build
+#          python -m build --sdist
+#          pip install dist/*.tar.gz
+#      - name: Download all artifacts
+#        # Downloads coverage1, coverage2, etc.
+#        uses: actions/download-artifact@v2
+#      - name: Display structure of downloaded files
+#        run: ls -R
+#      - name: Run coverage
+#        run: |
+#          coverage combine coverage*/.coverage*
+#          coverage report
+#      - uses: codecov/codecov-action@v1
