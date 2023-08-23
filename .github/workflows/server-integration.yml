@@ -145,7 +145,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -e '.[all,testing]'
-          pipi install coverage[toml]
+          pip install coverage[toml]
       - name: Download all artifacts
         # Downloads coverage1, coverage2, etc.
         uses: actions/download-artifact@v2
