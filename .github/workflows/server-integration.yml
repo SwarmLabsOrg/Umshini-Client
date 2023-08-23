@@ -60,7 +60,6 @@ jobs:
         git clone git@github.com:Umshini/Umshini-Server.git
         cd Umshini-Server && pip install -r requirements.txt
         AutoROM --accept-license
-        cd ..
     - name: Run servers
       run: |
         cd Umshini-Server
@@ -68,6 +67,7 @@ jobs:
         python -m umshini_server.server.run_admin &
         python -m umshini_server.server.standalone_game_server &
         python -m umshini_server.server.tournament_matchmaker -e ${{ matrix.env_name }} -p 4 &
+        cd ..
         pytest -v tests/test_umshini_client.py --env_name ${{ matrix.env_name }}
     - name: Upload coverage
       uses: actions/upload-artifact@v2
