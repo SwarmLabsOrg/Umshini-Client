@@ -16,7 +16,7 @@ with suppress_stdout_stderr():
     from chatarena.environments.umshini import PettingZooCompatibilityV0
 
 
-CLASSIC_GAMES = ["connect_four_v3", "texas_holdem_v4", "go_v5"]
+CLASSIC_GAMES = ["connect_four_v3", "texas_holdem_no_limit_v6", "go_v5"]
 LLM_GAMES = ["debate", "deception", "content_moderation"]
 MAX_CYCLES = 10000
 
@@ -38,11 +38,11 @@ class UnsupportedGameError(Exception):
 
 def import_classic(env_name):
     try:
-        from pettingzoo.classic import connect_four_v3, go_v5, texas_holdem_v4
+        from pettingzoo.classic import connect_four_v3, go_v5, texas_holdem_no_limit_v6
 
         all_environments["connect_four_v3"] = connect_four_v3
         all_environments["go_v5"] = go_v5
-        all_environments["texas_holdem_v4"] = texas_holdem_v4
+        all_environments["texas_holdem_no_limit_v6"] = texas_holdem_no_limit_v6
     except ImportError as err:
         print(
             f"You do not have the requested Classic game ({env_name}) installed.\n\
