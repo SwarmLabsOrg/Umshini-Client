@@ -101,7 +101,12 @@ class UmshiniTournamentAgent:
             trunc = False
             timestep = 0
             rew = info = None
-            obs, info = env.reset()
+            initial_obs = env.reset()
+            if initial_obs is None:
+                # handling edge case of environment automatically resetting (e.g. opp instantly folds in Texas Holdem)
+                term = True
+            else:
+                obs, info = initial_obs
             while not (term or trunc):
                 if timestep % 100 == 0 and self.debug:
                     print(f"{self.botname}: Timestep {timestep}\n")
