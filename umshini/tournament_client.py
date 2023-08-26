@@ -296,6 +296,9 @@ class TournamentConnection:
         if self.debug:
             print(ready_data)
 
+        if ready_data.get("type") == "bye":
+            return None, {"bye": True}
+
         if ready_data.get("type") == "reconnect":
             # shortcut to reconnect
             sdata = ready_data
@@ -322,6 +325,9 @@ class TournamentConnection:
                 spinner.stop()
                 print(Fore.GREEN + "Opponent didn't connect, win by default.")
                 return None, {"default": True}
+            if sdata.get("type") == "bye":
+                spinner.stop()
+                return None, {"bye": True}
             while sdata.get("queued") is True:
                 sdata = recv_json(self.main_connection)
         except TimeoutError as err:

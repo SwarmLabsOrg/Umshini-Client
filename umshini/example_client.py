@@ -85,11 +85,20 @@ class UmshiniTournamentAgent:
             print(Style.RESET_ALL)
             quit()
         current_round = 1
-        while env is not None or match_info.get("default") is True:
+        while env is not None or match_info.get("default") is True or match_info.get("bye") is True:
             if match_info.get("default") is True or (
                 hasattr(env, "default") and env.default
             ):
                 print(Fore.YELLOW + "Opponent Failed to Connect.")
+                print(Fore.GREEN + f"Round {current_round} complete")
+                print(Style.RESET_ALL)
+                if current_round > self.maximum_rounds:
+                    env = None
+                else:
+                    env, match_info = self.tournament.next_match()
+                continue
+            if match_info.get("bye") is True:
+                print(Fore.GREEN + "Bye round")
                 print(Fore.GREEN + f"Round {current_round} complete")
                 print(Style.RESET_ALL)
                 if current_round > self.maximum_rounds:
