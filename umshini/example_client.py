@@ -85,7 +85,11 @@ class UmshiniTournamentAgent:
             print(Style.RESET_ALL)
             quit()
         current_round = 1
-        while env is not None or match_info.get("default") is True or match_info.get("bye") is True:
+        while (
+            env is not None
+            or match_info.get("default") is True
+            or match_info.get("bye") is True
+        ):
             if match_info.get("default") is True or (
                 hasattr(env, "default") and env.default
             ):
