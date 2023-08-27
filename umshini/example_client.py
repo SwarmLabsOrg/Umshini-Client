@@ -105,6 +105,7 @@ class UmshiniTournamentAgent:
             if initial_obs is None:
                 # handling edge case of environment automatically resetting (e.g. opp instantly folds in Texas Holdem)
                 term = True
+                obs = None
             else:
                 obs, info = initial_obs
             while not (term or trunc):
