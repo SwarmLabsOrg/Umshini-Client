@@ -105,6 +105,7 @@ class UmshiniTournamentAgent:
                 print(Fore.GREEN + "Bye round")
                 print(Fore.GREEN + f"Round {current_round} complete")
                 print(Style.RESET_ALL)
+                current_round += 1
                 if current_round > self.maximum_rounds:
                     env = None
                 else:

@@ -94,7 +94,12 @@ class NetworkEnv(gym.Env):
         # Receive observation from game server
         if self.verbose > 1:
             print("receiving obs")
-        observation_data = recv_json(self.game_connection)
+        try:
+            observation_data = recv_json(self.game_connection)
+        except:
+            self.spinner.stop()
+            print(Fore.YELLOW + "Environment terminated prematurely! Round drawn.")
+            return self.obs, 0, True, True, {}
         if self.verbose > 1:
             print("received obs")
         if observation_data["type"] != "observation":
