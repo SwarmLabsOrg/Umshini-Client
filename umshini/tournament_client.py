@@ -96,7 +96,7 @@ class NetworkEnv(gym.Env):
             print("receiving obs")
         try:
             observation_data = recv_json(self.game_connection)
-        except:
+        except Exception as e:
             self.spinner.stop()
             print(Fore.YELLOW + "Environment terminated prematurely! Round drawn.")
             return self.obs, 0, True, True, {}
