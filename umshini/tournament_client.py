@@ -84,8 +84,8 @@ class NetworkEnv(gym.Env):
             surprise, float
         ), "Surprise is not a valid type."
         if isinstance(action, str):
-            action = action.replace('{', '')
-            action = action.replace('}', '')
+            action = action.replace("{", "")
+            action = action.replace("}", "")
         act_data = {"type": "action", "action": action, "surprise": surprise}
         if self.verbose > 1:
             print("sending action")
@@ -400,9 +400,7 @@ class TournamentConnection:
                 f"This user does not have a bot with the provided name ({self.botname})"
             )
         if init_data["type"] == "duplicate_registration":
-            raise RuntimeError(
-                f"This user is already registered in this tournament."
-            )
+            raise RuntimeError(f"This user is already registered in this tournament.")
         if init_data["type"] != "connect_success":
             raise RuntimeError(
                 f"Something went wrong during login: {init_data['type']}"
