@@ -400,7 +400,7 @@ class TournamentConnection:
                 f"This user does not have a bot with the provided name ({self.botname})"
             )
         if init_data["type"] == "duplicate_registration":
-            raise RuntimeError(f"This user is already registered in this tournament.")
+            raise RuntimeError("This user is already registered in this tournament.")
         if init_data["type"] != "connect_success":
             raise RuntimeError(
                 f"Something went wrong during login: {init_data['type']}"
