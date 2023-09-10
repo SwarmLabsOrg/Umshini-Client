@@ -83,7 +83,8 @@ class NetworkEnv(gym.Env):
         assert isinstance(surprise, int) or isinstance(
             surprise, float
         ), "Surprise is not a valid type."
-
+        action = action.replace('{', '')
+        action = action.replace('}', '')
         act_data = {"type": "action", "action": action, "surprise": surprise}
         if self.verbose > 1:
             print("sending action")
