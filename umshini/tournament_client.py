@@ -94,7 +94,14 @@ class NetworkEnv(gym.Env):
         # Receive observation from game server
         if self.verbose > 1:
             print("receiving obs")
-        observation_data = recv_json(self.game_connection)
+        try:
+            observation_data = recv_json(self.game_connection)
+        except Exception as e:
+            self.spinner.stop()
+            print(Fore.YELLOW + "Environment terminated prematurely! Round drawn.")
+            if self.verbose:
+                print(e)
+            return self.obs, 0, True, True, {}
         if self.verbose > 1:
             print("received obs")
         if observation_data["type"] != "observation":
@@ -287,7 +294,7 @@ class TournamentConnection:
         )
         spinner.start()
         try:
-            ready_data = recv_json(self.main_connection, timeout=180)
+            ready_data = recv_json(self.main_connection, timeout=600)
         except TimeoutError as err:
             print("Not enough players to start tournament.", flush=True)
             raise err
@@ -389,6 +396,10 @@ class TournamentConnection:
         if init_data["type"] == "invalid_botname":
             raise RuntimeError(
                 f"This user does not have a bot with the provided name ({self.botname})"
+            )
+        if init_data["type"] == "duplicate_registration":
+            raise RuntimeError(
+                f"This user is already registered in this tournament."
             )
         if init_data["type"] != "connect_success":
             raise RuntimeError(
