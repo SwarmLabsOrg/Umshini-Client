@@ -193,38 +193,25 @@ class TestEnv(gym.Env):
         assert (
             not self.was_term and not self.was_trunc
         ), "stepped after term or trunc, should terminate loop"
-        # Set random actions for all other agents in parallel game or None in turn-based game
-        actions = {
-            agent: (None if self.turn_based else self.env.action_space(agent).sample())
-            for agent in self.env.agents
-        }
-        actions[self.env.aec_env.agent_selection] = action
-        self.obss, rews, terms, truncs, infos = self.env.step(actions)
+
+        obs, rew, term, trunc, info = self.env.step(action)
 
         if self.num_steps > 50:
             trunc = True
             term = True
         else:
-            term = terms[self.agent]
-            trunc = truncs[self.agent]
-
-        obs = self.obss[self.agent]
-        rew = rews[self.agent]
-        info = infos[self.agent]
+            term = term
+            trunc = trunc
 
         self.was_term = term
         self.was_trunc = trunc
         self.num_steps += 1
 
         # Find next active agents
-        if self.turn_based:
-            active_agents = [self.env.unwrapped.agent_selection]
-        else:
-            active_agents = self.env.agents
+        active_agents = [self.env.unwrapped.agent_selection]
 
         # Step again if testing agent is not next
         if not self.was_term and not self.was_trunc and self.agent not in active_agents:
-            obs = self.obss[self.env.unwrapped.agent_selection]
             if isinstance(obs, dict) and "action_mask" in obs:
                 legal_mask = obs["action_mask"]
                 legal_actions = legal_mask.nonzero()[0]
