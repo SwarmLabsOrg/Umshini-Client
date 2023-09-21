@@ -185,8 +185,7 @@ class TestEnv(gym.Env):
         self.num_steps = 0
         self.was_term = False
         self.was_trunc = False
-        obss, info = self.env.reset()
-        return obss, info
+        self.env.reset()
 
     def last(self, observe: bool = True):
         return self.env.last(observe)
@@ -245,7 +244,8 @@ class TournamentConnection:
     def _test_environments(self):
         for game in self.available_games:
             test_env = TestEnv(game)
-            obs, info = test_env.reset()
+            test_env.reset()
+            obs, _, term, trunc, _ = test_env.last()
             for i in range(100):
                 if (
                     obs is not None
