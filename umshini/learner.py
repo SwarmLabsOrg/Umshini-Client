@@ -54,8 +54,7 @@ def test(env_id: str, user_policy: callable | None = None):
     for _ in range(100):
         try:
             (action, surprise) = user_policy(obs, rew, term, trunc, info)
-            test_env.step(action)
-            obs, rew, term, trunc, info = test_env.last()
+            obs, rew, term, trunc, info = test_env.step(action)
 
             if term or trunc:
                 print(

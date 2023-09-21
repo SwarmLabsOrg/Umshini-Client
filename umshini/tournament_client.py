@@ -185,10 +185,8 @@ class TestEnv(gym.Env):
         self.num_steps = 0
         self.was_term = False
         self.was_trunc = False
-        self.env.reset()
-
-    def last(self, observe: bool = True):
-        return self.env.last(observe)
+        obss, info = self.env.reset()
+        return obss, info
 
     def step(self, action):
         assert (
@@ -212,6 +210,8 @@ class TestEnv(gym.Env):
         # Update underlying AEC env (for last() to work)
         self.env.terminations[self.agent] = term
         self.env.truncations[self.agent] = trunc
+
+        return obs, rew, term, trunc, info
 
     def render(self, mode="human"):
         return
@@ -244,8 +244,7 @@ class TournamentConnection:
     def _test_environments(self):
         for game in self.available_games:
             test_env = TestEnv(game)
-            test_env.reset()
-            obs, _, term, trunc, _ = test_env.last()
+            obs, info = test_env.reset()
             for i in range(100):
                 if (
                     obs is not None
@@ -256,8 +255,7 @@ class TournamentConnection:
                     action = np.random.choice(obs["action_mask"].nonzero()[0])
                 else:
                     action = test_env.action_space.sample()
-                test_env.step(action)
-                obs, _, term, trunc, _ = test_env.last()
+                obs, _, term, trunc, _ = test_env.step(action)
                 if term or trunc:
                     if self.debug:
                         print(f"{self.botname} passed test in {game}")
