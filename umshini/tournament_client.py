@@ -188,12 +188,16 @@ class TestEnv(gym.Env):
         obss, info = self.env.reset()
         return obss, info
 
+    def last(self, observe: bool = True):
+        return self.env.last(observe)
+
     def step(self, action):
         assert (
             not self.was_term and not self.was_trunc
         ), "stepped after term or trunc, should terminate loop"
 
-        obs, rew, term, trunc, info = self.env.step(action)
+        self.env.step(action)
+        obs, rew, term, trunc, info = self.env.last()
 
         if self.num_steps > 50:
             trunc = True
@@ -206,22 +210,9 @@ class TestEnv(gym.Env):
         self.was_trunc = trunc
         self.num_steps += 1
 
-        # Find next active agents
-        active_agents = [self.env.unwrapped.agent_selection]
-
-        # Step again if testing agent is not next
-        if not self.was_term and not self.was_trunc and self.agent not in active_agents:
-            if isinstance(obs, dict) and "action_mask" in obs:
-                legal_mask = obs["action_mask"]
-                legal_actions = legal_mask.nonzero()[0]
-                action = np.random.choice(legal_actions)
-            else:
-                action = self.env.action_space(
-                    self.env.unwrapped.agent_selection
-                ).sample()
-            return self.step(action)
-        else:
-            return obs, rew, term, trunc, info
+        # Update underlying AEC env (for last() to work)
+        self.env.terminations[self.agent] = term
+        self.env.truncations[self.agent] = trunc
 
     def render(self, mode="human"):
         return
@@ -265,7 +256,8 @@ class TournamentConnection:
                     action = np.random.choice(obs["action_mask"].nonzero()[0])
                 else:
                     action = test_env.action_space.sample()
-                obs, _, term, trunc, _ = test_env.step(action)
+                test_env.step(action)
+                obs, _, term, trunc, _ = test_env.last()
                 if term or trunc:
                     if self.debug:
                         print(f"{self.botname} passed test in {game}")
