@@ -1,4 +1,5 @@
 from multiprocessing import Pool
+from typing import Callable
 
 import numpy as np
 
@@ -16,19 +17,26 @@ def rand_policy(obs, rew, term, trunc, info):
     return (action, 0)
 
 
-def run_player(env, botname, userkey, policy):
+def run_player(
+    env_name: str, botname: str, userkey: str, policy: Callable, testing: bool
+):
     umshini.connect(
-        env,
+        env_name,
         botname,
         userkey,
         policy,
-        debug=True,
-        testing=True,
+        debug=testing,
+        testing=testing,
     )
 
 
-def test_umshini_client(env_name):
-    num_players = 4
+def test_umshini_client(
+    env_name: str = "connect_four_v3", num_players: int = 4, testing: bool = True
+):
+    assert isinstance(num_players, int)
+    assert isinstance(testing, bool)
+    if num_players is None:
+        num_players = 4
     env_to_id = {
         "go_v5": 1,
         "connect_four_v3": 2,
@@ -40,7 +48,7 @@ def test_umshini_client(env_name):
     env_id = env_to_id[env_name]
     args = []
     for i in range(1, 1 + num_players):
-        args.append((env_name, f"user{i}_{env_id}", f"user{i}", rand_policy))
+        args.append((env_name, f"user{i}_{env_id}", f"user{i}", rand_policy, testing))
 
     with Pool(num_players) as pool:
         pool.starmap(run_player, args)

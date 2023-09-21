@@ -1,8 +1,6 @@
 import os
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 
-from pettingzoo.utils import aec_to_parallel, turn_based_aec_to_parallel
-
 
 @contextmanager
 def suppress_stdout_stderr():
@@ -84,16 +82,10 @@ def import_llm(env_name, render_mode):
 def make_test_env(env_id, seed=None, render_mode=None, debug=False):
     env = make_env(env_id, render_mode, debug)
 
-    turn_based = not env.metadata["is_parallelizable"]
-    if turn_based:
-        env = turn_based_aec_to_parallel(env)
-    else:
-        env = aec_to_parallel(env)
-
     # seed can only be set using env.reset
     env.reset(seed)
 
-    return env, turn_based
+    return env
 
 
 def make_env(env_id, render_mode=None, debug=False):

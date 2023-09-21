@@ -22,7 +22,7 @@ from umshini.envs.envs_list import make_test_env
 class DummyAgent:
     def __init__(self, env_name):
         self.env_name = env_name
-        self.env, _ = make_test_env(env_name, seed=1)
+        self.env = make_test_env(env_name, seed=1)
         self.env.reset()
 
     def pol(self, obs, rew, term, trunc, info):
