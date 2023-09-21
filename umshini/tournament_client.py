@@ -180,7 +180,6 @@ class TestEnv(gym.Env):
         self.num_steps = 0
         self.was_term = False
         self.was_trunc = False
-        self.obss = None
 
     def reset(self, **kwargs):
         self.num_steps = 0
