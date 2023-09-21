@@ -129,9 +129,8 @@ class UmshiniTournamentAgent:
                 action_surprise = self.policy(
                     obs, rew, term, trunc, info
                 )  # receive action and surprise from user
-                obs, rew, term, trunc, info = env.step(
-                    action_surprise
-                )  # Send action to game server
+                env.step(action_surprise)  # Send action to game server
+                obs, rew, term, trunc, info = env.last()
                 timestep += 1
             print(Fore.GREEN + f"Round {current_round} complete")
             print(Style.RESET_ALL)
