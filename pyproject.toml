@@ -35,8 +35,8 @@ dynamic = ["version"]
 
 [project.optional-dependencies]
 classic = ["pettingzoo[classic]>=1.24.0"]
-llm = ["chatarena[umshini]>=0.1.12.10"]
-all = ["pettingzoo[classic]>=1.24.0", "chatarena[umshini]>=0.1.12.10"]
+llm = ["chatarena[umshini] @ git+https://github.com/Farama-Foundation/chatarena.git@dev"]
+all = ["pettingzoo[classic]>=1.24.0", "chatarena[umshini] @ git+https://github.com/Farama-Foundation/chatarena.git@dev"]
 testing = [ "pytest", "pytest-cov" ]
 
 [tool.setuptools.dynamic]
