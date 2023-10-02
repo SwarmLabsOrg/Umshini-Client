@@ -7,6 +7,7 @@ from colorama import Fore, Style
 
 from umshini import ALL_ENVIRONMENTS
 from umshini.tournament_client import TournamentConnection
+from umshini.utils.validate_action import validate_action
 
 
 class UmshiniTournamentAgent:
@@ -129,6 +130,11 @@ class UmshiniTournamentAgent:
                 action_surprise = self.policy(
                     obs, rew, term, trunc, info
                 )  # receive action and surprise from user
+                # Do some preemptive preprocessing of the user action
+                if type(action_surprise) == tuple:
+                    action_surprise = (validate_action(action_surprise[0]), action_surprise[1])
+                else:
+                    action_surprise = validate_action(action_surprise)
                 obs, rew, term, trunc, info = env.step(
                     action_surprise
                 )  # Send action to game server
