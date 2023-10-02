@@ -25,4 +25,4 @@ def long_response_policy(obs, rew, term, trunc, info):
 
 @pytest.mark.parametrize("env_name", ALL_ENVIRONMENTS)
 def test_umshini_client(env_name):
-    umshini.test(env_name, user_policy=rand_policy)
+    umshini.test(env_name)
