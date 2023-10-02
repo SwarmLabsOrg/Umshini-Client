@@ -18,6 +18,11 @@ def rand_policy(obs, rew, term, trunc, info):
     return (action, 0)
 
 
+def long_response_policy(obs, rew, term, trunc, info):
+    response = "".join(map(str, range(1, 10000)))
+    return (response, 0)
+
+
 @pytest.mark.parametrize("env_name", ALL_ENVIRONMENTS)
 def test_umshini_client(env_name):
-    umshini.test(env_name)
+    umshini.test(env_name, user_policy=rand_policy)
