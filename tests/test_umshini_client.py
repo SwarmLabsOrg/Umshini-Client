@@ -5,6 +5,7 @@ import numpy as np
 import umshini
 
 
+# TODO: get this to work in CI on the actual server?
 def rand_policy(obs, rew, term, trunc, info):
     """Return a random legal action."""
     if isinstance(obs, dict) and "action_mask" in obs.keys():
@@ -14,6 +15,11 @@ def rand_policy(obs, rew, term, trunc, info):
     else:
         action = "TEST_RESPONSE"
     return (action, 0)
+
+
+def long_response_policy(obs, rew, term, trunc, info):
+    response = "".join(map(str, range(1, 10000)))
+    return (response, 0)
 
 
 def run_player(env, botname, userkey, policy):
@@ -41,6 +47,27 @@ def test_umshini_client(env_name):
     args = []
     for i in range(1, 1 + num_players):
         args.append((env_name, f"user{i}_{env_id}", f"user{i}", rand_policy))
+
+    with Pool(num_players) as pool:
+        pool.starmap(run_player, args)
+
+    print("Test Passed")
+
+
+def test_input_validation(env_name):
+    num_players = 4
+    env_to_id = {
+        "go_v5": 1,
+        "connect_four_v3": 2,
+        "texas_holdem_no_limit_v6": 3,
+        "debate": 4,
+        "content_moderation": 5,
+        "deception": 6,
+    }
+    env_id = env_to_id[env_name]
+    args = []
+    for i in range(1, 1 + num_players):
+        args.append((env_name, f"user{i}_{env_id}", f"user{i}", long_response_policy))
 
     with Pool(num_players) as pool:
         pool.starmap(run_player, args)
