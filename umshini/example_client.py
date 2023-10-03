@@ -132,7 +132,10 @@ class UmshiniTournamentAgent:
                 )  # receive action and surprise from user
                 # Do some preemptive preprocessing of the user action
                 if type(action_surprise) == tuple:
-                    action_surprise = (validate_action(action_surprise[0]), action_surprise[1])
+                    action_surprise = (
+                        validate_action(action_surprise[0]),
+                        action_surprise[1],
+                    )
                 else:
                     action_surprise = validate_action(action_surprise)
                 obs, rew, term, trunc, info = env.step(
