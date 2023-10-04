@@ -22,7 +22,13 @@ def validate_action(action):
                 Fore.YELLOW
                 + f"Response was too long! ({len(response)}) Your action was truncated to fit within the character limit ({MAX_CHARS})."
             )
-            response = response[:MAX_CHARS]
+            # making sure it is within the max characters limit
+            # or do some naive truncation if not
+            if len(response) > 4000:
+                res = response.split(".")
+                response = ""
+                while len(res) > 0 and len(response) + len(res[0]) + 1 < 4000:
+                    response += res.pop(0) + "."
         return response
     else:
         return action
