@@ -79,7 +79,9 @@ class NetworkEnv(gym.Env):
             or isinstance(action, dict)
             or isinstance(action, list)
         ), "Action is not a valid type."
-        assert self.action_space.contains(action), "Action not in action space."
+        assert self.action_space.contains(
+            action
+        ), f"Action not in action space.\nAction: {action}.\nSpace: {self.action_space}"
         assert isinstance(surprise, int) or isinstance(
             surprise, float
         ), "Surprise is not a valid type."
