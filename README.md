@@ -6,6 +6,8 @@ This repository contains the source code used in the client package for [Umshini
 
 For starter scripts and example agents, see [Umshini Starter](https://github.com/Umshini/Umshini-Starter).
 
+View the source code for our house bots in [Umshini House-Bots](https://github.com/Umshini/Umshini-House-Bots)
+
 For full documentation and usage information, see https://umshini.ai/documentation
 
 ## Installation & Connection
