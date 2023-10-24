@@ -116,6 +116,21 @@ class NetworkEnv(gym.Env):
             info = {}
             info["_terminated"] = True
             self.spinner.succeed()
+            if observation_data["type"] == "game_end" and observation_data.get("scores") is not None:
+                scores = observation_data.get("scores")
+                print(Fore.GREEN + f"Scores: {str(scores)}")
+                winners = []
+                max_score = -10000
+                for bot, score in scores.items():
+                    if score > max_score:
+                        max_score = score
+                        winners = [bot]
+                    elif score == max_score:
+                        winners.append(bot)
+                if len(winners) == 1:
+                    print(Fore.GREEN + f"Winner: " + winners[0])
+                elif len(winners) > 1:
+                    print(Fore.GREEN + f"Draw between " + " and ".join(winners))
             return self.obs, rew, term, trunc, info
 
         # Unpack observation
@@ -138,13 +153,6 @@ class NetworkEnv(gym.Env):
 
     def reset(self, **kwargs):
         self.steps = 0
-        self.spinner = Halo(
-            text=f"Playing game (step: {self.steps})",
-            text_color="cyan",
-            color="green",
-            spinner="dots",
-        )
-        self.spinner.start()
         # Get initial observation
         if self.verbose > 1:
             print("receiving initial obs")
@@ -163,6 +171,21 @@ class NetworkEnv(gym.Env):
         info = decompress(observation_data["info"][self.agent])
         self.obs = obs
         self.info = info
+        try:
+            meta = json.loads(observation_data.get("meta"))
+            if meta.get("botnames") is not None and isinstance(meta.get("botnames"), list):
+                print(Fore.GREEN + "Playing " + " vs. ".join(meta.get("botnames")))
+        except Exception as e:
+            pass
+
+        self.spinner = Halo(
+            text=f"Playing game (step: {self.steps})",
+            text_color="cyan",
+            color="green",
+            spinner="dots",
+        )
+        self.spinner.start()
+
         return self.obs, self.info
 
     def close(self):
@@ -264,6 +287,7 @@ class TournamentConnection:
         # Test agent in every game
         self.available_games = available_games
         self.current_match = 0
+        self.round_number = 1
         self._test_environments()
 
     # Test agent in every game
@@ -407,7 +431,7 @@ class TournamentConnection:
             raise RuntimeError(
                 f"Something went wrong during login: {init_data['type']}"
             )
-
+        self.round_number = init_data.get("round_number", 1)
         # Check if tournament is complete
         if init_data["complete"]:
             self.tournament_completed = True
@@ -445,4 +469,5 @@ class TournamentConnection:
         self.main_connection.close()
         self.main_connection = None
         self.current_match = 1
+        info["round_number"] = self.round_number
         return game_env, info

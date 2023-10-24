@@ -84,8 +84,9 @@ class UmshiniTournamentAgent:
             if self.debug:
                 print(traceback.format_exc())
             print(Style.RESET_ALL)
+            match_info = {}
             quit()
-        current_round = 1
+        current_round = match_info.get("round_number", 1)
         while (
             env is not None
             or match_info.get("default") is True
@@ -142,7 +143,7 @@ class UmshiniTournamentAgent:
                     action_surprise
                 )  # Send action to game server
                 timestep += 1
-            print(Fore.GREEN + f"Round {current_round} complete")
+            print(Fore.GREEN + f"Round {current_round} complete!")
             print(Style.RESET_ALL)
             current_round += 1
             if current_round > self.maximum_rounds:
