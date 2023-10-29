@@ -128,9 +128,9 @@ class NetworkEnv(gym.Env):
                     elif score == max_score:
                         winners.append(bot)
                 if len(winners) == 1:
-                    print(Fore.GREEN + f"Winner: " + winners[0])
+                    print(Fore.GREEN + "Winner: " + winners[0])
                 elif len(winners) > 1:
-                    print(Fore.GREEN + f"Draw between " + " and ".join(winners))
+                    print(Fore.GREEN + "Draw between " + " and ".join(winners))
             return self.obs, rew, term, trunc, info
 
         # Unpack observation
@@ -176,6 +176,8 @@ class NetworkEnv(gym.Env):
             if meta.get("botnames") is not None and isinstance(meta.get("botnames"), list):
                 print(Fore.GREEN + "Playing " + " vs. ".join(meta.get("botnames")))
         except Exception as e:
+            if self.verbose:
+                print(e)
             pass
 
         self.spinner = Halo(
