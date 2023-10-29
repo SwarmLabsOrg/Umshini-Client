@@ -116,7 +116,10 @@ class NetworkEnv(gym.Env):
             info = {}
             info["_terminated"] = True
             self.spinner.succeed()
-            if observation_data["type"] == "game_end" and observation_data.get("scores") is not None:
+            if (
+                observation_data["type"] == "game_end"
+                and observation_data.get("scores") is not None
+            ):
                 scores = observation_data.get("scores")
                 print(Fore.GREEN + f"Scores: {str(scores)}")
                 winners = []
@@ -173,7 +176,9 @@ class NetworkEnv(gym.Env):
         self.info = info
         try:
             meta = json.loads(observation_data.get("meta"))
-            if meta.get("botnames") is not None and isinstance(meta.get("botnames"), list):
+            if meta.get("botnames") is not None and isinstance(
+                meta.get("botnames"), list
+            ):
                 print(Fore.GREEN + "Playing " + " vs. ".join(meta.get("botnames")))
         except Exception as e:
             if self.verbose:
