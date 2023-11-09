@@ -132,7 +132,7 @@ class UmshiniTournamentAgent:
                     obs, rew, term, trunc, info
                 )  # receive action and surprise from user
                 # Do some preemptive preprocessing of the user action
-                if type(action_surprise) == tuple:
+                if isinstance(action_surprise, tuple):
                     action_surprise = (
                         validate_action(action_surprise[0]),
                         action_surprise[1],
@@ -142,6 +142,20 @@ class UmshiniTournamentAgent:
                 obs, rew, term, trunc, info = env.step(
                     action_surprise
                 )  # Send action to game server
+                # Print the action (response) if it is an LLM environment
+                role = info.get("role")
+                if role == "attacker":
+                    color = Fore.RED
+                elif role == "defender":
+                    color = Fore.BLUE
+                else:
+                    color = Fore.YELLOW
+                if isinstance(action_surprise, str):
+                    print(color + f"[{role}]" + Fore.BLACK + f"{action_surprise}")
+                elif isinstance(action_surprise, tuple) and isinstance(
+                    action_surprise[0], str
+                ):
+                    print(color + f"[{role}]" + Fore.BLACK + f"{action_surprise[0]}")
                 timestep += 1
             print(Fore.GREEN + f"Round {current_round} complete!")
             print(Style.RESET_ALL)

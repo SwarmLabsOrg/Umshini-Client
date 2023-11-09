@@ -2,7 +2,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: check-symlinks
       - id: destroyed-symlinks
@@ -20,22 +20,22 @@ repos:
       - id: mixed-line-ending
         args: [ "--fix=lf" ]
   - repo: https://github.com/python/black
-    rev: 23.3.0
+    rev: 23.11.0
     hooks:
       - id: black
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.4
+    rev: v2.2.6
     hooks:
       - id: codespell
         args:
           - --skip=*.css,*.js,*.map,*.scss,*.svg
           - --ignore-words-list=magent
   - repo: https://github.com/PyCQA/flake8
-    rev: 6.0.0
+    rev: 6.1.0
     hooks:
       - id: flake8
         args:
-          - '--per-file-ignores=*/__init__.py:F401 test/all_parameter_combs_test.py:F405 pettingzoo/classic/go/go.py:W605'
+          - '--per-file-ignores=*/__init__.py:F401'
           - --extend-ignore=E203
           - --max-complexity=205
           - --max-line-length=300
@@ -47,7 +47,7 @@ repos:
       - id: isort
         args: ["--profile", "black"]
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.2
+    rev: v3.15.0
     hooks:
       - id: pyupgrade
         args: ["--py38-plus"]
@@ -75,3 +75,7 @@ repos:
         additional_dependencies: ["pyright"]
         args:
           - --project=pyproject.toml
+  - repo: https://github.com/fpgmaas/deptry.git
+    rev: "0.12.0"
+    hooks:
+      - id: deptry

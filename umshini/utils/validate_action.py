@@ -6,7 +6,7 @@ MAX_CHARS = 4000
 
 
 def validate_action(action):
-    if type(action) == str:
+    if isinstance(action, str):
         response = "".join(filter(lambda x: x in string.printable, action))
         if response != action:
             print(
