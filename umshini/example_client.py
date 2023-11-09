@@ -132,7 +132,7 @@ class UmshiniTournamentAgent:
                     obs, rew, term, trunc, info
                 )  # receive action and surprise from user
                 # Do some preemptive preprocessing of the user action
-                if type(action_surprise) == tuple:
+                if isinstance(action_surprise, tuple):
                     action_surprise = (
                         validate_action(action_surprise[0]),
                         action_surprise[1],

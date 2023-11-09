@@ -1,8 +1,7 @@
 import argparse
 
-from example_agent import DummyAgent
-
 import umshini
+from umshini.examples.example_agent import DummyAgent
 
 """
     This is a simple example of connecting an agent to the Umshini server.

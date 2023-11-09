@@ -26,8 +26,8 @@ keywords = ["Reinforcement Learning", "game", "RL", "AI", "gym"]
 requires-python = ">=3.8"
 dependencies = [
     "numpy>=1.19.0",
-    "Cython>=0.29.21",
-    "pettingzoo>=1.24.0" ,
+    "pettingzoo>=1.24.0",
+    "gymnasium>=0.28.0",
     "halo",
     "colorama",
 ]
@@ -37,7 +37,7 @@ dynamic = ["version"]
 classic = ["pettingzoo[classic]>=1.24.0"]
 llm = ["chatarena[umshini]>=0.1.12.10"]
 all = ["pettingzoo[classic]>=1.24.0", "chatarena[umshini]>=0.1.12.10"]
-testing = [ "pytest", "pytest-cov" ]
+testing = [ "pytest", "pytest-cov", "deptry" ]
 
 [tool.setuptools.dynamic]
 version = {attr = "umshini.__version__"}
@@ -51,3 +51,6 @@ addopts = [ "--cov=umshini", "--cov-branch", "--cov-context=test", "--cov-report
 
 [tool.coverage.run]
 omit = [ "umshini/examples/connect_four.py", "umshini/examples/example_cli.py" ]
+
+[tool.deptry.per_rule_ignores]
+DEP002 = [ "pytest", "pytest-cov", "deptry"]
