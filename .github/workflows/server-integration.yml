@@ -59,7 +59,6 @@ jobs:
         ssh-add - <<< '${{ secrets.PRIVATE_SSH_KEY }}'
         git clone git@github.com:Umshini/Umshini-Server.git
         cd Umshini-Server && pip install -e .
-        AutoROM --accept-license
     - name: Run servers
       run: |
         cd Umshini-Server
