@@ -2,10 +2,8 @@
 from __future__ import annotations
 
 import inspect
-import logging
 import traceback
 
-import gymnasium
 from colorama import Fore, Style
 from halo import Halo
 
@@ -75,6 +73,8 @@ def local(env_id: str, user_policy: callable, opponent_policy: callable):
     test(env_id, opponent_policy)
 
     steps = 0
+    winner = None
+    score = None
     spinner = Halo(
         text=f"Playing local game: {env_id} (step: {steps})",
         text_color="cyan",
@@ -143,10 +143,6 @@ def test(env_id: str, user_policy: callable | None = None):
         action: the action to take
         surprise: the surprise value of the action [Optional]
     """
-    gymnasium.logger.set_level(
-        logging.ERROR
-    )  # Suppress Gymnasium warnings for some environments
-
     if user_policy is None:
         user_policy = DummyAgent(env_id).pol
 
@@ -169,7 +165,15 @@ def test(env_id: str, user_policy: callable | None = None):
                 action = None
 
             else:
-                action = user_policy(observation, reward, termination, truncation, info)
+                action_surprise = user_policy(
+                    observation, reward, termination, truncation, info
+                )
+
+                # Handle optional return without a surprise value
+                if isinstance(action_surprise, tuple):
+                    action = action_surprise[0]
+                else:
+                    action = action_surprise
             env.step(action)
         env.close()
         print(

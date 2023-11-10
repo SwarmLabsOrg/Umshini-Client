@@ -24,5 +24,5 @@ def long_response_policy(obs, rew, term, trunc, info):
 
 
 @pytest.mark.parametrize("env_name", ALL_ENVIRONMENTS)
-def test_umshini_client(env_name):
+def test_environment_verification(env_name):
     umshini.test(env_name)
