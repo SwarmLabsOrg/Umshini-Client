@@ -75,6 +75,8 @@ def local(env_id: str, user_policy: callable, opponent_policy: callable):
     test(env_id, opponent_policy)
 
     steps = 0
+    winner = None
+    score = None
     spinner = Halo(
         text=f"Playing local game: {env_id} (step: {steps})",
         text_color="cyan",
