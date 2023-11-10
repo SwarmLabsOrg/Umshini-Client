@@ -145,10 +145,6 @@ def test(env_id: str, user_policy: callable | None = None):
         action: the action to take
         surprise: the surprise value of the action [Optional]
     """
-    gymnasium.logger.set_level(
-        logging.ERROR
-    )  # Suppress Gymnasium warnings for some environments
-
     if user_policy is None:
         user_policy = DummyAgent(env_id).pol
 
@@ -171,7 +167,13 @@ def test(env_id: str, user_policy: callable | None = None):
                 action = None
 
             else:
-                action = user_policy(observation, reward, termination, truncation, info)
+                action_surprise = user_policy(observation, reward, termination, truncation, info)
+
+                # Handle optional return without a surprise value
+                if isinstance(action_surprise, tuple):
+                    action = action_surprise[0]
+                else:
+                    action = action_surprise
             env.step(action)
         env.close()
         print(
