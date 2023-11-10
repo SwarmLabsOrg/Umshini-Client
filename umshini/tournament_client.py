@@ -55,7 +55,7 @@ class NetworkEnv(gym.Env):
         self.observation_space = self.env.observation_space(self.agent)
         self.action_space = self.env.action_space(self.agent)
         self.action_space.seed(seed)
-        self.observation= None
+        self.observation = None
 
     def step(self, action_surprise):
         if self.terminated:
@@ -137,8 +137,8 @@ class NetworkEnv(gym.Env):
             return self.observation, reward, termination, truncation, info
 
         # Unpack observation
-        observation= decompress(observation_data["data"][self.agent])
-        self.observation= observation
+        observation = decompress(observation_data["data"][self.agent])
+        self.observation = observation
         info = decompress(observation_data["info"][self.agent])
         self.info = info
 
@@ -170,7 +170,7 @@ class NetworkEnv(gym.Env):
             return self.observation
 
         # Unpack observation
-        observation= decompress(observation_data["data"][self.agent])
+        observation = decompress(observation_data["data"][self.agent])
         info = decompress(observation_data["info"][self.agent])
         self.observation = observation
         self.info = info
@@ -231,7 +231,9 @@ class TestEnv(gym.Env):
             for agent in self.env.agents
         }
         actions[self.env.aec_env.agent_selection] = action
-        self.observations, rewards, terminations, truncations, infos = self.env.step(actions)
+        self.observations, rewards, terminations, truncations, infos = self.env.step(
+            actions
+        )
 
         if self.num_steps > 50:
             truncation = True
@@ -255,7 +257,11 @@ class TestEnv(gym.Env):
             active_agents = self.env.agents
 
         # Step again if testing agent is not next
-        if not self.was_terminated and not self.was_truncated and self.agent not in active_agents:
+        if (
+            not self.was_terminated
+            and not self.was_truncated
+            and self.agent not in active_agents
+        ):
             observation = self.observations[self.env.unwrapped.agent_selection]
             if isinstance(observation, dict) and "action_mask" in observation:
                 legal_mask = observation["action_mask"]

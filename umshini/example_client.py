@@ -108,18 +108,18 @@ class UmshiniTournamentAgent:
                 else:
                     env, match_info = self.tournament.next_match()
                 continue
-            term = False
-            trunc = False
+            termination = False
+            truncation = False
             timestep = 0
             reward = info = None
             initial_observation, initial_info = env.reset()
             if initial_observation is None:
                 # handling edge case of environment automatically resetting (e.g. opp instantly folds in Texas Holdem)
                 termination = True
-                observation= None
+                observation = None
             else:
                 observation, info = initial_observation
-            while not (term or trunc):
+            while not (termination or truncation):
                 if timestep % 100 == 0 and self.debug:
                     print(f"{self.botname}: Timestep {timestep}\n")
                 time.sleep(self.latency / 1000)  # Used to simulate network latency

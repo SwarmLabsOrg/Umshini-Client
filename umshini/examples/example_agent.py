@@ -15,7 +15,7 @@ from umshini.envs.envs_list import make_parallel_env
 
     The policy function must return:
         action: the action to take
-        surprise: the surprise value of the action [Optional] 
+        surprise: the surprise value of the action [Optional]
 """
 
 
