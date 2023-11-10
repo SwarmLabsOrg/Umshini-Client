@@ -2,10 +2,8 @@
 from __future__ import annotations
 
 import inspect
-import logging
 import traceback
 
-import gymnasium
 from colorama import Fore, Style
 from halo import Halo
 
@@ -167,7 +165,9 @@ def test(env_id: str, user_policy: callable | None = None):
                 action = None
 
             else:
-                action_surprise = user_policy(observation, reward, termination, truncation, info)
+                action_surprise = user_policy(
+                    observation, reward, termination, truncation, info
+                )
 
                 # Handle optional return without a surprise value
                 if isinstance(action_surprise, tuple):

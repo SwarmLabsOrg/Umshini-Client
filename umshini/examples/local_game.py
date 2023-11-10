@@ -19,4 +19,4 @@ def opponent_pol(obs, rew, term, trunc, info):
     return action, surprise
 
 
-umshini.local("connect_four_v3", my_pol, opponent_pol)
+umshini.local("go_v5", my_pol, opponent_pol)
