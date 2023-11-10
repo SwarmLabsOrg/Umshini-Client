@@ -7,7 +7,7 @@ import traceback
 from colorama import Fore, Style
 from halo import Halo
 
-from umshini.envs import make_env, LLM_GAMES, CLASSIC_GAMES
+from umshini.envs import CLASSIC_GAMES, LLM_GAMES, make_env
 from umshini.example_client import UmshiniTournamentAgent
 from umshini.examples.example_agent import DummyAgent
 
