@@ -108,7 +108,7 @@ class NetworkEnv(gym.Env):
             return self.observation, 0, True, True, {}
         if self.verbose > 1:
             print("received obs")
-        if observation_data["type"] != "observation":
+        if observation_data["type"] != "obs":
             # Game is done
             reward = 0
             termination = True
@@ -165,7 +165,7 @@ class NetworkEnv(gym.Env):
             print(observation_data)
             if not observation_data:
                 print("No data received")
-        if observation_data["type"] != "observation":
+        if observation_data["type"] != "obs":
             # Game is done
             return self.observation
 
