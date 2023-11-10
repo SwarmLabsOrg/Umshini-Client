@@ -58,17 +58,12 @@ class UmshiniTournamentAgent:
                 available_games=self.games,
                 debug=self.debug,
             )
-            print(
-                Fore.GREEN
-                + f"Bot: {self.botname}'s policy has passed environment verifications"
-            )
-            print(Style.RESET_ALL)
         except Exception as e:
             if self.debug:
                 print(Fore.RED + f"ERROR: {e}")
             print(
                 Fore.RED
-                + f"Bot: {self.botname}'s policy has failed verification testing in environment: {self.games}"
+                + f"Bot: {self.botname}'s policy has failed verification testing in {self.games[-1]} [{self.policy.__name__}]"
             )
             print(Style.RESET_ALL)
             quit()
@@ -116,20 +111,20 @@ class UmshiniTournamentAgent:
             term = False
             trunc = False
             timestep = 0
-            rew = info = None
-            initial_obs = env.reset()
-            if initial_obs is None:
+            reward = info = None
+            initial_observation, initial_info = env.reset()
+            if initial_observation is None:
                 # handling edge case of environment automatically resetting (e.g. opp instantly folds in Texas Holdem)
-                term = True
-                obs = None
+                termination = True
+                observation= None
             else:
-                obs, info = initial_obs
+                observation, info = initial_observation
             while not (term or trunc):
                 if timestep % 100 == 0 and self.debug:
                     print(f"{self.botname}: Timestep {timestep}\n")
                 time.sleep(self.latency / 1000)  # Used to simulate network latency
                 action_surprise = self.policy(
-                    obs, rew, term, trunc, info
+                    observation, reward, termination, truncation, info
                 )  # receive action and surprise from user
                 # Do some preemptive preprocessing of the user action
                 if isinstance(action_surprise, tuple):
@@ -139,7 +134,7 @@ class UmshiniTournamentAgent:
                     )
                 else:
                     action_surprise = validate_action(action_surprise)
-                obs, rew, term, trunc, info = env.step(
+                observation, reward, termination, truncation, info = env.step(
                     action_surprise
                 )  # Send action to game server
                 # Print the action (response) if it is an LLM environment

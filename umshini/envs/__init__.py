@@ -4,5 +4,6 @@ from umshini.envs.envs_list import (
     LLM_GAMES,
     all_environments,
     env_num_players,
-    make_test_env,
+    make_env,
+    make_parallel_env,
 )

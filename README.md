@@ -37,7 +37,7 @@ def my_bot(observation, reward, termination, truncation, info):
     Return a random legal action.
     """
     legal_mask = observation["action_mask"]
-    legal_action = legal_mask.nonzero()[0]
+    legal_actions = legal_mask.nonzero()[0]
     action = np.random.choice(legal_actions)
     return (action, surprise)
 

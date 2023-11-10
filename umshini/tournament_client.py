@@ -7,7 +7,7 @@ import numpy as np
 from colorama import Fore, Style
 from halo import Halo
 
-from umshini.envs import ALL_ENVIRONMENTS, make_test_env
+from umshini.envs import ALL_ENVIRONMENTS, make_parallel_env
 from umshini.utils.compress import decompress
 from umshini.utils.socket_wrap import SocketWrapper
 
@@ -44,7 +44,7 @@ class NetworkEnv(gym.Env):
             return
 
         # Create env for initial action and observation spaces
-        self.env, self.turn_based = make_test_env(env_id, seed=seed)
+        self.env, self.turn_based = make_parallel_env(env_id, seed=seed)
         if self.verbose > 1:
             print("Game server data:", self.game_data)
         self.agent = (
@@ -55,12 +55,12 @@ class NetworkEnv(gym.Env):
         self.observation_space = self.env.observation_space(self.agent)
         self.action_space = self.env.action_space(self.agent)
         self.action_space.seed(seed)
-        self.obs = None
+        self.observation= None
 
     def step(self, action_surprise):
         if self.terminated:
             print("terminated before single step occurred!")
-            return self.obs, 0, True, True, {}
+            return self.observation, 0, True, True, {}
         if type(action_surprise) is tuple:
             action = action_surprise[0]
             surprise = action_surprise[1]
@@ -105,14 +105,14 @@ class NetworkEnv(gym.Env):
             print(Fore.YELLOW + "Environment terminated prematurely! Round drawn.")
             if self.verbose:
                 print(e)
-            return self.obs, 0, True, True, {}
+            return self.observation, 0, True, True, {}
         if self.verbose > 1:
             print("received obs")
         if observation_data["type"] != "observation":
             # Game is done
-            rew = 0
-            term = True
-            trunc = True
+            reward = 0
+            termination = True
+            truncation = True
             info = {}
             info["_terminated"] = True
             self.spinner.succeed()
@@ -134,22 +134,22 @@ class NetworkEnv(gym.Env):
                     print(Fore.GREEN + "Winner: " + winners[0])
                 elif len(winners) > 1:
                     print(Fore.GREEN + "Draw between " + " and ".join(winners))
-            return self.obs, rew, term, trunc, info
+            return self.observation, reward, termination, truncation, info
 
         # Unpack observation
-        obs = decompress(observation_data["data"][self.agent])
-        self.obs = obs
+        observation= decompress(observation_data["data"][self.agent])
+        self.observation= observation
         info = decompress(observation_data["info"][self.agent])
         self.info = info
 
         # TODO: Decide what information a live tournament agent should have access to.
-        # Probably observation, info, term or trunc, though term or trunc are obvious from the message type
-        rew = 0
-        term = False
-        trunc = False
+        # Probably observation, info, termination or truncation, though termination or truncation are obvious from the message type
+        reward = 0
+        termination = False
+        truncation = False
         self.steps += 1
         self.spinner.text = f"Playing game (step: {self.steps})"
-        return obs, rew, term, trunc, info
+        return observation, reward, termination, truncation, info
 
     def render(self, mode="human"):
         return self.env.render(mode=mode)
@@ -161,18 +161,18 @@ class NetworkEnv(gym.Env):
             print("receiving initial obs")
         observation_data = recv_json(self.game_connection)
         if self.verbose > 1:
-            print("received initial obs")
+            print("received initial observation")
             print(observation_data)
             if not observation_data:
                 print("No data received")
         if observation_data["type"] != "observation":
             # Game is done
-            return self.obs
+            return self.observation
 
         # Unpack observation
-        obs = decompress(observation_data["data"][self.agent])
+        observation= decompress(observation_data["data"][self.agent])
         info = decompress(observation_data["info"][self.agent])
-        self.obs = obs
+        self.observation = observation
         self.info = info
         try:
             meta = json.loads(observation_data.get("meta"))
@@ -193,7 +193,7 @@ class NetworkEnv(gym.Env):
         )
         self.spinner.start()
 
-        return self.obs, self.info
+        return self.observation, self.info
 
     def close(self):
         self.env.close()
@@ -204,48 +204,48 @@ class NetworkEnv(gym.Env):
 class TestEnv(gym.Env):
     def __init__(self, env_id):
         seed = 1
-        self.env, self.turn_based = make_test_env(env_id, seed=seed, debug=True)
+        self.env, self.turn_based = make_parallel_env(env_id, seed=seed, debug=True)
         self.env.reset()
         self.agent = agent = self.env.agents[0]
         self.observation_space = self.env.observation_space(agent)
         self.action_space = self.env.action_space(agent)
         self.num_steps = 0
-        self.was_term = False
-        self.was_trunc = False
-        self.obss = None
+        self.was_terminated = False
+        self.was_truncated = False
+        self.observations = None
 
     def reset(self, **kwargs):
         self.num_steps = 0
-        self.was_term = False
-        self.was_trunc = False
-        obss, info = self.env.reset()
-        return obss, info
+        self.was_terminated = False
+        self.was_truncated = False
+        observations, infos = self.env.reset()
+        return observations, infos
 
     def step(self, action):
         assert (
-            not self.was_term and not self.was_trunc
-        ), "stepped after term or trunc, should terminate loop"
+            not self.was_terminated and not self.was_truncated
+        ), "stepped after termination or truncation, should terminate loop"
         # Set random actions for all other agents in parallel game or None in turn-based game
         actions = {
             agent: (None if self.turn_based else self.env.action_space(agent).sample())
             for agent in self.env.agents
         }
         actions[self.env.aec_env.agent_selection] = action
-        self.obss, rews, terms, truncs, infos = self.env.step(actions)
+        self.observations, rewards, terminations, truncations, infos = self.env.step(actions)
 
         if self.num_steps > 50:
-            trunc = True
-            term = True
+            truncation = True
+            termination = True
         else:
-            term = terms[self.agent]
-            trunc = truncs[self.agent]
+            termination = terminations[self.agent]
+            truncation = truncations[self.agent]
 
-        obs = self.obss[self.agent]
-        rew = rews[self.agent]
+        observation = self.observations[self.agent]
+        reward = rewards[self.agent]
         info = infos[self.agent]
 
-        self.was_term = term
-        self.was_trunc = trunc
+        self.was_terminated = termination
+        self.was_truncated = truncation
         self.num_steps += 1
 
         # Find next active agents
@@ -255,10 +255,10 @@ class TestEnv(gym.Env):
             active_agents = self.env.agents
 
         # Step again if testing agent is not next
-        if not self.was_term and not self.was_trunc and self.agent not in active_agents:
-            obs = self.obss[self.env.unwrapped.agent_selection]
-            if isinstance(obs, dict) and "action_mask" in obs:
-                legal_mask = obs["action_mask"]
+        if not self.was_terminated and not self.was_truncated and self.agent not in active_agents:
+            observation = self.observations[self.env.unwrapped.agent_selection]
+            if isinstance(observation, dict) and "action_mask" in observation:
+                legal_mask = observation["action_mask"]
                 legal_actions = legal_mask.nonzero()[0]
                 action = np.random.choice(legal_actions)
             else:
@@ -267,7 +267,7 @@ class TestEnv(gym.Env):
                 ).sample()
             return self.step(action)
         else:
-            return obs, rew, term, trunc, info
+            return observation, reward, termination, truncation, info
 
     def render(self, mode="human"):
         return
@@ -301,19 +301,19 @@ class TournamentConnection:
     def _test_environments(self):
         for game in self.available_games:
             test_env = TestEnv(game)
-            obs, info = test_env.reset()
+            observation, info = test_env.reset()
             for i in range(100):
                 if (
-                    obs is not None
-                    and isinstance(obs, dict)
-                    and obs
-                    and "action_mask" in obs
+                    observation is not None
+                    and isinstance(observation, dict)
+                    and observation
+                    and "action_mask" in observation
                 ):
-                    action = np.random.choice(obs["action_mask"].nonzero()[0])
+                    action = np.random.choice(observation["action_mask"].nonzero()[0])
                 else:
                     action = test_env.action_space.sample()
-                obs, _, term, trunc, _ = test_env.step(action)
-                if term or trunc:
+                observation, _, termination, truncation, _ = test_env.step(action)
+                if termination or truncation:
                     if self.debug:
                         print(f"{self.botname} passed test in {game}")
                     break

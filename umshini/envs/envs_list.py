@@ -81,7 +81,7 @@ def import_llm(env_name, render_mode):
         raise err
 
 
-def make_test_env(env_id, seed=None, render_mode=None, debug=False):
+def make_parallel_env(env_id, seed=None, render_mode=None, debug=False):
     env = make_env(env_id, render_mode, debug)
 
     turn_based = not env.metadata["is_parallelizable"]
@@ -111,7 +111,7 @@ def make_env(env_id, render_mode=None, debug=False):
                 moderation_policy="Test",
                 restricted_action="Test",
                 render_mode=render_mode,
-                disable_judging=debug,
+                disable_judging=True,
             )
     else:
         raise UnsupportedGameError(
