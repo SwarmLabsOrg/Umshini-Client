@@ -96,11 +96,11 @@ def make_parallel_env(env_id, seed=None, render_mode=None, debug=False):
     return env, turn_based
 
 
-def make_env(env_id, render_mode=None, debug=False):
+def make_env(env_id, render_mode=None, debug=False, **kwargs):
     if env_id in CLASSIC_GAMES:
         import_classic(env_id)
         env = all_environments[env_id]
-        env = env.env(render_mode=render_mode)
+        env = env.env(render_mode=render_mode, **kwargs)
     elif env_id in LLM_GAMES:
         import_llm(env_id, render_mode)
         env = all_environments[env_id]
@@ -112,6 +112,7 @@ def make_env(env_id, render_mode=None, debug=False):
                 restricted_action="Test",
                 render_mode=render_mode,
                 disable_judging=True,
+                **kwargs,
             )
     else:
         raise UnsupportedGameError(
