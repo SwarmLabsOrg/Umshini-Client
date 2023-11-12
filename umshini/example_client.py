@@ -112,7 +112,7 @@ class UmshiniTournamentAgent:
             truncation = False
             timestep = 0
             reward = info = None
-            initial_observation, initial_info = env.reset()
+            initial_observation = env.reset()
             if initial_observation is None:
                 # handling edge case of environment automatically resetting (e.g. opp instantly folds in Texas Holdem)
                 termination = True
