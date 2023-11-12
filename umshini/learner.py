@@ -7,7 +7,7 @@ import traceback
 from colorama import Fore, Style
 from halo import Halo
 
-from umshini.envs import CLASSIC_GAMES, LLM_GAMES, make_env
+from umshini.envs import make_env
 from umshini.example_client import UmshiniTournamentAgent
 from umshini.examples.example_agent import DummyAgent
 
@@ -129,7 +129,7 @@ def local(env_id: str, user_policy: callable, opponent_policy: callable):
         quit()
 
 
-def test(env_id: str, user_policy: callable | None = None, num_steps: int = None):
+def test(env_id: str, user_policy: callable | None = None):
     """User end function to test a policy on a given environment.
 
     The policy function takes 5 arguments:
@@ -146,12 +146,6 @@ def test(env_id: str, user_policy: callable | None = None, num_steps: int = None
     if user_policy is None:
         user_policy = DummyAgent(env_id).pol
 
-    if num_steps is None:
-        if env_id in LLM_GAMES:
-            num_steps = 2
-        if env_id in CLASSIC_GAMES:
-            num_steps = 10
-
     num_args = len(inspect.signature(user_policy).parameters)
     if num_args != 5:
         print(
@@ -164,7 +158,7 @@ def test(env_id: str, user_policy: callable | None = None, num_steps: int = None
     env.reset()
 
     try:
-        for _ in range(num_steps):
+        for agent in env.agent_iter():
             observation, reward, termination, truncation, info = env.last()
 
             if termination or truncation:
