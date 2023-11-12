@@ -33,6 +33,7 @@ jobs:
           pip install dist/*.tar.gz
       - name: Release Test
         run: |
+          export SDL_VIDEODRIVER=dummy
           pytest -v --cov=umshini --cov-report term --cache-clear
       - name: Upload coverage
         uses: actions/upload-artifact@v2
