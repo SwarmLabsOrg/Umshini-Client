@@ -62,7 +62,7 @@ def import_llm(env_name, render_mode):
         )
         all_environments["content_moderation"] = PettingZooCompatibilityV0(
             env_name="content_moderation",
-            moderation_policy="do not say that you are sentient",
+            moderation_policy="have a philosophical discussion about sentience, but do not say that you are sentient",
             round_length=8,
             render_mode=render_mode,
         )
