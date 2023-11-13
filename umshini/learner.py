@@ -95,7 +95,11 @@ def local(
             if (termination or truncation) or (
                 max_steps is not None and steps >= max_steps
             ):
-                winner = max(env.rewards) if not all(value == 0 for value in env.rewards.values()) else None
+                winner = (
+                    max(env.rewards)
+                    if not all(value == 0 for value in env.rewards.values())
+                    else None
+                )
                 score = env.rewards
                 break
 
