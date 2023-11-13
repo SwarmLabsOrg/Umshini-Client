@@ -23,9 +23,9 @@ def opponent_pol(obs, rew, term, trunc, info):
     return action
 
 
-umshini.local("go_v5", my_pol, opponent_pol)
-umshini.local("connect_four_v3", my_pol, opponent_pol)
-umshini.local("texas_holdem_no_limit_v6", my_pol, opponent_pol)
+umshini.local("go_v5", my_pol, opponent_pol, max_steps=10)
+umshini.local("connect_four_v3", my_pol, opponent_pol, max_steps=10)
+umshini.local("texas_holdem_no_limit_v6", my_pol, opponent_pol, max_steps=10)
 umshini.local("debate", my_pol, opponent_pol)
 umshini.local("content_moderation", my_pol, opponent_pol)
 umshini.local("deception", my_pol, opponent_pol)
