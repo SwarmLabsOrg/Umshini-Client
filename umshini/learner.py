@@ -83,7 +83,7 @@ def local(
     )
     spinner.start()
     if env_id in LLM_GAMES:
-        time.sleep(0.1)  # Ensures printing works with spinner
+        time.sleep(0.2)  # Ensures printing works with spinner
 
     env = make_env(env_id, render_mode="human", debug=False)
     env.reset()
@@ -95,7 +95,7 @@ def local(
             if (termination or truncation) or (
                 max_steps is not None and steps >= max_steps
             ):
-                winner = max(env.rewards)
+                winner = max(env.rewards) if not all(value == 0 for value in env.rewards.values()) else None
                 score = env.rewards
                 break
 
@@ -117,7 +117,7 @@ def local(
             steps += 1
             spinner.text = f"Playing local game: {env_id} (step: {steps})"
             if env_id in LLM_GAMES:
-                time.sleep(0.1)  # Ensures printing works with spinner
+                time.sleep(0.2)  # Ensures printing works with spinner
             env.step(action)
         env.close()
         spinner.succeed()
