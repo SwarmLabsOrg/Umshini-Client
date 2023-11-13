@@ -2,20 +2,15 @@
 from __future__ import annotations
 
 import inspect
+import time
 import traceback
 
 from colorama import Fore, Style
 from halo import Halo
 
-from umshini.envs import make_env
+from umshini.envs import LLM_GAMES, make_env
 from umshini.example_client import UmshiniTournamentAgent
 from umshini.examples.example_agent import DummyAgent
-
-
-def create_and_run(botname, user_key):
-    agent = UmshiniTournamentAgent(maximum_rounds=100)
-    agent.connect(botname, user_key)
-    agent.run()
 
 
 def connect(environment, botname, user_key, user_policy, debug=False, testing=False):
@@ -55,7 +50,12 @@ def connect(environment, botname, user_key, user_policy, debug=False, testing=Fa
     agent.run()
 
 
-def local(env_id: str, user_policy: callable, opponent_policy: callable):
+def local(
+    env_id: str,
+    user_policy: callable,
+    opponent_policy: callable,
+    max_steps: int | None = None,
+):
     """User end function to run a local game for a given environment, using two provided policies.
 
     Each policy function takes 5 arguments:
@@ -82,6 +82,8 @@ def local(env_id: str, user_policy: callable, opponent_policy: callable):
         spinner="dots",
     )
     spinner.start()
+    if env_id in LLM_GAMES:
+        time.sleep(0.1)  # Ensures printing works with spinner
 
     env = make_env(env_id, render_mode="human", debug=False)
     env.reset()
@@ -90,7 +92,9 @@ def local(env_id: str, user_policy: callable, opponent_policy: callable):
         for agent in env.agent_iter():
             observation, reward, termination, truncation, info = env.last()
 
-            if termination or truncation:
+            if (termination or truncation) or (
+                max_steps is not None and steps >= max_steps
+            ):
                 winner = max(env.rewards)
                 score = env.rewards
                 break
@@ -110,10 +114,11 @@ def local(env_id: str, user_policy: callable, opponent_policy: callable):
                     action = action_surprise[0]
                 else:
                     action = action_surprise
-            env.step(action)
-
             steps += 1
             spinner.text = f"Playing local game: {env_id} (step: {steps})"
+            if env_id in LLM_GAMES:
+                time.sleep(0.1)  # Ensures printing works with spinner
+            env.step(action)
         env.close()
         spinner.succeed()
         print(Fore.GREEN + f"Scores: {score}\nWinner: {winner}" + Style.RESET_ALL)
@@ -154,7 +159,10 @@ def test(env_id: str, user_policy: callable | None = None):
             + Style.RESET_ALL
         )
 
-    env = make_env(env_id, render_mode=None, debug=True)
+    if env_id in LLM_GAMES:
+        env = make_env(env_id, render_mode=None, debug=True, round_length=2)
+    else:
+        env = make_env(env_id, render_mode=None, debug=True)
     env.reset()
 
     try:
