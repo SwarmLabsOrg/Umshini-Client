@@ -53,4 +53,4 @@ addopts = [ "--cov=umshini", "--cov-branch", "--cov-context=test", "--cov-report
 omit = [ "umshini/examples/connect_four.py", "umshini/examples/example_cli.py" ]
 
 [tool.deptry.per_rule_ignores]
-DEP002 = [ "pytest", "pytest-cov", "deptry"]
+DEP002 = [ "pytest", "pytest-cov", "deptry", "chess", "rlcard", "pygame"]
