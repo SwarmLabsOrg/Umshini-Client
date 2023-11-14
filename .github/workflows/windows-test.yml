@@ -13,11 +13,11 @@ permissions:
 
 jobs:
   macos-test:
-    runs-on: macos-11
+    runs-on: windows-latest
     strategy:
       matrix:
         python-version: [ '3.8', '3.9', '3.10', '3.11' ]
-        macos-version: [ '10.15', '11', '12' ]
+
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}

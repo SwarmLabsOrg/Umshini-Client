@@ -12,17 +12,17 @@ build-backend = "setuptools.build_meta"
 name = "umshini"
 readme = "README.md"
 description = "Umshini client for playing in MARL tournaments"
-authors = [{ name = "Jordan K. Terry", email = "j.k.terry@swarmlabs.com" }]
+authors = [{ name = "Jordan K. Terry", email = "j.k.terry@swarmlabs.com" }, { name = "Elliot Tower", email = "elliot.tower@swarmlabs.com" }, { name = "Hannah Tan", email = "hannah.tan@swarmlabs.com" }]
 license = { file = "LICENSE" }
 classifiers = [
     "Development Status :: 4 - Beta",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
 ]
-keywords = ["Reinforcement Learning", "game", "RL", "AI", "gym"]
+keywords = ["Reinforcement Learning", "LLM", "game", "RL", "AI", "gymnasium", "pettingzoo"]
 requires-python = ">=3.8"
 dependencies = [
     "numpy>=1.19.0",
