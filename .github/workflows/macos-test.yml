@@ -19,6 +19,8 @@ jobs:
         python-version: [ '3.8', '3.9', '3.10', '3.11' ]
         macos-version: [ '10.15', '11', '12' ]
     steps:
+      - name: Check macOS version
+        run: sw_vers -productVersion
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4

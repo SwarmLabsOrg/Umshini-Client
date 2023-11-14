@@ -34,9 +34,9 @@ dependencies = [
 dynamic = ["version"]
 
 [project.optional-dependencies]
-classic = ["pettingzoo[classic]>=1.24.0"]
+classic = ["pettingzoo>=1.24.0", "chess==1.9.4", "rlcard==1.0.5", "pygame==2.3.0"]
 llm = ["chatarena[umshini]>=0.1.12.10"]
-all = ["pettingzoo[classic]>=1.24.0", "chatarena[umshini]>=0.1.12.10"]
+all = ["pettingzoo>=1.24.0", "chess==1.9.4", "rlcard==1.0.5", "pygame==2.3.0", "chatarena[umshini]>=0.1.12.10"]
 testing = [ "pytest", "pytest-cov", "deptry" ]
 
 [tool.setuptools.dynamic]
