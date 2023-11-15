@@ -12,7 +12,7 @@ permissions:
   contents: read
 
 jobs:
-  macos-test:
+  windows-test:
     runs-on: windows-latest
     strategy:
       matrix:
@@ -31,7 +31,7 @@ jobs:
         run: |
           python -m pip install --upgrade build
           python -m build --sdist
-          pip install dist/*.tar.gz
+          pip install dist\*.tar.gz
       - name: Release Test
         run: |
           export SDL_VIDEODRIVER=dummy
@@ -39,7 +39,7 @@ jobs:
       - name: Upload coverage
         uses: actions/upload-artifact@v3
         with:
-          name: coverage-macos-test-${{ matrix.python-version }}
+          name: coverage-windows-test-${{ matrix.python-version }}
           path: .coverage
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
