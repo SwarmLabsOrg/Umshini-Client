@@ -34,7 +34,6 @@ jobs:
           pip install dist/umshini-$(python -c "import umshini; print(umshini.__version__)").tar.gz
       - name: Release Test
         run: |
-          export SDL_VIDEODRIVER=dummy
           pytest -v --cov=umshini --cov-report term --cache-clear
       - name: Upload coverage
         uses: actions/upload-artifact@v3
