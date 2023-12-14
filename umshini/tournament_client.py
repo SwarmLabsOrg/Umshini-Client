@@ -280,7 +280,7 @@ class TestEnv(gym.Env):
 
 
 class TournamentConnection:
-    def __init__(self, ip, port, botname, key, available_games, debug=False):
+    def __init__(self, ip, port, botname, key, available_games, role=None, debug=False):
         # Initialize class variables
         self.botname = botname
         self.ip_address = ip
@@ -289,6 +289,7 @@ class TournamentConnection:
         self.main_connection = None  # Connection to tournament server
         self.tournament_completed = False
         self.debug = debug
+        self.role = role
         # Grab all available games
         if self.debug:
             print("Connecting to matchmaker for following games: ", available_games)
@@ -404,14 +405,18 @@ class TournamentConnection:
         except ConnectionRefusedError:
             raise RuntimeError("Tournament server is offline.")
 
+        send_data = {
+            "botname": self.botname,
+            "key": self.key,
+            "client_version": "1.0",
+            "available_games": self.available_games,
+        }
+
+        if self.role is not None:
+            send_data["role"] = self.role
+
         send_json(
-            self.main_connection,
-            {
-                "botname": self.botname,
-                "key": self.key,
-                "client_version": "1.0",
-                "available_games": self.available_games,
-            },
+            self.main_connection, send_data
         )
 
         try:
@@ -434,6 +439,10 @@ class TournamentConnection:
             raise RuntimeError(
                 "This user is already connected to the server too many times."
             )
+        if init_data["type"] == "role_not_found":
+            raise RuntimeError("Role not found for bot.")
+        if init_data["type"] == "invalid_role":
+            raise RuntimeError("Invalid role provided.")
         if init_data["type"] == "invalid_botname":
             raise RuntimeError(
                 f"This user does not have a bot with the provided name ({self.botname})"
