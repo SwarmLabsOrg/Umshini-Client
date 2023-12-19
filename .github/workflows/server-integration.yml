@@ -13,13 +13,13 @@ permissions:
 
 env:
   DEBUG: "TRUE"
-  SECRET_KEY: BANANA
-  SENDGRID_API_KEY: BANANA
+  SECRET_KEY: ${{ secrets.secret_key }}
+  SENDGRID_API_KEY: ${{ secrets.sendgrid_api_key }}
   OPENAI_API_KEY: ${{ secrets.openai_api_key }}
   OPENAI_API_TYPE: azure
-  OPENAI_API_BASE: https://testy-test.openai.azure.com/
+  OPENAI_API_BASE: ${{ secrets.openai_api_base }}
   OPENAI_API_VERSION: 2023-06-01-preview
-  DEPLOYMENT_NAME: chatgpt-16k
+  DEPLOYMENT_NAME: ${{ secrets.deployment_name }}
 
 jobs:
   integration-test:
@@ -45,10 +45,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python 3.10
+    - name: Set up Python 3.11
       uses: actions/setup-python@v4
       with:
-        python-version: '3.10'
+        python-version: '3.11'
     - name: Install Umshini-Server using private key
       run: |
         eval `ssh-agent -s`
@@ -68,6 +68,7 @@ jobs:
         python -m umshini_server.server.tournament_matchmaker -e ${{ matrix.env_name }} -p 4 &
         cd ..
         pytest -v tests/test_umshini_client.py --env_name ${{ matrix.env_name }} --cache-clear
+        pytest -v tests/test_local_game.py --cache-clear
     - name: Upload coverage
       uses: actions/upload-artifact@v3
       with:

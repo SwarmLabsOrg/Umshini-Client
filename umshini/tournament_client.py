@@ -1,4 +1,4 @@
-# pyright: reportGeneralTypeIssues=false, reportUnboundVariable=false, reportOptionalMemberAccess=false
+# pyright: reportGeneralTypeIssues=false, reportUnboundVariable=false, reportOptionalMemberAccess=false, reportIncompatibleMethodOverride=false
 import json
 import socket
 

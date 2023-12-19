@@ -5,7 +5,6 @@ import numpy as np
 import umshini
 
 
-# TODO: get this to work in CI on the actual server?
 def rand_policy(obs, rew, term, trunc, info):
     """Return a random legal action."""
     if isinstance(obs, dict) and "action_mask" in obs.keys():
