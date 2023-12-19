@@ -21,7 +21,6 @@ class UmshiniTournamentAgent:
         host="localhost",
         maximum_rounds=10000,
         debug=False,
-        role=None,
     ):
         self.host = host
         self.policy = policy
@@ -34,7 +33,6 @@ class UmshiniTournamentAgent:
         self.tournament = None
         self.maximum_rounds = maximum_rounds
         self.debug = debug
-        self.role = role
 
     def connect(self, botname, key):
         self.botname = botname
@@ -57,7 +55,6 @@ class UmshiniTournamentAgent:
                 self.port,
                 self.botname,
                 self.key,
-                role=self.role,
                 available_games=self.games,
                 debug=self.debug,
             )
