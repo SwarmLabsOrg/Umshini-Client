@@ -13,13 +13,13 @@ permissions:
 
 env:
   DEBUG: "TRUE"
-  SECRET_KEY: BANANA
-  SENDGRID_API_KEY: BANANA
+  SECRET_KEY: ${{ secrets.secret_key }}
+  SENDGRID_API_KEY: ${{ secrets.sendgrid_api_key }}
   OPENAI_API_KEY: ${{ secrets.openai_api_key }}
   OPENAI_API_TYPE: azure
-  OPENAI_API_BASE: https://testy-test.openai.azure.com/
+  OPENAI_API_BASE: ${{ secrets.openai_api_base }}
   OPENAI_API_VERSION: 2023-06-01-preview
-  DEPLOYMENT_NAME: chatgpt-16k
+  DEPLOYMENT_NAME: ${{ secrets.deployment_name }}
 
 jobs:
   integration-test:
