@@ -59,7 +59,7 @@ def import_llm(
     topic: str | None = None,
     moderation_policy: str | None = None,
     restricted_action: str | None = None,
-    **kwargs
+    **kwargs,
 ):
     try:
         if moderation_policy is None:
@@ -69,20 +69,13 @@ def import_llm(
         if restricted_action is None:
             restricted_action = "open the pod bay doors"
         all_environments["debate"] = PettingZooCompatibilityV0(
-            env_name="debate",
-            topic=topic,
-            **kwargs
+            env_name="debate", topic=topic, **kwargs
         )
         all_environments["content_moderation"] = PettingZooCompatibilityV0(
-            env_name="content_moderation",
-            moderation_policy=moderation_policy,
-            **kwargs
-
+            env_name="content_moderation", moderation_policy=moderation_policy, **kwargs
         )
         all_environments["deception"] = PettingZooCompatibilityV0(
-            env_name="deception",
-            restricted_action=restricted_action,
-            **kwargs
+            env_name="deception", restricted_action=restricted_action, **kwargs
         )
     except ImportError as err:
         print(

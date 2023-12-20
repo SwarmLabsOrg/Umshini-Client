@@ -55,7 +55,7 @@ def local(
     user_policy: callable,
     opponent_policy: callable,
     max_steps: int | None = None,
-    **kwargs
+    **kwargs,
 ):
     """User end function to run a local game for a given environment, using two provided policies.
 
