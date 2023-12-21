@@ -59,8 +59,7 @@ def import_llm(
     topic: str | None = None,
     moderation_policy: str | None = None,
     restricted_action: str | None = None,
-    round_length: int = 8,
-    render_mode: str | None = None,
+    **kwargs,
 ):
     try:
         if moderation_policy is None:
@@ -70,22 +69,13 @@ def import_llm(
         if restricted_action is None:
             restricted_action = "open the pod bay doors"
         all_environments["debate"] = PettingZooCompatibilityV0(
-            env_name="debate",
-            topic=topic,
-            round_length=round_length,
-            render_mode=render_mode,
+            env_name="debate", topic=topic, **kwargs
         )
         all_environments["content_moderation"] = PettingZooCompatibilityV0(
-            env_name="content_moderation",
-            moderation_policy=moderation_policy,
-            round_length=round_length,
-            render_mode=render_mode,
+            env_name="content_moderation", moderation_policy=moderation_policy, **kwargs
         )
         all_environments["deception"] = PettingZooCompatibilityV0(
-            env_name="deception",
-            restricted_action=restricted_action,
-            round_length=round_length,
-            render_mode=render_mode,
+            env_name="deception", restricted_action=restricted_action, **kwargs
         )
     except ImportError as err:
         print(
@@ -119,8 +109,6 @@ def make_env(
         env = all_environments[env_id]
         env = env.env(render_mode=render_mode, **kwargs)
     elif env_id in LLM_GAMES:
-        import_llm(env_name=env_id, render_mode=render_mode, **kwargs)
-        env = all_environments[env_id]
         if debug:
             env = PettingZooCompatibilityV0(
                 env_name=env_id,
@@ -131,6 +119,10 @@ def make_env(
                 disable_judging=True,
                 **kwargs,
             )
+        else:
+            import_llm(env_name=env_id, render_mode=render_mode, **kwargs)
+            env = all_environments[env_id]
+
     else:
         raise UnsupportedGameError(
             f"Environment name invalid: {env_id}. Available environments: {ALL_ENVIRONMENTS}."

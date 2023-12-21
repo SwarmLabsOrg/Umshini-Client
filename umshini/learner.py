@@ -55,8 +55,22 @@ def local(
     user_policy: callable,
     opponent_policy: callable,
     max_steps: int | None = None,
+    **kwargs,
 ):
     """User end function to run a local game for a given environment, using two provided policies.
+
+    Use kwargs to specify environment specific keyword arguments.
+    For RL environments, see https://pettingzoo.farama.org/environments/classic/
+    For LLM environments, see https://github.com/Farama-Foundation/chatarena/blob/main/chatarena/environments/umshini/pettingzoo_wrapper.py#L45
+
+    Note: "render_mode" kwarg cannot be specified as a kwarg, as rendering is always enabled for local testing.
+
+    Example:
+        >>> import umshini
+        >>> def test_policy(observation, reward, termination, truncation, info):
+        ...     return ("TEST RESPONSE", 0)
+        ...
+        >>> umshini.local("deception", test_policy, test_policy, **dict(round_length=2, string_observation=True, character_limit=8000, save_json=False, disable_judging=True))
 
     Each policy function takes 5 arguments:
         observation: the observation of the environment
@@ -85,7 +99,7 @@ def local(
     if env_id in LLM_GAMES:
         time.sleep(0.2)  # Ensures printing works with spinner
 
-    env = make_env(env_id, render_mode="human", debug=False)
+    env = make_env(env_id, render_mode="human", debug=False, **kwargs)
     env.reset()
 
     try:
