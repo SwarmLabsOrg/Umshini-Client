@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 import umshini
-from umshini import ALL_ENVIRONMENTS, CLASSIC_GAMES, LLM_GAMES
+from umshini import CLASSIC_GAMES, LLM_GAMES
 
 
 def rand_policy(obs, rew, term, trunc, info):
@@ -16,13 +16,6 @@ def rand_policy(obs, rew, term, trunc, info):
     else:
         action = "TEST_RESPONSE"
     return (action, 0)
-
-
-@pytest.mark.parametrize("env_name", ALL_ENVIRONMENTS)
-def test_local_game(env_name):
-    """Tests local game for all environments."""
-    umshini.local(env_name, rand_policy, rand_policy)
-
 
 @pytest.mark.parametrize("env_name", CLASSIC_GAMES)
 def test_local_game_rl_kwargs(env_name):
