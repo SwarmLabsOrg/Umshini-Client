@@ -68,9 +68,7 @@ def local(
         >>> def test_policy(observation, reward, termination, truncation, info):
         ...     return ("TEST RESPONSE", 0)
         ...
-        >>>
-
-
+        >>> umshini.local("deception", test_policy, test_policy, **dict(round_length=2, string_observation=True, character_limit=8000, save_json=False, disable_judging=True))
 
     Each policy function takes 5 arguments:
         observation: the observation of the environment
