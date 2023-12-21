@@ -17,6 +17,7 @@ def rand_policy(obs, rew, term, trunc, info):
         action = "TEST_RESPONSE"
     return (action, 0)
 
+
 @pytest.mark.parametrize("env_name", CLASSIC_GAMES)
 def test_local_game_rl_kwargs(env_name):
     """Tests env-specific kwargs from PettingZoo environments."""
