@@ -57,6 +57,7 @@ jobs:
         cd Umshini-Server && pip install -e . && cd ..
     - name: Install Umshini-client dependencies
       run: |
+        sudo apt-get install xvfb
         python -m pip install --upgrade pip
         pip install -e '.[all,testing]' --upgrade
     - name: Run servers
@@ -67,7 +68,7 @@ jobs:
         python -m umshini_server.server.standalone_game_server &
         python -m umshini_server.server.tournament_matchmaker -e ${{ matrix.env_name }} -p 4 &
         cd ..
-        pytest -v tests/test_local_game.py --cache-clear
+        xvfb-run -a -s "-screen 0 1024x768x24" pytest -v tests/test_local_game.py --cache-clear
 #        TODO: fix integration test getting stuck on infinite loop (works in umshini_server repo though, for whatever reason)
 #        pytest -v tests/test_umshini_client.py --env_name ${{ matrix.env_name }} --cache-clear
     - name: Upload coverage

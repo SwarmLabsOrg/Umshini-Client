@@ -33,7 +33,7 @@ def test_local_game_rl_kwargs(env_name):
             rand_policy,
             rand_policy,
             max_steps=25,
-            **dict(screen_height=500),
+            **dict(screen_scaling=9),
         )
     if env_name == "chess_v5":
         umshini.local(
@@ -41,7 +41,7 @@ def test_local_game_rl_kwargs(env_name):
             rand_policy,
             rand_policy,
             max_steps=25,
-            **dict(screen_scaling=9),
+            **dict(screen_height=500),
         )
     if env_name == "go_v5":
         umshini.local(
