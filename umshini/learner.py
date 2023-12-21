@@ -63,6 +63,8 @@ def local(
     For RL environments, see https://pettingzoo.farama.org/environments/classic/
     For LLM environments, see https://github.com/Farama-Foundation/chatarena/blob/main/chatarena/environments/umshini/pettingzoo_wrapper.py#L45
 
+    Note: "render_mode" kwarg cannot be specified as a kwarg, as rendering is always enabled for local testing.
+
     Example:
         >>> import umshini
         >>> def test_policy(observation, reward, termination, truncation, info):
