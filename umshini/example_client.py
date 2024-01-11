@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 # pyright: reportOptionalMemberAccess=false, reportGeneralTypeIssues=false
+import numpy as np
 import time
 import traceback
 
 from colorama import Fore, Style
+from multiprocessing import TimeoutError
+from multiprocessing.pool import ThreadPool
 
 from umshini import ALL_ENVIRONMENTS
 from umshini.tournament_client import TournamentConnection
@@ -11,6 +14,8 @@ from umshini.utils.validate_action import validate_action
 
 
 class UmshiniTournamentAgent:
+    TURN_LIMIT = 10  # seconds
+
     def __init__(
         self,
         policy,
@@ -126,9 +131,25 @@ class UmshiniTournamentAgent:
                 if timestep % 100 == 0 and self.debug:
                     print(f"{self.botname}: Timestep {timestep}\n")
                 time.sleep(self.latency / 1000)  # Used to simulate network latency
-                action_surprise = self.policy(
-                    observation, reward, termination, truncation, info
-                )  # receive action and surprise from user
+                with ThreadPool() as pool:
+                    try:
+                        action_surprise = pool.apply_async(self.policy, args=(
+                            observation, reward, termination, truncation, info
+                        )).get(timeout=self.TURN_LIMIT)
+                    except TimeoutError:
+                        print(Fore.RED + "Time Limit Exceeded. Sending default action for environment.")
+                        action_surprise = None
+                    except Exception as e:
+                        print(Fore.RED + f"Error occurred while calling policy: {e}. "
+                                         f"Sending default action for environment.")
+                if action_surprise is None:
+                    # if error raised by policy or timed out
+                    if isinstance(observation, dict) and "action_mask" in observation.keys():
+                        legal_mask = observation["action_mask"]
+                        legal_actions = legal_mask.nonzero()[0]
+                        action_surprise = np.random.choice(legal_actions)
+                    else:
+                        action_surprise = "Pass"
                 # Do some preemptive preprocessing of the user action
                 if isinstance(action_surprise, tuple):
                     action_surprise = (
