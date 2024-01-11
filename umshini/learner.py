@@ -13,7 +13,7 @@ from umshini.example_client import UmshiniTournamentAgent
 from umshini.examples.example_agent import DummyAgent
 
 
-def connect(environment, botname, user_key, user_policy, debug=False, testing=False):
+def connect(environment, botname, user_key, user_policy, role=None, debug=False, testing=False):
     """User end function to add their RL policy.
 
     Policy function takes 5 arguments:
@@ -35,6 +35,7 @@ def connect(environment, botname, user_key, user_policy, debug=False, testing=Fa
             host="127.0.0.1",
             port="8803",
             debug=debug,
+            role=role,
         )
     else:
         agent = UmshiniTournamentAgent(
@@ -44,6 +45,7 @@ def connect(environment, botname, user_key, user_policy, debug=False, testing=Fa
             host="34.70.234.149",
             port="8803",
             debug=debug,
+            role=role,
         )
     test(environment, user_policy)
     agent.connect(botname, user_key)
