@@ -42,7 +42,6 @@ class NetworkEnv(gym.Env):
         if self.default:
             print(Fore.GREEN + "Opponent didn't connect, win by default.")
             return
-
         # Create env for initial action and observation spaces
         self.env, self.turn_based = make_parallel_env(env_id, seed=seed)
         if self.verbose > 1:
@@ -351,15 +350,18 @@ class TournamentConnection:
         if ready_data.get("type") == "reconnect":
             # shortcut to reconnect
             sdata = ready_data
-            env = NetworkEnv(
-                sdata["env"],
-                sdata["seed"],
-                self.ip_address,
-                sdata["port"],
-                sdata["username"],
-                sdata["token"],
-            )
-            return env, {}
+            envs = []
+            for port in json.loads(sdata["ports"]):
+                env = NetworkEnv(
+                    sdata["env"],
+                    sdata["seed"],
+                    self.ip_address,
+                    port,
+                    sdata["username"],
+                    sdata["token"],
+                )
+                envs.append(env)
+            return envs, {}
 
         send_json(self.main_connection, {"type": "ready"})
 
@@ -385,15 +387,18 @@ class TournamentConnection:
         spinner.succeed()
 
         # Create network env with game server info
-        env = NetworkEnv(
-            sdata["env"],
-            sdata["seed"],
-            self.ip_address,
-            sdata["port"],
-            sdata["username"],
-            sdata["token"],
-        )
-        return env, {}
+        envs = []
+        for port in json.loads(sdata["ports"]):
+            env = NetworkEnv(
+                sdata["env"],
+                sdata["seed"],
+                self.ip_address,
+                port,
+                sdata["username"],
+                sdata["token"],
+            )
+            envs.append(env)
+        return envs, {}
 
     # Start connection to matchmaking server
     def _setup_main_connection(self):
@@ -487,9 +492,9 @@ class TournamentConnection:
         print(Style.RESET_ALL)
 
         # Connect to game server
-        game_env, info = self._connect_game_server()
+        game_envs, info = self._connect_game_server()
         self.main_connection.close()
         self.main_connection = None
         self.current_match = 1
         info["round_number"] = self.round_number
-        return game_env, info
+        return game_envs, info
