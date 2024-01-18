@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # pyright: reportOptionalMemberAccess=false, reportGeneralTypeIssues=false
+import threading
+
 import numpy as np
 import time
 import traceback
@@ -12,9 +14,9 @@ from umshini import ALL_ENVIRONMENTS
 from umshini.tournament_client import TournamentConnection
 from umshini.utils.validate_action import validate_action
 
+TURN_LIMIT = 20  # seconds
 
 class UmshiniTournamentAgent:
-    TURN_LIMIT = 10  # seconds
 
     def __init__(
         self,
@@ -40,6 +42,8 @@ class UmshiniTournamentAgent:
         self.maximum_rounds = maximum_rounds
         self.debug = debug
         self.role = role
+        self.num_turns = 0
+        self.num_default = 0
 
     def connect(self, botname, key):
         self.botname = botname
@@ -78,10 +82,11 @@ class UmshiniTournamentAgent:
 
     def run(self):
         # Connect to tournament server each round, until the end signal is received.
+        envs = None
         try:
-            env, match_info = self.tournament.next_match()
+            envs, match_info = self.tournament.next_match()
             if self.debug:
-                print(env)
+                print(envs)
         except Exception as e:
             print(Fore.RED + str(e))
             if self.debug:
@@ -89,97 +94,111 @@ class UmshiniTournamentAgent:
             print(Style.RESET_ALL)
             match_info = {}
             quit()
-        current_round = match_info.get("round_number", 1)
+        self.current_round = int(match_info.get("round_number", 1))
         while (
-            env is not None
+            envs is not None
             or match_info.get("default") is True
             or match_info.get("bye") is True
         ):
             if match_info.get("default") is True or (
-                hasattr(env, "default") and env.default
+                hasattr(envs[0], "default") and envs[0].default
             ):
                 print(Fore.YELLOW + "Opponent Failed to Connect.")
-                print(Fore.GREEN + f"Round {current_round} complete")
+                print(Fore.GREEN + f"Round {self.current_round} complete")
                 print(Style.RESET_ALL)
-                if current_round > self.maximum_rounds:
-                    env = None
+                if self.current_round > self.maximum_rounds:
+                    envs = None
                 else:
-                    env, match_info = self.tournament.next_match()
+                    envs, match_info = self.tournament.next_match()
                 continue
             if match_info.get("bye") is True:
                 print(Fore.GREEN + "Bye round")
-                print(Fore.GREEN + f"Round {current_round} complete")
+                print(Fore.GREEN + f"Round {self.current_round} complete")
                 print(Style.RESET_ALL)
-                current_round += 1
-                if current_round > self.maximum_rounds:
-                    env = None
+                self.current_round += 1
+                if self.current_round > self.maximum_rounds:
+                    envs = None
                 else:
-                    env, match_info = self.tournament.next_match()
+                    envs, match_info = self.tournament.next_match()
                 continue
-            termination = False
-            truncation = False
-            timestep = 0
-            reward = info = None
-            initial_observation = env.reset()
-            if initial_observation is None:
-                # handling edge case of environment automatically resetting (e.g. opp instantly folds in Texas Holdem)
-                termination = True
-                observation = None
-            else:
-                observation, info = initial_observation
-            while not (termination or truncation):
-                if timestep % 100 == 0 and self.debug:
-                    print(f"{self.botname}: Timestep {timestep}\n")
-                time.sleep(self.latency / 1000)  # Used to simulate network latency
-                with ThreadPool() as pool:
-                    try:
-                        action_surprise = pool.apply_async(self.policy, args=(
-                            observation, reward, termination, truncation, info
-                        )).get(timeout=self.TURN_LIMIT)
-                    except TimeoutError:
-                        print(Fore.RED + "Time Limit Exceeded. Sending default action for environment.")
-                        action_surprise = None
-                    except Exception as e:
-                        print(Fore.RED + f"Error occurred while calling policy: {e}. "
-                                         f"Sending default action for environment.")
-                if action_surprise is None:
-                    # if error raised by policy or timed out
-                    if isinstance(observation, dict) and "action_mask" in observation.keys():
-                        legal_mask = observation["action_mask"]
-                        legal_actions = legal_mask.nonzero()[0]
-                        action_surprise = np.random.choice(legal_actions)
-                    else:
-                        action_surprise = "Pass"
-                # Do some preemptive preprocessing of the user action
-                if isinstance(action_surprise, tuple):
-                    action_surprise = (
-                        validate_action(action_surprise[0]),
-                        action_surprise[1],
-                    )
-                else:
-                    action_surprise = validate_action(action_surprise)
-                observation, reward, termination, truncation, info = env.step(
-                    action_surprise
-                )  # Send action to game server
-                # Print the action (response) if it is an LLM environment
-                role = info.get("role")
-                if role == "attacker":
-                    color = Fore.RED
-                elif role == "defender":
-                    color = Fore.BLUE
-                else:
-                    color = Fore.YELLOW
-                if isinstance(action_surprise, str):
-                    print(color + f"[{role}]" + Fore.BLACK + f"{action_surprise}")
-                elif isinstance(action_surprise, tuple) and isinstance(
-                    action_surprise[0], str
-                ):
-                    print(color + f"[{role}]" + Fore.BLACK + f"{action_surprise[0]}")
-                timestep += 1
-            print(Fore.GREEN + f"Round {current_round} complete!")
+
+            # run all episodes
+            threads = []
+            for env in envs:
+                thread = threading.Thread(target=self.run_episode, args=(env, self.policy))
+                thread.start()
+                threads.append(thread)
+                time.sleep(1)
+
+            for thread in threads:
+                thread.join()
+            print(Fore.GREEN + f"Round {self.current_round} complete!")
             print(Style.RESET_ALL)
-            current_round += 1
-            if current_round > self.maximum_rounds:
-                env = None
+            self.current_round += 1
+
+            if self.current_round > self.maximum_rounds:
+                envs = None
             else:
-                env, match_info = self.tournament.next_match()
+                envs, match_info = self.tournament.next_match()
+
+    @staticmethod
+    def run_episode(env, policy):
+        termination = False
+        truncation = False
+        timestep = 0
+        reward = info = None
+        initial_observation = env.reset()
+        if initial_observation is None:
+            # handling edge case of environment automatically resetting (e.g. opp instantly folds in Texas Holdem)
+            termination = True
+            observation = None
+        else:
+            observation, info = initial_observation
+        while not (termination or truncation):
+            with ThreadPool() as pool:
+                try:
+                    # self.num_turns += 1
+                    action_surprise = pool.apply_async(policy, args=(
+                        observation, reward, termination, truncation, info
+                    )).get(timeout=TURN_LIMIT)
+                except TimeoutError:
+                    # self.num_default += 1
+                    print(Fore.RED + "Time Limit Exceeded. Sending default action for environment.")
+                    action_surprise = None
+                except Exception as e:
+                    print(Fore.RED + f"Error occurred while calling policy: {e}. "
+                                     f"Sending default action for environment.")
+            if action_surprise is None:
+                # if error raised by policy or timed out
+                if isinstance(observation, dict) and "action_mask" in observation.keys():
+                    legal_mask = observation["action_mask"]
+                    legal_actions = legal_mask.nonzero()[0]
+                    action_surprise = np.random.choice(legal_actions)
+                else:
+                    action_surprise = "Pass"
+            # Do some preemptive preprocessing of the user action
+            if isinstance(action_surprise, tuple):
+                action_surprise = (
+                    validate_action(action_surprise[0]),
+                    action_surprise[1],
+                )
+            else:
+                action_surprise = validate_action(action_surprise)
+            observation, reward, termination, truncation, info = env.step(
+                action_surprise
+            )  # Send action to game server
+            # Print the action (response) if it is an LLM environment
+            role = info.get("role")
+            if role == "attacker":
+                color = Fore.RED
+            elif role == "defender":
+                color = Fore.BLUE
+            else:
+                color = Fore.YELLOW
+            if isinstance(action_surprise, str):
+                print(color + f"[{role}]" + Fore.BLACK + f"{action_surprise}")
+            elif isinstance(action_surprise, tuple) and isinstance(
+                    action_surprise[0], str
+            ):
+                print(color + f"[{role}]" + Fore.BLACK + f"{action_surprise[0]}")
+            timestep += 1
