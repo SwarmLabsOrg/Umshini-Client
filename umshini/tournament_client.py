@@ -280,7 +280,7 @@ class TestEnv(gym.Env):
 
 
 class TournamentConnection:
-    def __init__(self, ip, port, botname, key, available_games, role=None, debug=False):
+    def __init__(self, ip, port, botname, key, available_games, debug=False):
         # Initialize class variables
         self.botname = botname
         self.ip_address = ip
@@ -289,7 +289,6 @@ class TournamentConnection:
         self.main_connection = None  # Connection to tournament server
         self.tournament_completed = False
         self.debug = debug
-        self.role = role
         # Grab all available games
         if self.debug:
             print("Connecting to matchmaker for following games: ", available_games)
@@ -411,9 +410,6 @@ class TournamentConnection:
             "client_version": "1.0",
             "available_games": self.available_games,
         }
-
-        if self.role is not None:
-            send_data["role"] = self.role
 
         send_json(
             self.main_connection, send_data
