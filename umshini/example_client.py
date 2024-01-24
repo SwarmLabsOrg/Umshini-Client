@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-# pyright: reportOptionalMemberAccess=false, reportGeneralTypeIssues=false
-import numpy as np
+# pyright: reportOptionalMemberAccess=false, reportGeneralTypeIssues=false, reportUnboundVariable=false
 import time
 import traceback
-
-from colorama import Fore, Style
 from multiprocessing import TimeoutError
 from multiprocessing.pool import ThreadPool
+
+import numpy as np
+from colorama import Fore, Style
 
 from umshini import ALL_ENVIRONMENTS
 from umshini.tournament_client import TournamentConnection
@@ -130,18 +130,27 @@ class UmshiniTournamentAgent:
                 time.sleep(self.latency / 1000)  # Used to simulate network latency
                 with ThreadPool() as pool:
                     try:
-                        action_surprise = pool.apply_async(self.policy, args=(
-                            observation, reward, termination, truncation, info
-                        )).get(timeout=self.TURN_LIMIT)
+                        action_surprise = pool.apply_async(
+                            self.policy,
+                            args=(observation, reward, termination, truncation, info),
+                        ).get(timeout=self.TURN_LIMIT)
                     except TimeoutError:
-                        print(Fore.RED + "Time Limit Exceeded. Sending default action for environment.")
+                        print(
+                            Fore.RED
+                            + "Time Limit Exceeded. Sending default action for environment."
+                        )
                         action_surprise = None
                     except Exception as e:
-                        print(Fore.RED + f"Error occurred while calling policy: {e}. "
-                                         f"Sending default action for environment.")
+                        print(
+                            Fore.RED + f"Error occurred while calling policy: {e}. "
+                            f"Sending default action for environment."
+                        )
                 if action_surprise is None:
                     # if error raised by policy or timed out
-                    if isinstance(observation, dict) and "action_mask" in observation.keys():
+                    if (
+                        isinstance(observation, dict)
+                        and "action_mask" in observation.keys()
+                    ):
                         legal_mask = observation["action_mask"]
                         legal_actions = legal_mask.nonzero()[0]
                         action_surprise = np.random.choice(legal_actions)
