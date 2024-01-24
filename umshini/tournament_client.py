@@ -411,9 +411,7 @@ class TournamentConnection:
             "available_games": self.available_games,
         }
 
-        send_json(
-            self.main_connection, send_data
-        )
+        send_json(self.main_connection, send_data)
 
         try:
             init_data = recv_json(self.main_connection)
