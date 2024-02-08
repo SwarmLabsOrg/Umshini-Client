@@ -38,7 +38,7 @@ def connect(environment, botname, user_key, user_policy, debug=False, testing=Fa
         host = "127.0.0.1"
         port = "8803"
     else:
-        host = "matchmaker.umshini.ai"
+        host = "test-matchmaker.umshini.ai"
         if PORT_MAP.get(environment) is not None:
             port = PORT_MAP.get(environment)
         else:

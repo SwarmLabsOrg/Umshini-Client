@@ -353,7 +353,7 @@ class TournamentConnection:
             env = NetworkEnv(
                 sdata["env"],
                 sdata["seed"],
-                "games.umshini.ai",
+                "test-games.umshini.ai",
                 sdata["port"],
                 sdata["username"],
                 sdata["token"],
@@ -386,7 +386,7 @@ class TournamentConnection:
         env = NetworkEnv(
             sdata["env"],
             sdata["seed"],
-            "games.umshini.ai",
+            "test-games.umshini.ai",
             sdata["port"],
             sdata["username"],
             sdata["token"],
