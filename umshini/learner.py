@@ -12,7 +12,14 @@ from umshini.envs import LLM_GAMES, make_env
 from umshini.example_client import UmshiniTournamentAgent
 from umshini.examples.example_agent import DummyAgent
 
-
+PORT_MAP = {
+    "debate": "8803",
+    "content_moderation": "8804",
+    "deception": "8805",
+    "go_v5": "8806",
+    "connect_four_v3": "8807",
+    "texas_holdem_no_limit_v6": "8808"
+}
 def connect(environment, botname, user_key, user_policy, debug=False, testing=False):
     """User end function to add their RL policy.
 
@@ -28,23 +35,24 @@ def connect(environment, botname, user_key, user_policy, debug=False, testing=Fa
         surprise: the surprise value of the action [Optional]
     """
     if testing:
-        agent = UmshiniTournamentAgent(
-            policy=user_policy,
-            games=[environment],
-            maximum_rounds=100,
-            host="127.0.0.1",
-            port="8803",
-            debug=debug,
-        )
+        host = "127.0.0.1"
+        port = "8803"
     else:
-        agent = UmshiniTournamentAgent(
-            policy=user_policy,
-            games=[environment],
-            maximum_rounds=100,
-            host="34.70.234.149",
-            port="8803",
-            debug=debug,
-        )
+        host = "matchmaker.umshini.ai"
+        if PORT_MAP.get(environment) is not None:
+            port = PORT_MAP.get(environment)
+        else:
+            raise Exception("Environment not found!")
+
+    agent = UmshiniTournamentAgent(
+        policy=user_policy,
+        games=[environment],
+        maximum_rounds=100,
+        host=host,
+        port=port,
+        debug=debug,
+    )
+
     test(environment, user_policy)
     agent.connect(botname, user_key)
     agent.run()

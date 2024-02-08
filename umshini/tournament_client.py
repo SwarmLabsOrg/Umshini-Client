@@ -353,7 +353,7 @@ class TournamentConnection:
             env = NetworkEnv(
                 sdata["env"],
                 sdata["seed"],
-                self.ip_address,
+                "games.umshini.ai",
                 sdata["port"],
                 sdata["username"],
                 sdata["token"],
@@ -382,12 +382,11 @@ class TournamentConnection:
             print("Failed to receive game info from server", flush=True)
             raise err
         spinner.succeed()
-
         # Create network env with game server info
         env = NetworkEnv(
             sdata["env"],
             sdata["seed"],
-            self.ip_address,
+            "games.umshini.ai",
             sdata["port"],
             sdata["username"],
             sdata["token"],
