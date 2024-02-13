@@ -383,6 +383,8 @@ class TournamentConnection:
             raise err
         spinner.succeed()
         # Create network env with game server info
+        print("Connecting to game server")
+        print(sdata["port"])
         env = NetworkEnv(
             sdata["env"],
             sdata["seed"],
@@ -391,6 +393,7 @@ class TournamentConnection:
             sdata["username"],
             sdata["token"],
         )
+        print("Success")
         return env, {}
 
     # Start connection to matchmaking server
