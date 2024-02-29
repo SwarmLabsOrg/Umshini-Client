@@ -335,7 +335,7 @@ class TournamentConnection:
         )
         spinner.start()
         try:
-            ready_data = recv_json(self.main_connection, timeout=600)
+            ready_data = recv_json(self.main_connection, timeout=3600)
         except TimeoutError as err:
             print("Not enough players to start tournament.", flush=True)
             raise err
