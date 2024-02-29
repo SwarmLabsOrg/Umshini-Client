@@ -39,10 +39,10 @@ def connect(environment, botname, user_key, user_policy, debug=False, testing=Fa
         port = "8803"
     else:
         host = "matchmaker.umshini.ai"
-        if PORT_MAP.get(environment) is not None:
-            port = PORT_MAP.get(environment)
-        else:
-            raise Exception("Environment not found!")
+    if PORT_MAP.get(environment) is not None:
+        port = PORT_MAP.get(environment)
+    else:
+        raise Exception("Environment not found!")
 
     agent = UmshiniTournamentAgent(
         policy=user_policy,
